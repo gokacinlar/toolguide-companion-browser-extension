@@ -1,3 +1,7 @@
+# My .gitignore
+
+src/lib/
+
 # Logs
 logs
 *.log
