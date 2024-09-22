@@ -1,0 +1,41 @@
+{
+  "name": "Dev Toolguide",
+  "version": "1.0.0",
+  "description": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
+  "main": "index.js",
+  "type": "module",
+  "license": "AGPL-version-3.0",
+  "private": false,
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": "",
+  "keywords": [],
+  "author": {
+    "name": "Derviş Öksüzoğlu",
+    "email": "gokacinlar@outlook.com",
+    "url": "https://dervisoksuzoglu.net"
+  },
+  "contributors": [],
+  "scripts": {
+    "dev": "",
+    "test": "",
+    "clean": "rm -rf dist",
+    "compile": "npx tsc",
+    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'node_modules' ./ dist/ && rsync -av src/ dist/src/",
+    "build": "npm run clean && npm run compile && npm run copy-assets"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.271",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "fastbootstrap": "^2.2.0"
+  }
+}

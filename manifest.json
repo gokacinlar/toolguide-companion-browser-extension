@@ -1,0 +1,44 @@
+{
+    "name": "Dev Toolguide",
+    "author": "Derviş Öksüzoğlu",
+    "version": "1.0.0",
+    "manifest_version": 3,
+    "incognito": "not_allowed",
+    "description": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
+    "background": {
+        "service_worker": "/src/background/service_worker.js",
+        "type": "module"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "css": [
+                "/assets/css/custom.css"
+            ],
+            "js": [
+                "/src/app.js"
+            ]
+        }
+    ],
+    "permissions": [
+        "scripting",
+        "activeTab"
+    ],
+    "action": {
+        "default_popup": "popup/popup.html",
+        "default_title": "Dev Toolguide"
+    },
+    "default_locale": "en",
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "/images/logo.png"
+            ],
+            "matches": [
+                "<all_urls>"
+            ]
+        }
+    ]
+}

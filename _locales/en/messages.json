@@ -1,0 +1,10 @@
+{
+    "extensionName": {
+        "message": "Dev Toolguide",
+        "description": "Name of the extension."
+    },
+    "extensionDescription": {
+        "message": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
+        "description": "Description of the extension."
+    }
+}
