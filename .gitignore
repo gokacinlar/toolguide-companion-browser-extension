@@ -1,6 +1,6 @@
 # My .gitignore
 
-src/lib/
+src/lib/css/
 
 # Logs
 logs
