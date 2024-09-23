@@ -1,5 +1,6 @@
 # My .gitignore
 src/lib/css/
+dist/
 
 # Logs
 logs
@@ -131,3 +132,4 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+src/components/header.ts
