@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon_16x16.png">
     <!--End of Favicon-->
     <!--External CSS-->
-    <link rel="stylesheet" type="text/css" href="/src/lib/css/fastbootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/src/lib/css/fastbootstrap.css">
     <link rel="stylesheet" type="text/css" href="/assets/css/custom.css">
     <!--End of External CSS-->
 </head>
@@ -19,10 +19,14 @@
 
 <body>
     <header>
-        <app-header></app-header>
+        <app-header>
+        </app-header>
     </header>
-    <main>
-
+    <main class="d-flex flex-row">
+        <app-aside>
+        </app-aside>
+        <app-main>
+        </app-main>
     </main>
     <footer>
 
