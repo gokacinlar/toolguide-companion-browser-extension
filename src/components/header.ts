@@ -82,6 +82,8 @@ class Header extends HTMLElement {
         `;
     }
 
+    // Initialize and implement the dark & light mode theme switching in TypeScript
+    // ORIGINAL: https://fastbootstrap.com/get-started/dark-mode/
     private initThemeToggler() {
         const getStoredTheme = (): string | null => localStorage.getItem("theme");
         const setStoredTheme = (theme: string) => localStorage.setItem("theme", theme);
