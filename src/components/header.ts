@@ -1,22 +1,10 @@
+import { Template } from "./helper.js";
 class Header extends HTMLElement {
-    private stylings: {
-        header: string,
-        headerTitle: string,
-        switchButtons: string
-    };
-
-    private btns: {
-        btnPrimary: string
-    };
-
-    private texts: {
-        h1: string
-    }
-
-    private svgIcons: {
-        light: string,
-        dark: string
-    }
+    private stylings: { [key: string]: string };
+    private btns: { [key: string]: string };
+    private texts: { [key: string]: string };
+    private svgIcons: { [key: string]: string };
+    private templateHelper: Template;
 
     constructor() {
         super();
@@ -27,7 +15,7 @@ class Header extends HTMLElement {
         };
 
         this.btns = {
-            btnPrimary: "d-flex flex-row align-items-end justify-content-center gap-2 btn btn-primary rounded-pill fs-5 transition-all"
+            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-primary rounded-pill fs-5 transition-all"
         }
 
         this.texts = {
@@ -39,20 +27,27 @@ class Header extends HTMLElement {
             dark: "/images/icons/dark.svg"
         }
 
+        this.templateHelper = new Template(); // Create an instance of Template
+
+        // Define styles directly in the constructor
+        const styles = `
+            @import url(/src/lib/css/fastbootstrap.css);
+            @import url(/assets/css/custom.css);
+        `;
+
+        // Create the template and append it to the shadow root
+        const template = this.templateHelper.createTemplate(styles, this.renderContent());
+
         this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(this.createTemplate().content.cloneNode(true));
+        this.shadowRoot?.appendChild(template.content.cloneNode(true));
 
         // Initialize theme toggler
         this.initThemeToggler();
     }
 
-    private createTemplate(): HTMLTemplateElement {
-        const template = document.createElement("template");
-        template.innerHTML = `
-            <style>
-                @import url(/src/lib/css/fastbootstrap.css);
-                @import url(/assets/css/custom.css);
-            </style>
+    // Always render the content first
+    private renderContent(): string {
+        return `
             <header class="${this.stylings.header}">
                 <section class="${this.stylings.headerTitle}">
                     <div>
@@ -64,16 +59,15 @@ class Header extends HTMLElement {
                 </section>
             </header>
         `;
-        return template;
     }
 
-    renderHeaderUpperContent(): string {
+    private renderHeaderUpperContent(): string {
         return `
             <h1 class="${this.texts.h1}">Dev Toolguide</h1>
         `;
     }
 
-    renderLightDarkModeSwitch(): string {
+    private renderLightDarkModeSwitch(): string {
         return `
             <div id="bd-theme" aria-label="Theme switcher" class="${this.stylings.switchButtons}">
                 <button data-bs-theme-value="light" class="${this.btns.btnPrimary}"><span>Light</span></button>
@@ -134,7 +128,7 @@ class Header extends HTMLElement {
             img.alt = theme === "light" ? "Light Theme Icon" : "Dark Theme Icon";
             img.style.width = "24px";
             img.style.height = "24px";
-            img.setAttribute("class", "text-light");
+            img.setAttribute("class", "switch-button-icon text-light");
 
             btnToActive.insertAdjacentElement("afterbegin", img);
 
