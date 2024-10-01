@@ -9,13 +9,13 @@ class Header extends HTMLElement {
     constructor() {
         super();
         this.stylings = {
-            header: "col-12 d-flex fs-4",
+            header: "col-12 d-flex fs-4 shadow-sm",
             headerTitle: "w-100 py-2 px-2 my-1 mx-1 d-flex flex-row align-content-center align-items-center justify-content-between bg-primary rounded-3",
             switchButtons: "d-flex flex-row gap-2"
         };
 
         this.btns = {
-            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-primary rounded-pill fs-5 transition-all"
+            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-primary rounded-pill fs-5 transition-all shadow-md"
         }
 
         this.texts = {
