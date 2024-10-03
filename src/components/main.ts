@@ -1,3 +1,4 @@
+// main.ts
 import { Template } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
 
@@ -6,6 +7,7 @@ export class Main extends HTMLElement {
     private appCalculations: AppCalculations;
 
     private documentStyling: { [key: string]: string };
+    private Ids: { [key: string]: string };
 
     constructor() {
         super();
@@ -13,8 +15,12 @@ export class Main extends HTMLElement {
         this.appCalculations = new AppCalculations();
 
         this.documentStyling = {
-            main: "d-flex align-content-center justify-content-start",
-            mainPlaceholder: "w-100 d-flex flex-column align-items-center justify-content-center"
+            main: "d-flex flex-column align-content-center justify-content-start",
+            mainPlaceholder: "info-placeholder w-100 d-flex flex-column align-items-center justify-content-center"
+        };
+
+        this.Ids = {
+            dynamicContent: "dynamicContent"
         }
 
         // Define styles directly in the constructor
@@ -28,6 +34,7 @@ export class Main extends HTMLElement {
         this.shadowRoot?.appendChild(template.content.cloneNode(true));
     }
 
+    // Render the placeholder
     public renderContent(): string {
         return `
         <main class="${this.documentStyling.main}">
@@ -35,24 +42,29 @@ export class Main extends HTMLElement {
                 <h1>Dev Toolguide</h1>
                 <p>Your browser companion to accomplish many handy stuff!</p>
             </div>
+            <div id="${this.Ids.dynamicContent}"></div>
         </main>
         `;
     }
 
     // Method to update the main content based on the selected component
     public updateContent(component: any): void {
-        const mainElement = this.shadowRoot?.querySelector("main") as HTMLElement | null;
+        // Define the dynamicContent since all tools will be appended there
+        const dynamicContent = this.shadowRoot?.getElementById("dynamicContent") as HTMLElement | null;;
+        const placeHolderContent = this.shadowRoot?.querySelector(".info-placeholder ") as HTMLElement | null;;
 
-        if (mainElement) {
+        if (dynamicContent) {
             switch (component) {
-                case "calculation": // Match the key from Aside
-                    mainElement.innerHTML = this.appCalculations.basicCalculator(); // Render the calculator content
+                case "calculation":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.appCalculations);
                     break;
-                case "converters": // Match the key from Aside
-                    mainElement.innerHTML = this.renderConverters(); // Call a method to render converters
+                case "converters":
+                    dynamicContent.innerHTML = this.renderConverters();
                     break;
                 default:
-                    mainElement.innerHTML = "<p>Select a component to view its content.</p>"; // Default message
+                    dynamicContent.innerHTML = "<p>Select a component to view its content.</p>";
                     break;
             }
         }
