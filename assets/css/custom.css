@@ -13,9 +13,15 @@
 }
 
 @layer init {
+    @property --body-height {
+        syntax: "<length>";
+        inherits: false;
+        initial-value: 512px;
+    }
+
     body {
         width: 768px;
-        height: 512px;
+        height: var(--body-height);
     }
 }
 
@@ -42,6 +48,9 @@
         -webkit-transform: translateZ(-80px);
         transform: translateZ(-80px);
         opacity: 0;
+        -moz-transform: translateZ(-80px);
+        -ms-transform: translateZ(-80px);
+        -o-transform: translateZ(-80px);
     }
 
     100% {
@@ -63,4 +72,18 @@
         transform: translateZ(0);
         opacity: 1;
     }
+}
+
+/* Aside & Aside Buttons */
+
+.aside-buttons {
+    min-height: var(--body-height);
+}
+
+/* App Calculations */
+
+.app-calc-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
