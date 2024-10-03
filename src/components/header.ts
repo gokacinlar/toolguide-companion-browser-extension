@@ -1,4 +1,5 @@
 import { Template } from "./helper.js";
+
 class Header extends HTMLElement {
     private stylings: { [key: string]: string };
     private btns: { [key: string]: string };
@@ -10,7 +11,7 @@ class Header extends HTMLElement {
         super();
         this.stylings = {
             header: "col-12 d-flex fs-4 shadow-sm",
-            headerTitle: "w-100 py-2 px-2 my-1 mx-1 d-flex flex-row align-content-center align-items-center justify-content-between bg-primary rounded-3",
+            headerTitle: "w-100 py-2 px-2 my-1 mx-1 d-flex flex-row align-content-center align-items-center justify-content-between bg-primary rounded-3 shadow-lg",
             switchButtons: "d-flex flex-row gap-2"
         };
 
