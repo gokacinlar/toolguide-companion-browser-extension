@@ -16,7 +16,8 @@ export class AppCalculations extends HTMLElement {
         };
 
         this.Ids = {
-            basicCalculator: "basicCalculator"
+            basicCalculator: "basicCalculator",
+            anotherPageId: "anotherPageId"
         }
 
         const styles = `
@@ -33,13 +34,16 @@ export class AppCalculations extends HTMLElement {
     public appCalculations(): string {
         return `
             <ul class="${this.classes.ul}">
-                <li><button class="${this.classes.button}" data-page="${this.Ids.basicCalculator}">Calculator</button></li>
+                <li><button class="${this.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
+                <li><button class="${this.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
             </ul>
             <div id="content">
                 <div class="${this.classes.componentElement}" id="basicCalculator" style="display: none;">${this.basicCalculator()}</div>
+                <div class="${this.classes.componentElement}" id="anotherPageId" style="display: none;">${this.anotherPage()}</div>
             </div>
         `;
     }
+
 
     // Function to open corresponding data-page in DOM through buttons
     private handleNavigation() {
@@ -56,19 +60,19 @@ export class AppCalculations extends HTMLElement {
     }
 
     // Function to enable tab switching
-    public openPage(pageName: string | null) {
+    public openPage(pageName: string | null): void {
         // Hide all tab content first
-        const tabcontent = this.shadowRoot?.querySelectorAll<HTMLElement>(".app-calc-component-element");
+        const tabcontent = Array.from(this.shadowRoot?.querySelectorAll(".app-calc-component-element") as NodeListOf<HTMLElement>);
         if (tabcontent) {
-            tabcontent.forEach((content) => {
+            tabcontent.forEach((content: HTMLElement) => {
                 content.style.display = "none";
             });
         }
 
         // Remove active class from all navigation buttons next
-        const tabNavigation = this.shadowRoot?.querySelectorAll<HTMLButtonElement>(".app-calc-nav-button");
+        const tabNavigation = Array.from(this.shadowRoot?.querySelectorAll(".app-calc-nav-button") as NodeListOf<HTMLElement>)
         if (tabNavigation) {
-            tabNavigation.forEach((button) => {
+            tabNavigation.forEach((button: HTMLElement) => {
                 button.classList.remove("active");
             });
         }
@@ -96,6 +100,15 @@ export class AppCalculations extends HTMLElement {
             <div>
                 <h2>Basic Calculator</h2>
                 <p>This is the content for the Basic Calculator component.</p>
+            </div>
+        `;
+    }
+
+    public anotherPage(): string {
+        return `
+            <div>
+                <h2>Another Content!</h2>
+                <p>This is the content for the Another Content component.</p>
             </div>
         `;
     }
