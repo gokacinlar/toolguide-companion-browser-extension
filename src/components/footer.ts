@@ -86,7 +86,7 @@ class Footer extends HTMLElement {
         `;
     }
 
-    // Function to render images in Footer's Left Side
+    // Function to render images in Footer's Right Side
     private renderImageLink(image: ImageSource, title: string): string {
         return `
             <a href="${image.ref}" aria-label="${title}">
