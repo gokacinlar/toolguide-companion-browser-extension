@@ -1,19 +1,26 @@
 import { Template } from "./helper.js";
 
+interface BasicTemplate {
+    ul: string;
+    button: string;
+    componentElement: string;
+}
+
+const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
+    classes: {
+        ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
+        button: "app-calc-nav-button btn btn-outline-light w-100 fs-5 shadow-md rounded-3",
+        componentElement: "app-calc-component-element"
+    }
+}
+
 export class AppCalculations extends HTMLElement {
     private template: Template;
-    private classes: { [key: string]: string };
     private Ids: { [key: string]: string }
 
     constructor() {
         super();
         this.template = new Template();
-
-        this.classes = {
-            ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-            button: "app-calc-nav-button btn btn-info border-2 border-dark border-opacity-50 text-light w-100 fs-5 shadow-md rounded-3",
-            componentElement: "app-calc-component-element"
-        };
 
         this.Ids = {
             basicCalculator: "basicCalculator",
@@ -33,17 +40,16 @@ export class AppCalculations extends HTMLElement {
     // Render the main template
     public appCalculations(): string {
         return `
-            <ul class="${this.classes.ul}">
-                <li><button class="${this.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
-                <li><button class="${this.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
+            <ul class="${BASIC_TEMPLATE.classes.ul}">
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
             </ul>
             <div id="content">
-                <div class="${this.classes.componentElement}" id="basicCalculator" style="display: none;">${this.basicCalculator()}</div>
-                <div class="${this.classes.componentElement}" id="anotherPageId" style="display: none;">${this.anotherPage()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="basicCalculator" style="display: none;">${this.basicCalculator()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.anotherPage()}</div>
             </div>
         `;
     }
-
 
     // Function to open corresponding data-page in DOM through buttons
     private handleNavigation() {
