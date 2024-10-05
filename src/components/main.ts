@@ -50,8 +50,8 @@ export class Main extends HTMLElement {
     // Method to update the main content based on the selected component
     public updateContent(component: any): void {
         // Define the dynamicContent since all tools will be appended there
-        const dynamicContent = this.shadowRoot?.getElementById("dynamicContent") as HTMLElement | null;;
-        const placeHolderContent = this.shadowRoot?.querySelector(".info-placeholder ") as HTMLElement | null;;
+        const dynamicContent = this.shadowRoot?.getElementById("dynamicContent") as HTMLElement | null;
+        const placeHolderContent = this.shadowRoot?.querySelector(".info-placeholder") as HTMLElement | null;
 
         if (dynamicContent) {
             switch (component) {
@@ -71,7 +71,6 @@ export class Main extends HTMLElement {
     }
 
     // Method to render converters content (placeholder)
-    // Later delete
     private renderConverters(): string {
         return `
             <div>
