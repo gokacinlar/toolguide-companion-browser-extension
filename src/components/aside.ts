@@ -18,8 +18,8 @@ class Aside extends HTMLElement {
         this.main = new Main();
 
         this.documentStylings = {
-            template: "aside-buttons bg-primary d-flex flex-column gap-2 py-2 px-2 mb-2 align-items-center justify-content-start rounded-3 shadow-lg",
-            btnStyling: "btn btn-info border-2 border-dark border-opacity-50 text-light w-100 fs-5 shadow-md rounded-3"
+            template: "aside-buttons d-flex flex-column gap-2 py-2 px-2 mb-1 align-items-center justify-content-start rounded-3 shadow-lg",
+            btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3"
         };
 
         this.buttons = {

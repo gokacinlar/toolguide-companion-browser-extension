@@ -12,6 +12,18 @@
     font-display: auto;
 }
 
+@property --bg-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #162C49;
+}
+
+@property --light-color {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: #ffffff;
+}
+
 @property --body-height {
     syntax: "<length>";
     inherits: false;
@@ -90,6 +102,15 @@
         transform: translateZ(0);
         opacity: 1;
     }
+}
+
+/* Custom Global CSS Color Rules */
+
+.header-content,
+.aside-buttons,
+.footer-content {
+    color: var(--light-color);
+    background: var(--bg-color);
 }
 
 /* Aside & Aside Buttons */
