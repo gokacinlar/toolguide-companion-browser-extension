@@ -71,8 +71,8 @@ class Header extends HTMLElement {
     private renderLightDarkModeSwitch(): string {
         return `
             <div id="bd-theme" aria-label="Theme switcher" class="${this.stylings.switchButtons}">
-                <button data-bs-theme-value="light" class="${this.btns.btnPrimary}"><span>Light</span></button>
-                <button data-bs-theme-value="dark" class="${this.btns.btnPrimary}"><span>Dark</span></button>
+                <button data-bs-theme-value="light" class="${this.btns.btnPrimary}" aria-label="Light" title="Switch to Light Mode"><span>Light</span></button>
+                <button data-bs-theme-value="dark" class="${this.btns.btnPrimary}" aria-label="Dark" title="Switch to Dark Mode"><span>Dark</span></button>
             </div>
         `;
     }
