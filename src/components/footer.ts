@@ -27,11 +27,12 @@ const IMAGE_SOURCES: { [key: string]: ImageSource } = {
 };
 
 const STYLES = {
-    footerStyling: "py-2 px-2 my-1 mx-1 mb-2 d-flex flex-row align-content-center align-items-center justify-content-between bg-dark rounded-3 shadow-lg"
+    footerStyling: "footer-content py-2 px-2 my-1 mx-1 mb-2 d-flex flex-row align-content-center align-items-center justify-content-between rounded-3 shadow-lg"
 };
 
 class Footer extends HTMLElement {
     private templateHelper: Template;
+    private version: { [key: string]: string };
     private footerSections: { [key: string]: string };
 
     constructor() {
@@ -42,14 +43,18 @@ class Footer extends HTMLElement {
             footerLeft: ""
         };
 
+        this.version = {
+            number: "v1.0.0",
+        }
+
         // Define styles directly in the constructor
         const styles = `
             @import url(/src/lib/css/fastbootstrap.css);
             @import url(/assets/css/custom.css);
         `;
-        
+
         const template = this.templateHelper.createTemplate(styles, this.renderFooter());
-        
+
         this.attachShadow({ mode: "open" });
         this.shadowRoot?.appendChild(template.content.cloneNode(true));
     }
@@ -69,8 +74,8 @@ class Footer extends HTMLElement {
 
     renderFooterRight(): string {
         return `
-            <div>
-                <h2>Title</h2>
+            <div id="versionNumber">
+                <h3 class="mb-0">${this.version.number}</h3>
             </div>
         `;
     }
@@ -89,8 +94,8 @@ class Footer extends HTMLElement {
     // Function to render images in Footer's Right Side
     private renderImageLink(image: ImageSource, title: string): string {
         return `
-            <a href="${image.ref}" aria-label="${title}">
-                <img src="${image.src}" class="footer-links img-fluid shadow-md" title="${title}" alt="${title} icon">
+            <a href="${image.ref}" aria-label="${title}" target="_blank">
+                <img src="${image.src}" class="footer-links img-fluid" title="${title}" alt="${title} Icon">
             </a>
         `;
     }
