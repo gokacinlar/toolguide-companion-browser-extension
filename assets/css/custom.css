@@ -53,24 +53,54 @@
         height: auto;
         aspect-ratio: 3/2;
     }
-}
 
-.switch-button {
-    width: 75px;
-    transition: width 0.25s ease-in-out;
-    -webkit-transition: width 0.25s ease-in-out;
-    -moz-transition: width 0.25s ease-in-out;
-    -ms-transition: width 0.25s ease-in-out;
-    -o-transition: width 0.25s ease-in-out;
+    /* Use drop-shadow since box-shadow literally works on box model, not svg images */
+    .footer-links,
+    .switch-button {
+        /* .shadow-md conversion to drop-shadow */
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
 
-    &.active {
-        width: 100px;
+    .switch-button {
+        width: 75px;
+        transition: width 0.25s ease-in-out;
+        -webkit-transition: width 0.25s ease-in-out;
+        -moz-transition: width 0.25s ease-in-out;
+        -ms-transition: width 0.25s ease-in-out;
+        -o-transition: width 0.25s ease-in-out;
+
+        &.active {
+            width: 100px;
+        }
+    }
+
+    .switch-button-icon {
+        -webkit-animation: fade-in-fwd 0.35s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+        animation: fade-in-fwd 0.35s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+    }
+
+    /* Custom Global CSS Color Rules */
+
+    .header-content,
+    .aside-buttons,
+    .footer-content {
+        color: var(--light-color);
+        background: var(--bg-color);
+    }
+
+    /* Aside & Aside Buttons */
+
+    .aside-buttons {
+        min-height: var(--aside-height);
     }
 }
 
-.switch-button-icon {
-    -webkit-animation: fade-in-fwd 0.35s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
-    animation: fade-in-fwd 0.35s cubic-bezier(0.215, 0.610, 0.355, 1.000) both;
+/* App Calculations */
+
+.app-calc-ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
 }
 
 @-webkit-keyframes fade-in-fwd {
@@ -102,27 +132,4 @@
         transform: translateZ(0);
         opacity: 1;
     }
-}
-
-/* Custom Global CSS Color Rules */
-
-.header-content,
-.aside-buttons,
-.footer-content {
-    color: var(--light-color);
-    background: var(--bg-color);
-}
-
-/* Aside & Aside Buttons */
-
-.aside-buttons {
-    min-height: var(--aside-height);
-}
-
-/* App Calculations */
-
-.app-calc-ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
 }
