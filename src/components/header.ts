@@ -16,7 +16,7 @@ class Header extends HTMLElement {
         };
 
         this.btns = {
-            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-primary rounded-pill fs-5 transition-all shadow-md"
+            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-discovery rounded-pill fs-5 transition-all shadow-md"
         }
 
         this.texts = {

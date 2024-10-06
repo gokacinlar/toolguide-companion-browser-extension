@@ -9,8 +9,8 @@ interface BasicTemplate {
 const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
     classes: {
         ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-        button: "app-calc-nav-button btn btn-outline-light w-100 fs-5 shadow-md rounded-3",
-        componentElement: "app-calc-component-element"
+        button: "app-calc-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
+        componentElement: "app-calc-component-element py-2"
     }
 }
 

@@ -75,7 +75,7 @@ class Footer extends HTMLElement {
     renderFooterRight(): string {
         return `
             <div id="versionNumber">
-                <h3 class="mb-0">${this.version.number}</h3>
+                <h5 class="mb-0">${this.version.number}</h5>
             </div>
         `;
     }
