@@ -28,8 +28,8 @@
     "test": "",
     "clean": "rm -rf dist",
     "compile": "npx tsc",
-    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'node_modules' --exclude '*.ts' ./ dist/ && rsync -av --exclude '*.ts' src/ dist/src/",
-    "build": "npm run clean && npm run compile && npm run copy-assets"
+    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'node_modules' --exclude '*.ts' ./ dist/",
+    "build": "npm run clean && npm run compile && npm run copy-assets && rm -rf dist/dist"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.271",
