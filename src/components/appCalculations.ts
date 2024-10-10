@@ -1,22 +1,22 @@
 import { Template } from "./helper.js";
+import { create, all } from 'mathjs'; // Import Math.js
 
-interface BasicTemplate {
-    ul: string;
-    button: string;
-    componentElement: string;
-}
+interface BasicTemplate { [key: string]: string }
 
 const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
     classes: {
         ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
         button: "app-calc-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
-        componentElement: "app-calc-component-element py-2"
+        componentElement: "app-calc-component-element py-2 my-2",
+        calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
+        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
     }
 }
 
 export class AppCalculations extends HTMLElement {
     private template: Template;
     private Ids: { [key: string]: string }
+    private math: any;
 
     constructor() {
         super();
@@ -103,9 +103,73 @@ export class AppCalculations extends HTMLElement {
     // Calculator itself
     public basicCalculator(): string {
         return `
-            <div>
-                <h2>Basic Calculator</h2>
-                <p>This is the content for the Basic Calculator component.</p>
+            <div class="container d-flex flex-column gap-3">
+                <div class="row justify-content-start">
+                    <div class="col-6">
+                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none" aria-label="Calculation Results" disabled="true">
+                    </div>
+                    <div class="col-2">
+                        <button type="button" data-value="AC" data-action="clear" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">AC</button>
+                    </div>
+                </div>
+                <div class="d-flex flex-column gap-3">
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                            <button type="button" data-value="7" class="${BASIC_TEMPLATE.classes.calcButtons}">7</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="8" class="${BASIC_TEMPLATE.classes.calcButtons}">8</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="9" class="${BASIC_TEMPLATE.classes.calcButtons}">9</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="/" data-action="divide" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">/</button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                            <button type="button" data-value="4" class="${BASIC_TEMPLATE.classes.calcButtons}">4</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="5" class="${BASIC_TEMPLATE.classes.calcButtons}">5</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="6" class="${BASIC_TEMPLATE.classes.calcButtons}">6</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="*" data-action="multiply" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">*</button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                            <button type="button" data-value="1" class="${BASIC_TEMPLATE.classes.calcButtons}">1</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="2" class="${BASIC_TEMPLATE.classes.calcButtons}">2</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="3" class="${BASIC_TEMPLATE.classes.calcButtons}">3</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="-" data-action"subtract" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">-</button>
+                        </div>
+                    </div>
+                    <div class="row justify-content-start">
+                        <div class="col-2">
+                            <button type="button" data-value="0" class="${BASIC_TEMPLATE.classes.calcButtons}">0</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="." class="${BASIC_TEMPLATE.classes.calcButtons}">.</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="=" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">=</button>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="+" data-action="add" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">+</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
     }
@@ -119,10 +183,63 @@ export class AppCalculations extends HTMLElement {
         `;
     }
 
+    private keyPressDetection() {
+        document.addEventListener("keydown", (e) => {
+            const keyPressed = e.key;
+            const validKeys = "123456789/*-+";
+            if (!validKeys.includes(keyPressed)) {
+                e.preventDefault();
+            } else {
+                const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+                if (calcOutput) {
+                    calcOutput.value += keyPressed; // Append the keyPressed instead of the event
+                }
+            }
+        });
+    }
+
+    private calculate() {
+        const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+        if (calcOutput) {
+            try {
+                // Use Math.js to evaluate the expression in the output field
+                // Fixme
+                const result = this.math.evaluate(calcOutput.value);
+                calcOutput.value = result.toString();
+            } catch (error) {
+                console.error("Error evaluating expression:", error);
+                calcOutput.value = "Calculation Error";
+            }
+        }
+    }
+
+    // Update the printData method to include the "=" button functionality
+    private printData() {
+        const calcButtons: NodeListOf<HTMLButtonElement> = this.shadowRoot!.querySelectorAll(".calc-button, .calc-keys");
+        calcButtons.forEach((elem: HTMLButtonElement) => {
+            const calcButtonsData = elem.getAttribute("data-value");
+
+            if (calcButtonsData) {
+                elem.addEventListener("click", () => {
+                    const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+                    if (calcOutput) {
+                        if (calcButtonsData === "=") {
+                            this.calculate(); // Call calculate when "=" is pressed
+                        } else {
+                            calcOutput.value += calcButtonsData; // Append the button value to the output
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     // Use connectedCallback to manage tab switching
     connectedCallback() {
         this.handleNavigation(); // Set up event listeners for navigation buttons
         this.openPage("basicCalculator"); // Open the default page
+        this.printData();
+        this.keyPressDetection();
     }
 }
 

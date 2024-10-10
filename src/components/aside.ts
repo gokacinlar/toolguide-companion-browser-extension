@@ -24,7 +24,9 @@ class Aside extends HTMLElement {
 
         this.buttons = {
             calculation: "Calculators",
-            converters: "Converters"
+            converters: "Converters",
+            formatters: "Formatters",
+            generators: "Generators"
         };
 
         // Define styles directly in the constructor
