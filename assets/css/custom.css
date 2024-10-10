@@ -103,6 +103,10 @@
     padding: 0;
 }
 
+.calc-output-result {
+    border: none;
+}
+
 @-webkit-keyframes fade-in-fwd {
     0% {
         -webkit-transform: translateZ(-80px);
