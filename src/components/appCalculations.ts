@@ -1,5 +1,4 @@
 import { Template } from "./helper.js";
-import { create, all } from 'mathjs'; // Import Math.js
 
 interface BasicTemplate { [key: string]: string }
 
@@ -16,7 +15,6 @@ const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
 export class AppCalculations extends HTMLElement {
     private template: Template;
     private Ids: { [key: string]: string }
-    private math: any;
 
     constructor() {
         super();
@@ -152,7 +150,7 @@ export class AppCalculations extends HTMLElement {
                             <button type="button" data-value="3" class="${BASIC_TEMPLATE.classes.calcButtons}">3</button>
                         </div>
                         <div class="col-2">
-                            <button type="button" data-value="-" data-action"subtract" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">-</button>
+                            <button type="button" data-value="-" data-action="subtract" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">-</button>
                         </div>
                     </div>
                     <div class="row justify-content-start">
@@ -186,31 +184,75 @@ export class AppCalculations extends HTMLElement {
     private keyPressDetection() {
         document.addEventListener("keydown", (e) => {
             const keyPressed = e.key;
-            const validKeys = "123456789/*-+";
-            if (!validKeys.includes(keyPressed)) {
-                e.preventDefault();
-            } else {
-                const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
-                if (calcOutput) {
-                    calcOutput.value += keyPressed; // Append the keyPressed instead of the event
+            const validKeys = "1234567890/*-+.";
+            const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+
+            if (calcOutput) {
+                if (keyPressed === "Enter") {
+                    const result = this.calculate(calcOutput.value);
+                    calcOutput.value = result !== null ? result.toString() : "Error";
+                } else if (keyPressed === "Escape") {
+                    calcOutput.value = "";
+                } else if (validKeys.includes(keyPressed)) {
+                    calcOutput.value += keyPressed;
+                } else if (keyPressed === "Delete") {
+                    calcOutput.value = "";
                 }
             }
         });
     }
 
-    private calculate() {
-        const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
-        if (calcOutput) {
-            try {
-                // Use Math.js to evaluate the expression in the output field
-                // Fixme
-                const result = this.math.evaluate(calcOutput.value);
-                calcOutput.value = result.toString();
-            } catch (error) {
-                console.error("Error evaluating expression:", error);
-                calcOutput.value = "Calculation Error";
+
+    private calculate(expression: string): number | null {
+        const numbers: number[] = [];
+        const operators: string[] = [];
+        let currentNum = "";
+
+        // Perform the operation locally instead of using mathjs
+        const applyOperator = (a: number, b: number, operator: string) => {
+            switch (operator) {
+                case "+": return a + b;
+                case "-": return a - b;
+                case "*": return a * b;
+                case "/":
+                    if (b !== 0) return a / b;
+                    alert("Division by zero.");
+                    return null;
+                default: return null;
+            }
+        };
+
+        for (let char of expression) {
+            // Use regex to detect the numerical value in the string (AI)
+            if (/\d/.test(char) || char === ".") {
+                currentNum += char;
+            } else if (["+", "-", "*", "/"].includes(char)) {
+                if (currentNum) {
+                    numbers.push(Number(currentNum));
+                    currentNum = "";
+                }
+                operators.push(char);
             }
         }
+
+        if (currentNum) {
+            numbers.push(Number(currentNum));
+        }
+
+        let result: any = numbers[0];
+
+        // Get the corresponding operator to perform the calculation
+        for (let i = 0; i < operators.length; i++) {
+            const operator = operators[i];
+            const nextNum = numbers[i + 1];
+
+            result = applyOperator(result, nextNum, operator);
+            if (result === null) {
+                return null; // Handle the division by zero
+            }
+        }
+
+        return result;
     }
 
     // Update the printData method to include the "=" button functionality
@@ -224,7 +266,10 @@ export class AppCalculations extends HTMLElement {
                     const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
                     if (calcOutput) {
                         if (calcButtonsData === "=") {
-                            this.calculate(); // Call calculate when "=" is pressed
+                            const result = this.calculate(calcOutput.value);
+                            calcOutput.value = result !== null ? result.toString() : "Error";
+                        } else if (calcButtonsData === "AC") {
+                            calcOutput.value = ""; // Clear the output on AC
                         } else {
                             calcOutput.value += calcButtonsData; // Append the button value to the output
                         }
@@ -234,7 +279,6 @@ export class AppCalculations extends HTMLElement {
         });
     }
 
-    // Use connectedCallback to manage tab switching
     connectedCallback() {
         this.handleNavigation(); // Set up event listeners for navigation buttons
         this.openPage("basicCalculator"); // Open the default page
