@@ -104,7 +104,7 @@ export class AppCalculations extends HTMLElement {
             <div class="container d-flex flex-column gap-3">
                 <div class="row justify-content-start">
                     <div class="col-6">
-                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none" aria-label="Calculation Results" disabled="true">
+                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
                     </div>
                     <div class="col-2">
                         <button type="button" data-value="AC" data-action="clear" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">AC</button>
@@ -183,9 +183,9 @@ export class AppCalculations extends HTMLElement {
 
     private keyPressDetection() {
         document.addEventListener("keydown", (e) => {
-            const keyPressed = e.key;
-            const validKeys = "1234567890/*-+.";
-            const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+            const keyPressed: Event | string = e.key;
+            const validKeys: string = "1234567890/*-+.";
+            const calcOutput: HTMLInputElement | null | undefined = this.shadowRoot?.querySelector(".calc-output-result");
 
             if (calcOutput) {
                 if (keyPressed === "Enter") {
@@ -206,7 +206,7 @@ export class AppCalculations extends HTMLElement {
     private calculate(expression: string): number | null {
         const numbers: number[] = [];
         const operators: string[] = [];
-        let currentNum = "";
+        let currentNum: string = "";
 
         // Perform the operation locally instead of using mathjs
         const applyOperator = (a: number, b: number, operator: string) => {
@@ -239,7 +239,7 @@ export class AppCalculations extends HTMLElement {
             numbers.push(Number(currentNum));
         }
 
-        let result: any = numbers[0];
+        let result: number | null = numbers[0];
 
         // Get the corresponding operator to perform the calculation
         for (let i = 0; i < operators.length; i++) {
