@@ -74,8 +74,13 @@ class Footer extends HTMLElement {
 
     renderFooterRight(): string {
         return `
-            <div id="versionNumber">
-                <h5 class="mb-0">${this.version.number}</h5>
+            <div class="d-flex flex-row gap-1">
+                <div id="versionNumber">
+                    <h5 class="mb-0 bg-discovery py-2 px-2 rounded-pill">${this.version.number}</h5>
+                </div>
+                <div>
+                    <h5 class="mb-0 bg-discovery py-2 px-2 rounded-pill" id="footerClock"></h5>
+                </div>
             </div>
         `;
     }
@@ -98,6 +103,33 @@ class Footer extends HTMLElement {
                 <img src="${image.src}" class="footer-links img-fluid" title="${title}" alt="${title} Icon">
             </a>
         `;
+    }
+
+    // Function to display time in H + M + S in the Footer
+    private clockTime(elem: HTMLHeadElement): void {
+        const clock = new Date();
+        let h = clock.getHours();
+        let m = clock.getMinutes();
+        let s = clock.getSeconds();
+
+        m = this.checkTime(m);
+        s = this.checkTime(s);
+
+        elem.innerHTML = h + ":" + m + ":" + s;
+    }
+
+    // Add zeroes if the number is less than 10 for UI clarity
+    private checkTime(i: number | any) {
+        if (i < 10) {
+            i = "0" + i;
+        }
+        return i;
+    }
+
+    connectedCallback() {
+        const clock = this.shadowRoot?.querySelector("#footerClock") as HTMLElement;
+        this.clockTime(clock); // Call the function for immediate appearance in the UI
+        setInterval(() => this.clockTime(clock), 1000);
     }
 }
 
