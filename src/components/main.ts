@@ -1,10 +1,12 @@
 // main.ts
 import { Template } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
+import { Converters } from "./converters.js";
 
 export class Main extends HTMLElement {
     private templateHelper: Template;
     private appCalculations: AppCalculations;
+    private converters: Converters
 
     private documentStyling: { [key: string]: string };
     private Ids: { [key: string]: string };
@@ -13,6 +15,7 @@ export class Main extends HTMLElement {
         super();
         this.templateHelper = new Template();
         this.appCalculations = new AppCalculations();
+        this.converters = new Converters();
 
         this.documentStyling = {
             main: "d-flex flex-column align-content-center justify-content-start",
@@ -61,23 +64,15 @@ export class Main extends HTMLElement {
                     dynamicContent.appendChild(this.appCalculations);
                     break;
                 case "converters":
-                    dynamicContent.innerHTML = this.renderConverters();
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.converters);
                     break;
                 default:
                     dynamicContent.innerHTML = "<p>Select a component to view its content.</p>";
                     break;
             }
         }
-    }
-
-    // Method to render converters content (placeholder)
-    private renderConverters(): string {
-        return `
-            <div>
-                <h2>Converters</h2>
-                <p>This is the content for the Converters component.</p>
-            </div>
-        `;
     }
 }
 
