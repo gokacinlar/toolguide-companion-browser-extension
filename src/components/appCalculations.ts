@@ -5,8 +5,8 @@ interface BasicTemplate { [key: string]: string }
 const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
     classes: {
         ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-        button: "app-calc-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
-        componentElement: "app-calc-component-element py-2 my-2",
+        button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
+        componentElement: "component-tab-content-element py-2 my-2",
         calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
         calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
     }
@@ -50,23 +50,24 @@ export class AppCalculations extends HTMLElement {
     }
 
     // Function to open corresponding data-page in DOM through buttons
-    private handleNavigation() {
-        const navButtons = this.shadowRoot?.querySelectorAll<HTMLButtonElement>(".app-calc-nav-button");
+    public handleNavigation() {
+        const navButtons = this.shadowRoot?.querySelectorAll<HTMLButtonElement>(".component-tab-nav-button");
 
         if (navButtons) {
             navButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     const pageName = button.getAttribute("data-page");
-                    this.openPage(pageName);
+                    this.openPage(pageName, this.shadowRoot ?? undefined); // Use the optional chaining operator to ensure shadowRoot is not null
                 });
             });
         }
     }
 
     // Function to enable tab switching
-    public openPage(pageName: string | null): void {
+    // In AppCalculations class
+    public openPage(pageName: string | null, shadowRoot?: ShadowRoot): void {
         // Hide all tab content first
-        const tabcontent = Array.from(this.shadowRoot?.querySelectorAll(".app-calc-component-element") as NodeListOf<HTMLElement>);
+        const tabcontent = Array.from(shadowRoot?.querySelectorAll(".component-tab-content-element") as NodeListOf<HTMLElement>);
         if (tabcontent) {
             tabcontent.forEach((content: HTMLElement) => {
                 content.style.display = "none";
@@ -74,7 +75,7 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Remove active class from all navigation buttons next
-        const tabNavigation = Array.from(this.shadowRoot?.querySelectorAll(".app-calc-nav-button") as NodeListOf<HTMLElement>)
+        const tabNavigation = Array.from(shadowRoot?.querySelectorAll(".component-tab-nav-button") as NodeListOf<HTMLElement>)
         if (tabNavigation) {
             tabNavigation.forEach((button: HTMLElement) => {
                 button.classList.remove("active");
@@ -82,7 +83,7 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Show the selected page based on user selection through buttons
-        const blockElem = this.shadowRoot?.getElementById(pageName || "");
+        const blockElem = shadowRoot?.getElementById(pageName || "");
         if (blockElem) {
             blockElem.style.display = "block";
         } else {
@@ -90,13 +91,14 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Add active class to the corresponding navigation button to display the content
-        const activeButton = this.shadowRoot?.querySelector<HTMLButtonElement>('.app-calc-nav-button[data-page="' + pageName + '"]');
+        const activeButton = shadowRoot?.querySelector<HTMLButtonElement>('.component-tab-nav-button[data-page="' + pageName + '"]');
         if (activeButton) {
             activeButton.classList.add("active");
         } else {
             console.warn(`Button with data-page="${pageName}" not found.`);
         }
     }
+
 
     // Calculator itself
     public basicCalculator(): string {
@@ -281,7 +283,7 @@ export class AppCalculations extends HTMLElement {
 
     connectedCallback() {
         this.handleNavigation(); // Set up event listeners for navigation buttons
-        this.openPage("basicCalculator"); // Open the default page
+        this.openPage("basicCalculator", this.shadowRoot ?? undefined);
         this.printData();
         this.keyPressDetection();
     }
