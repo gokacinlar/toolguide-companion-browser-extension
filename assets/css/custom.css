@@ -24,6 +24,12 @@
     initial-value: #ffffff;
 }
 
+@property --body-width {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 768px;
+}
+
 @property --body-height {
     syntax: "<length>";
     inherits: false;
@@ -44,7 +50,7 @@
 
 @layer init {
     body {
-        width: 768px;
+        width: var(--body-width);
         height: var(--body-height);
     }
 
@@ -92,6 +98,12 @@
 
     .aside-buttons {
         min-height: var(--aside-height);
+    }
+
+    /* Unit Converter */
+
+    textarea[name="result"] {
+        resize: none !important;
     }
 }
 
