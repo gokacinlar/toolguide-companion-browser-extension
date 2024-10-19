@@ -1,13 +1,35 @@
 import { Template } from "./helper.js";
 import { Main } from "./main.js";
 
+interface ButtonTemplate {
+    name: string;
+    imgSrc: string;
+}
+
+const BUTTON_TEMPLATE: { [key: string]: ButtonTemplate } = {
+    calculation: {
+        name: "Calculators",
+        imgSrc: "/images/icons/aside/calculators.svg"
+    },
+    converters: {
+        name: "Converters",
+        imgSrc: "/images/icons/aside/converters.svg"
+    },
+    formatters: {
+        name: "Formatters",
+        imgSrc: "/images/icons/aside/formatters.svg"
+    },
+    generators: {
+        name: "Generators",
+        imgSrc: "/images/icons/aside/generators.svg"
+    }
+}
+
 class Aside extends HTMLElement {
     private documentStylings: {
         template: string,
         btnStyling: string,
     };
-
-    private buttons: { [key: string]: string };
 
     private templateHelper: Template;
     private main: Main;
@@ -19,14 +41,7 @@ class Aside extends HTMLElement {
 
         this.documentStylings = {
             template: "aside-buttons d-flex flex-column gap-2 py-2 px-2 mb-1 align-items-center justify-content-start rounded-3 shadow-lg",
-            btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3"
-        };
-
-        this.buttons = {
-            calculation: "Calculators",
-            converters: "Converters",
-            formatters: "Formatters",
-            generators: "Generators"
+            btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3 d-flex flex-row align-items-center justify-content-center gap-2"
         };
 
         // Define styles directly in the constructor
@@ -56,10 +71,13 @@ class Aside extends HTMLElement {
 
     // Render Aside buttons to navigate the tabs
     private renderButtons(asideElement: HTMLElement | null): void {
-        for (const key in this.buttons) {
+        for (const key in BUTTON_TEMPLATE) {
             const buttonHolder: HTMLButtonElement = document.createElement("button");
 
-            buttonHolder.textContent = this.buttons[key];
+            buttonHolder.innerHTML = `
+                <img src="${BUTTON_TEMPLATE[key].imgSrc}" alt="${BUTTON_TEMPLATE[key].name}">
+                ${BUTTON_TEMPLATE[key].name}
+            `;
             buttonHolder.className = this.documentStylings.btnStyling;
             buttonHolder.dataset.component = key; // Use data attribute to identify the component
             buttonHolder.addEventListener("click", this.handleButtonClick.bind(this));
