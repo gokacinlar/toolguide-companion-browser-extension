@@ -4,7 +4,7 @@
   "description": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
   "main": "index.js",
   "type": "module",
-  "license": "AGPL-version-3.0",
+  "license": "MIT",
   "private": false,
   "engines": {
     "node": ">= 14.0.0",
@@ -15,7 +15,9 @@
     "type": "git",
     "url": "https://github.com/gokacinlar/dev-toolguide"
   },
-  "bugs": "",
+  "bugs": {
+    "url": "https://github.com/gokacinlar/dev-toolguide/issues"
+  },
   "keywords": [],
   "author": {
     "name": "Derviş Öksüzoğlu",
