@@ -67,16 +67,17 @@ export class Converters extends HTMLElement {
         return `
         <section id="unitConverter">
             <div class="uc-container">
-                <div class="uc-inputs">
-                    <label for="First Input">Type Conversion</label>
-                    <input type="text" title="Değer Giriniz" name="First Input">
+                <div class="uc-inputs input-group mb-3">
+                    <span class="input-group-text" id="typing-conversion">Input</span>
+                    <input type="text" class="form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="typing-conversion" />
                 </div>
-                <div class="uc-input-selection">
+                <div class="uc-inputs-selection mb-3">
                     ${this.renderInputSelection()}
                 </div>
-                <div class="uc-second-value">
-                    <button class="uc-convert-btn" id="ucConvertBtn">Çevir!</button>
-                    <textarea class="uc-output-value" id="ucOutputValue" title="Sonuç" readonly></textarea>
+                <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
+                    <label for="ucOutputValue" class="form-label">Results will appear below.</label>
+                    <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                    <button class="btn btn-discovery uc-convert-btn rounded-pill fs-4 mt-3" id="ucConvertBtn">Convert</button>
                 </div>
             </div>
         </section>
@@ -85,23 +86,23 @@ export class Converters extends HTMLElement {
 
     private renderInputSelection(): string {
         return `
-        <div class="uc-child uc-one">
-            <label for="uc-value-one">Çevrilecek</label>
-            <select name="uc-value-one" id="ucValueOne" title="1. Değer">
-                <option value="İkilik">İkilik</option>
-                <option value="Ondalık">Ondalık</option>
-                <option value="Sekizlik">Sekizlik</option>
-                <option value="Onaltılık">Onaltılık</option>
-            </select>
-        </div>
-        <div class="uc-child uc-two">
-            <label for="uc-value-one">Sonuç</label>
-            <select name="uc-value-two" id="ucValueTwo" title="2. Değer">
-                <option value="İkilik">İkilik</option>
-                <option value="Ondalık">Ondalık</option>
-                <option value="Sekizlik">Sekizlik</option>
-                <option value="Onaltılık">Onaltılık</option>
-            </select>
+        <div class="uc-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+            <div class="uc-child uc-one w-100">
+                <select class="form-select" aria-label="First Value Select" name="uc-value-one" id="ucValueOne" title="First Value">
+                    <option value="Binary">Binary</option>
+                    <option value="Decimal">Decimal</option>
+                    <option value="Octal">Octal</option>
+                    <option value="Hexademical">Hexademical</option>
+                </select>
+            </div>
+            <div class="uc-child uc-two w-100">
+                <select class="form-select" aria-label="Second Value Select" name="uc-value-two" id="ucValueTwo" title="Second Value">
+                    <option value="Binary">Binary</option>
+                    <option value="Decimal">Decimal</option>
+                    <option value="Octal">Octal</option>
+                    <option value="Hexademical">Hexademical</option>
+                </select>
+            </div>
         </div>
         `;
     }
@@ -109,7 +110,69 @@ export class Converters extends HTMLElement {
     connectedCallback() {
         this.handleNavigation();
         this.appCalculation.openPage("unitConverter", this.shadowRoot ?? undefined); // Use the optional chaining operator to ensure shadowRoot is not null
+
+        // Define HTMLElements within the connectedCallback()
+        const inputField = this.shadowRoot?.querySelector(".form-control") as HTMLInputElement;
+        const outputTextarea = this.shadowRoot?.getElementById("ucOutputValue") as HTMLTextAreaElement;
+        const convertBtn = this.shadowRoot?.getElementById("ucConvertBtn") as HTMLButtonElement;
+        const valueOneSelect = this.shadowRoot?.getElementById("ucValueOne") as HTMLInputElement;
+        const valueTwoSelect = this.shadowRoot?.getElementById("ucValueTwo") as HTMLInputElement;
+
+        // Function to do the conversion
+        function convertValue(inputValue: string, fromUnit: string, toUnit: string): string {
+            const dataValues: { [key: string]: number } = {
+                "Binary": 2,
+                "Decimal": 10,
+                "Octal": 8,
+                "Hexademical": 16
+            };
+
+            if (typeof inputValue !== "string") {
+                throw new Error("Input value must be a string.");
+            }
+
+            if ((!Object.keys(dataValues).includes(fromUnit)) && (!Object.keys(dataValues).includes(toUnit))) {
+                throw new Error("Invalid conversion.");
+            }
+
+            try {
+                const convertedValue = parseInt(inputValue, dataValues[fromUnit]).toString(dataValues[toUnit]);
+
+                if (dataValues[toUnit] === 16) {
+                    return convertedValue.toUpperCase();
+                }
+
+                return convertedValue;
+            } catch (error) {
+                return `Invalid ${fromUnit} number.`;
+            }
+        }
+
+        // Add event listener to convert button, thus do the conversion
+        convertBtn.addEventListener("click", () => {
+            // First clean the input
+            const inputValue = inputField.value.trim();
+            const fromUnit = valueOneSelect.value;
+            const toUnit = valueTwoSelect.value;
+
+            if (inputValue.length === 0) {
+                outputTextarea.value = "Please provide a value.";
+                return;
+            }
+
+            try {
+                const convertedValue = convertValue(inputValue, fromUnit, toUnit);
+                outputTextarea.value = convertedValue;
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    outputTextarea.value = error.message;
+                } else {
+                    outputTextarea.value = "An unknown error occurred.";
+                }
+            }
+        });
     }
+
 }
 
 customElements.define("app-converters", Converters);
