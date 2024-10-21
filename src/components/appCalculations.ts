@@ -13,6 +13,7 @@ const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
 }
 
 export class AppCalculations extends HTMLElement {
+    private listenersSetUp: boolean = false; // Set flag for event listeners in the basicCalculator()
     private template: Template;
     private Ids: { [key: string]: string }
 
@@ -25,14 +26,8 @@ export class AppCalculations extends HTMLElement {
             anotherPageId: "anotherPageId"
         }
 
-        const styles = `
-            @import url(/src/lib/css/fastbootstrap.css);
-            @import url(/assets/css/custom.css);
-        `;
-
-        const template = this.template.createTemplate(styles, this.appCalculations());
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
+        const template = this.template.createTemplate(this.appCalculations());
+        this.appendChild(template.content.cloneNode(true));
     }
 
     // Render the main template
@@ -51,13 +46,13 @@ export class AppCalculations extends HTMLElement {
 
     // Function to open corresponding data-page in DOM through buttons
     public handleNavigation() {
-        const navButtons = this.shadowRoot?.querySelectorAll<HTMLButtonElement>(".component-tab-nav-button");
+        const navButtons = document.querySelectorAll<HTMLButtonElement>(".component-tab-nav-button");
 
         if (navButtons) {
             navButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     const pageName = button.getAttribute("data-page");
-                    this.openPage(pageName, this.shadowRoot ?? undefined); // Use the optional chaining operator to ensure shadowRoot is not null
+                    this.openPage(pageName, document);
                 });
             });
         }
@@ -65,9 +60,9 @@ export class AppCalculations extends HTMLElement {
 
     // Function to enable tab switching
     // In AppCalculations class
-    public openPage(pageName: string | null, shadowRoot?: ShadowRoot): void {
+    public openPage(pageName: string | null, document: Document): void {
         // Hide all tab content first
-        const tabcontent = Array.from(shadowRoot?.querySelectorAll(".component-tab-content-element") as NodeListOf<HTMLElement>);
+        const tabcontent = Array.from(document.querySelectorAll(".component-tab-content-element") as NodeListOf<HTMLElement>);
         if (tabcontent) {
             tabcontent.forEach((content: HTMLElement) => {
                 content.style.display = "none";
@@ -75,7 +70,7 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Remove active class from all navigation buttons next
-        const tabNavigation = Array.from(shadowRoot?.querySelectorAll(".component-tab-nav-button") as NodeListOf<HTMLElement>)
+        const tabNavigation = Array.from(document.querySelectorAll(".component-tab-nav-button") as NodeListOf<HTMLElement>)
         if (tabNavigation) {
             tabNavigation.forEach((button: HTMLElement) => {
                 button.classList.remove("active");
@@ -83,7 +78,7 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Show the selected page based on user selection through buttons
-        const blockElem = shadowRoot?.getElementById(pageName || "");
+        const blockElem = document.getElementById(pageName || "");
         if (blockElem) {
             blockElem.style.display = "block";
         } else {
@@ -91,7 +86,7 @@ export class AppCalculations extends HTMLElement {
         }
 
         // Add active class to the corresponding navigation button to display the content
-        const activeButton = shadowRoot?.querySelector<HTMLButtonElement>('.component-tab-nav-button[data-page="' + pageName + '"]');
+        const activeButton = document.querySelector<HTMLButtonElement>('.component-tab-nav-button[data-page="' + pageName + '"]');
         if (activeButton) {
             activeButton.classList.add("active");
         } else {
@@ -187,7 +182,7 @@ export class AppCalculations extends HTMLElement {
         document.addEventListener("keydown", (e) => {
             const keyPressed: Event | string = e.key;
             const validKeys: string = "1234567890/*-+.";
-            const calcOutput: HTMLInputElement | null | undefined = this.shadowRoot?.querySelector(".calc-output-result");
+            const calcOutput = document.querySelector(".calc-output-result") as HTMLInputElement;
 
             if (calcOutput) {
                 if (keyPressed === "Enter") {
@@ -203,7 +198,6 @@ export class AppCalculations extends HTMLElement {
             }
         });
     }
-
 
     private calculate(expression: string): number | null {
         const numbers: number[] = [];
@@ -259,13 +253,13 @@ export class AppCalculations extends HTMLElement {
 
     // Update the printData method to include the "=" button functionality
     private printData() {
-        const calcButtons: NodeListOf<HTMLButtonElement> = this.shadowRoot!.querySelectorAll(".calc-button, .calc-keys");
+        const calcButtons: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".calc-button, .calc-keys");
         calcButtons.forEach((elem: HTMLButtonElement) => {
             const calcButtonsData = elem.getAttribute("data-value");
 
             if (calcButtonsData) {
-                elem.addEventListener("click", () => {
-                    const calcOutput = this.shadowRoot?.querySelector<HTMLInputElement>(".calc-output-result");
+                const handleClick = () => {
+                    const calcOutput = document.querySelector(".calc-output-result") as HTMLInputElement;
                     if (calcOutput) {
                         if (calcButtonsData === "=") {
                             const result = this.calculate(calcOutput.value);
@@ -276,16 +270,25 @@ export class AppCalculations extends HTMLElement {
                             calcOutput.value += calcButtonsData; // Append the button value to the output
                         }
                     }
-                });
+                };
+
+                elem.addEventListener("click", handleClick);
             }
         });
     }
 
+
     connectedCallback() {
-        this.handleNavigation(); // Set up event listeners for navigation buttons
-        this.openPage("basicCalculator", this.shadowRoot ?? undefined);
-        this.printData();
-        this.keyPressDetection();
+        // Check event listener for basicCalculator components to prevent
+        // duplicatation leading to addition of multiple inputs to .calc-output-result
+        if (!this.listenersSetUp) {
+            this.handleNavigation(); // Set up event listeners for navigation buttons
+            this.openPage("basicCalculator", document);
+            this.printData();
+            this.keyPressDetection();
+
+            this.listenersSetUp = true;
+        }
     }
 }
 
