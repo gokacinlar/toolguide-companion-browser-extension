@@ -30,7 +30,7 @@
     "test": "",
     "clean": "rm -rf dist",
     "compile": "npx tsc",
-    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'node_modules' --exclude '*.ts' ./ dist/",
+    "copy-assets": "rsync -av --exclude 'tsconfig.json' --exclude 'node_modules' --exclude '*.ts' --exclude '.git' ./ dist/",
     "build": "npm run clean && npm run compile && npm run copy-assets && rm -rf dist/dist"
   },
   "devDependencies": {
