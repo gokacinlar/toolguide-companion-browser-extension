@@ -47,16 +47,8 @@ class Footer extends HTMLElement {
             number: "v1.0.0",
         }
 
-        // Define styles directly in the constructor
-        const styles = `
-            @import url(/src/lib/css/fastbootstrap.css);
-            @import url(/assets/css/custom.css);
-        `;
-
-        const template = this.templateHelper.createTemplate(styles, this.renderFooter());
-
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
+        const template = this.templateHelper.createTemplate(this.renderFooter());
+        this.appendChild(template.content.cloneNode(true));
     }
 
     renderFooter(): string {
@@ -127,11 +119,10 @@ class Footer extends HTMLElement {
     }
 
     connectedCallback() {
-        const clock = this.shadowRoot?.querySelector("#footerClock") as HTMLElement;
+        const clock = document.querySelector("#footerClock") as HTMLElement;
         this.clockTime(clock); // Call the function for immediate appearance in the UI
         setInterval(() => this.clockTime(clock), 1000);
     }
 }
 
 customElements.define("app-footer", Footer);
-

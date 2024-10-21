@@ -1,11 +1,8 @@
-// Create a template content to be appended to Shadow DOM
+// Create a template content to be appended to every Light DOM
 export class Template {
-    public createTemplate(styles: string, content: any): HTMLTemplateElement {
+    public createTemplate(content: any): HTMLTemplateElement {
         const template = document.createElement("template");
         template.innerHTML = `
-            <style>
-                ${styles}
-            </style>
             ${content}
         `;
         return template;

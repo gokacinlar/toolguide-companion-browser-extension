@@ -26,14 +26,9 @@ export class Converters extends HTMLElement {
         this.Ids = {
             unitConverter: "unitConverter",
         }
-        const styles = `
-        @import url(/src/lib/css/fastbootstrap.css);
-        @import url(/assets/css/custom.css);
-        `;
 
-        const template = this.template.createTemplate(styles, this.unitConverters());
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
+        const template = this.template.createTemplate(this.unitConverters());
+        this.appendChild(template.content.cloneNode(true));
     }
 
     // Render the main template
@@ -51,13 +46,13 @@ export class Converters extends HTMLElement {
 
     // Function to open corresponding data-page in DOM through buttons
     public handleNavigation() {
-        const navButtons = this.shadowRoot?.querySelectorAll<HTMLButtonElement>(".component-tab-nav-button");
+        const navButtons = document.querySelectorAll<HTMLButtonElement>(".component-tab-nav-button");
 
         if (navButtons) {
             navButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     const pageName = button.getAttribute("data-page");
-                    this.appCalculation.openPage(pageName, this.shadowRoot ?? undefined); // Use the optional chaining operator to ensure shadowRoot is not null
+                    this.appCalculation.openPage(pageName, document); // Use the optional chaining operator to ensure shadowRoot is not null
                 });
             });
         }
@@ -109,14 +104,14 @@ export class Converters extends HTMLElement {
 
     connectedCallback() {
         this.handleNavigation();
-        this.appCalculation.openPage("unitConverter", this.shadowRoot ?? undefined); // Use the optional chaining operator to ensure shadowRoot is not null
+        this.appCalculation.openPage("unitConverter", document); // Use the optional chaining operator to ensure shadowRoot is not null
 
         // Define HTMLElements within the connectedCallback()
-        const inputField = this.shadowRoot?.querySelector(".form-control") as HTMLInputElement;
-        const outputTextarea = this.shadowRoot?.getElementById("ucOutputValue") as HTMLTextAreaElement;
-        const convertBtn = this.shadowRoot?.getElementById("ucConvertBtn") as HTMLButtonElement;
-        const valueOneSelect = this.shadowRoot?.getElementById("ucValueOne") as HTMLInputElement;
-        const valueTwoSelect = this.shadowRoot?.getElementById("ucValueTwo") as HTMLInputElement;
+        const inputField = document.querySelector(".form-control") as HTMLInputElement;
+        const outputTextarea = document.getElementById("ucOutputValue") as HTMLTextAreaElement;
+        const convertBtn = document.getElementById("ucConvertBtn") as HTMLButtonElement;
+        const valueOneSelect = document.getElementById("ucValueOne") as HTMLInputElement;
+        const valueTwoSelect = document.getElementById("ucValueTwo") as HTMLInputElement;
 
         // Function to do the conversion
         function convertValue(inputValue: string, fromUnit: string, toUnit: string): string {

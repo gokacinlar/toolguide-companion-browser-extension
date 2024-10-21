@@ -44,20 +44,11 @@ class Aside extends HTMLElement {
             btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3 d-flex flex-row align-items-center justify-content-center gap-2"
         };
 
-        // Define styles directly in the constructor
-        const styles = `
-            @import url(/src/lib/css/fastbootstrap.css);
-            @import url(/assets/css/custom.css);
-        `;
-
-        // Create the template and append it to the shadow root
-        const template = this.templateHelper.createTemplate(styles, this.renderContent());
-
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
+        const template = this.templateHelper.createTemplate(this.renderContent());
+        this.appendChild(template.content.cloneNode(true));
 
         // Render buttons after appending the template
-        const asideElement = this.shadowRoot?.querySelector("aside") as HTMLElement | null;
+        const asideElement = document.querySelector("aside") as HTMLElement | null;
         this.renderButtons(asideElement);
     }
 

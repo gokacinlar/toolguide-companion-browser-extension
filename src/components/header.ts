@@ -16,7 +16,7 @@ class Header extends HTMLElement {
         };
 
         this.btns = {
-            btnPrimary: "switch-button d-flex flex-row align-items-end justify-content-center gap-2 btn btn-discovery rounded-pill fs-5 transition-all shadow-md"
+            btnPrimary: "switch-button d-flex flex-row align-items-center justify-content-center gap-2 btn btn-discovery rounded-pill fs-5 transition-all shadow-md"
         }
 
         this.texts = {
@@ -30,18 +30,8 @@ class Header extends HTMLElement {
 
         this.templateHelper = new Template(); // Create an instance of Template
 
-        // Define styles directly in the constructor
-        const styles = `
-            @import url(/src/lib/css/fastbootstrap.css);
-            @import url(/assets/css/custom.css);
-        `;
-
-        // Create the template and append it to the shadow root
-        const template = this.templateHelper.createTemplate(styles, this.renderContent());
-
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
-
+        const template = this.templateHelper.createTemplate(this.renderContent());
+        this.appendChild(template.content.cloneNode(true));
         // Initialize theme toggler
         this.initThemeToggler();
     }
@@ -102,14 +92,14 @@ class Header extends HTMLElement {
         setTheme(getPreferredTheme());
 
         const showActiveTheme = (theme: string, focus: boolean = false) => {
-            const themeSwitcher = this.shadowRoot?.querySelector("#bd-theme") as HTMLElement;
+            const themeSwitcher = document.querySelector("#bd-theme") as HTMLElement;
             if (!themeSwitcher) {
                 return;
             }
 
-            const btnToActive = this.shadowRoot?.querySelector(`[data-bs-theme-value="${theme}"]`) as HTMLElement;
+            const btnToActive = document.querySelector(`[data-bs-theme-value="${theme}"]`) as HTMLElement;
 
-            this.shadowRoot?.querySelectorAll("[data-bs-theme-value]").forEach(element => {
+            document.querySelectorAll("[data-bs-theme-value]").forEach(element => {
                 element.classList.remove("active");
                 element.setAttribute("aria-pressed", "false");
                 // Remove any existing image to prevent duplication
@@ -148,7 +138,7 @@ class Header extends HTMLElement {
         window.addEventListener("DOMContentLoaded", () => {
             showActiveTheme(getPreferredTheme());
 
-            this.shadowRoot?.querySelectorAll("[data-bs-theme-value]").forEach(toggle => {
+            document.querySelectorAll("[data-bs-theme-value]").forEach(toggle => {
                 toggle.addEventListener("click", () => {
                     const theme = toggle.getAttribute("data-bs-theme-value") as string;
                     setStoredTheme(theme);

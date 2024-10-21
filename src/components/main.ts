@@ -26,15 +26,8 @@ export class Main extends HTMLElement {
             dynamicContent: "dynamicContent"
         }
 
-        // Define styles directly in the constructor
-        const styles = `
-            @import url(/src/lib/css/fastbootstrap.css);
-            @import url(/assets/css/custom.css);
-        `;
-
-        const template = this.templateHelper.createTemplate(styles, this.renderContent());
-        this.attachShadow({ mode: "open" });
-        this.shadowRoot?.appendChild(template.content.cloneNode(true));
+        const template = this.templateHelper.createTemplate(this.renderContent());
+        this.appendChild(template.content.cloneNode(true));
     }
 
     // Render the placeholder
@@ -53,8 +46,8 @@ export class Main extends HTMLElement {
     // Method to update the main content based on the selected component
     public updateContent(component: any): void {
         // Define the dynamicContent since all tools will be appended there
-        const dynamicContent = this.shadowRoot?.getElementById("dynamicContent") as HTMLElement | null;
-        const placeHolderContent = this.shadowRoot?.querySelector(".info-placeholder") as HTMLElement | null;
+        const dynamicContent = document.getElementById("dynamicContent") as HTMLElement | null;
+        const placeHolderContent = document.querySelector(".info-placeholder") as HTMLElement | null;
 
         if (dynamicContent) {
             switch (component) {
