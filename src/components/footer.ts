@@ -2,8 +2,7 @@ import { Template } from "./helper.js";
 
 // Define an interface for the structure of nested objects within imgSources
 interface ImageSource {
-    src: string;
-    ref: string;
+    [key: string]: string;
 }
 
 // Use Constants for image sources for better readability and maintainability
@@ -23,6 +22,9 @@ const IMAGE_SOURCES: { [key: string]: ImageSource } = {
     support: {
         src: "/images/icons/support.svg",
         ref: ""
+    },
+    auxiliary: {
+        version: "/images/icons/gear.svg"
     }
 };
 
@@ -66,12 +68,15 @@ class Footer extends HTMLElement {
 
     renderFooterRight(): string {
         return `
-            <div class="d-flex flex-row gap-1">
+            <div class="d-flex flex-row gap-1 bg-dark rounded-pill px-1 py-1 shadow-lg pe-none">
                 <div id="versionNumber">
-                    <h5 class="mb-0 bg-discovery py-2 px-2 rounded-pill">${this.version.number}</h5>
+                    <h5 class="d-flex flex-row align-items-center justify-content-start text-white mb-0 rounded-pill bg-discovery py-1 px-1 gap-1 shadow-sm">
+                        <img src="${IMAGE_SOURCES.auxiliary.version}" class="footer-auxiliary-icon">
+                        ${this.version.number}
+                    </h5>
                 </div>
-                <div>
-                    <h5 class="mb-0 bg-discovery py-2 px-2 rounded-pill" id="footerClock"></h5>
+                <div id="clock">
+                    <h5 class="mb-0 bg-discovery text-white py-1 px-1 rounded-pill shadow-sm" id="footerClock"></h5>
                 </div>
             </div>
         `;
@@ -107,7 +112,13 @@ class Footer extends HTMLElement {
         m = this.checkTime(m);
         s = this.checkTime(s);
 
-        elem.innerHTML = h + ":" + m + ":" + s;
+        const renderClock = (): string => {
+            return `
+                ${h + ":" + m + ":" + s}
+            `;
+        }
+
+        elem.innerHTML = renderClock();
     }
 
     // Add zeroes if the number is less than 10 for UI clarity
