@@ -2,6 +2,7 @@
 import { Template } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
 import { Converters } from "./converters.js";
+import { Generators } from "./generators.js";
 
 interface stylings {
     [key: string]: string;
@@ -24,13 +25,15 @@ const STYLINGS: { [key: string]: stylings } = {
 export class Main extends HTMLElement {
     private templateHelper: Template;
     private appCalculations: AppCalculations;
-    private converters: Converters
+    private converters: Converters;
+    private generators: Generators;
 
     constructor() {
         super();
         this.templateHelper = new Template();
         this.appCalculations = new AppCalculations();
         this.converters = new Converters();
+        this.generators = new Generators();
 
         const template = this.templateHelper.createTemplate(this.renderContent());
         this.appendChild(template.content.cloneNode(true));
@@ -66,6 +69,11 @@ export class Main extends HTMLElement {
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";
                     dynamicContent.appendChild(this.converters);
+                    break;
+                case "generators":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.generators);
                     break;
                 default:
                     dynamicContent.innerHTML = this.renderDefault();
