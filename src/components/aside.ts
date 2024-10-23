@@ -66,7 +66,7 @@ class Aside extends HTMLElement {
             const buttonHolder: HTMLButtonElement = document.createElement("button");
 
             buttonHolder.innerHTML = `
-                <img src="${BUTTON_TEMPLATE[key].imgSrc}" alt="${BUTTON_TEMPLATE[key].name}">
+                <img class="aside-button-icons" src="${BUTTON_TEMPLATE[key].imgSrc}" alt="${BUTTON_TEMPLATE[key].name}">
                 ${BUTTON_TEMPLATE[key].name}
             `;
             buttonHolder.className = this.documentStylings.btnStyling;
@@ -86,7 +86,11 @@ class Aside extends HTMLElement {
         // Find the existing Main component in the DOM
         const mainElement = document.querySelector("app-main") as Main | null;
         if (mainElement) {
-            mainElement.updateContent(component); // Call the method to update the main content
+            if (component) {
+                mainElement.updateContent(component); // Call the method to update the main content
+            } else {
+                mainElement.innerHTML = "";
+            }
         }
     }
 }
