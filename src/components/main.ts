@@ -3,13 +3,28 @@ import { Template } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
 import { Converters } from "./converters.js";
 
+interface stylings {
+    [key: string]: string;
+}
+
+const STYLINGS: { [key: string]: stylings } = {
+    welcome: {
+        div: "d-flex flex-column align-items-center justify-content-center gap-2 px-4 py-4",
+        imgPath: "/images/icons/robot.svg"
+    },
+    documentStyling: {
+        main: "d-flex flex-column align-content-center justify-content-start",
+        mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-1"
+    },
+    ids: {
+        dynamicContent: "dynamicContent"
+    }
+}
+
 export class Main extends HTMLElement {
     private templateHelper: Template;
     private appCalculations: AppCalculations;
     private converters: Converters
-
-    private documentStyling: { [key: string]: string };
-    private Ids: { [key: string]: string };
 
     constructor() {
         super();
@@ -17,28 +32,19 @@ export class Main extends HTMLElement {
         this.appCalculations = new AppCalculations();
         this.converters = new Converters();
 
-        this.documentStyling = {
-            main: "d-flex flex-column align-content-center justify-content-start",
-            mainPlaceholder: "info-placeholder w-100 d-flex flex-column align-items-center justify-content-center"
-        };
-
-        this.Ids = {
-            dynamicContent: "dynamicContent"
-        }
-
         const template = this.templateHelper.createTemplate(this.renderContent());
         this.appendChild(template.content.cloneNode(true));
     }
 
-    // Render the placeholder
+    // Render the main placeholder to host the actual elements here
     public renderContent(): string {
         return `
-        <main class="${this.documentStyling.main}">
-            <div class="${this.documentStyling.mainPlaceholder}">
+        <main class="${STYLINGS.documentStyling.main}">
+            <div class="${STYLINGS.documentStyling.mainPlaceholder}">
                 <h1>Dev Toolguide</h1>
                 <p>Your browser companion to accomplish many handy stuff!</p>
             </div>
-            <div id="${this.Ids.dynamicContent}"></div>
+            <div id="${STYLINGS.ids.dynamicContent}"></div>
         </main>
         `;
     }
@@ -62,10 +68,19 @@ export class Main extends HTMLElement {
                     dynamicContent.appendChild(this.converters);
                     break;
                 default:
-                    dynamicContent.innerHTML = "<p>Select a component to view its content.</p>";
+                    dynamicContent.innerHTML = this.renderDefault();
                     break;
             }
         }
+    }
+
+    private renderDefault(): string {
+        return `
+            <div class="${STYLINGS.welcome.div}">
+                <img class="welcome-message-logo" src="${STYLINGS.welcome.imgPath}">
+                <h4>Section not available!</h4>
+            </div>
+        `;
     }
 }
 
