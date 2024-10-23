@@ -79,7 +79,7 @@ export class Generators extends HTMLElement {
                     <textarea class="lorem-output-value w-100 form-control fs-5" id="loremOutput" title="Result" placeholder="Result" name="lorem-result"></textarea>
                 </div>
                 <div class="lorem-actions mb-3 px-1">
-                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="generateLorem">Clear</button>
+                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearLorem">Clear</button>
                 </div>
             </div>
             `;
@@ -120,18 +120,24 @@ export class Generators extends HTMLElement {
 
         // Run the generation of lorem when the extension loads in the connectedCallBack
         const generateLoremBtn = document.querySelector("#generateLorem") as HTMLButtonElement;
-        generateLoremBtn.addEventListener("click", () => {
-            // Parse Input string to integer value
-            const loremValue = document.querySelector(".lorem-value") as HTMLInputElement;
-            const loremOutput = document.querySelector("#loremOutput") as HTMLTextAreaElement;
+        const loremValue = document.querySelector(".lorem-value") as HTMLInputElement;
+        const loremOutput = document.querySelector("#loremOutput") as HTMLTextAreaElement;
 
+        generateLoremBtn.addEventListener("click", () => {
             // Check if input value is provided between acceptable parameters
+            // Parse Input string to integer value
             const inputValue = parseInt(loremValue.value);
             if (isNaN(inputValue) || inputValue < 1 || inputValue > 99) {
                 loremOutput.value = "Please provide a value between 1 and 99.";
             } else {
                 loremOutput.value = this.generateLorem(inputValue);
             }
+        });
+
+        // Function to clear Lorem Ipsum Output textarea
+        const clearLoremOutput = document.querySelector("#clearLorem") as HTMLButtonElement;
+        clearLoremOutput.addEventListener("click", () => {
+            loremOutput.value = "";
         });
     }
 
