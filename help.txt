@@ -1,0 +1,8 @@
+For Windows users, compiling & copying assets can be done by "Robocopy" but it is slow as hell:
+
+To use Robocopy, simple change these two:
+
+    "clean": "if exist dist rd /s /q dist",
+    "copy-assets": "robocopy . dist /mir /xf tsconfig.json node_modules *.ts .git",
+
+I'd recommend working in WSL2, which requires Windows 10 version 1903+.
