@@ -61,7 +61,7 @@ export class Converters extends HTMLElement {
     public renderUnitConverter(): string {
         return `
         <section id="unitConverter">
-            <div class="uc-container">
+            <div class="uc-container px-1">
                 <div class="uc-inputs input-group mb-3">
                     <span class="input-group-text" id="typing-conversion">Input</span>
                     <input type="text" class="form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="typing-conversion" />

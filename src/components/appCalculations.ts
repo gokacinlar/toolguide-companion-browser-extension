@@ -96,9 +96,9 @@ export class AppCalculations extends HTMLElement {
 
 
     // Calculator itself
-    public basicCalculator(): string {
+    private basicCalculator(): string {
         return `
-            <div class="container d-flex flex-column gap-3">
+            <div class="container d-flex flex-column gap-3 px-1">
                 <div class="row justify-content-start">
                     <div class="col-6">
                     <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
@@ -169,7 +169,7 @@ export class AppCalculations extends HTMLElement {
         `;
     }
 
-    public anotherPage(): string {
+    private anotherPage(): string {
         return `
             <div>
                 <h2>Another Content!</h2>

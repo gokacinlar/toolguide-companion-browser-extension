@@ -86,11 +86,7 @@ class Aside extends HTMLElement {
         // Find the existing Main component in the DOM
         const mainElement = document.querySelector("app-main") as Main | null;
         if (mainElement) {
-            if (component) {
-                mainElement.updateContent(component); // Call the method to update the main content
-            } else {
-                mainElement.innerHTML = "";
-            }
+            mainElement.updateContent(component); // Call the method to update the main content
         }
     }
 }
