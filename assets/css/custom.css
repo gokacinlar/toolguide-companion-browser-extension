@@ -133,6 +133,13 @@
         max-height: 100px;
         resize: none !important;
     }
+
+    /* Lorem Ipsum Generator */
+
+    textarea[name="lorem-result"] {
+        min-height: 175px !important;
+        resize: none !important;
+    }
 }
 
 /* App Calculations */
