@@ -50,7 +50,10 @@
 
 @layer init {
     body {
-        width: var(--body-width);
+        /*  Do not set width in "width", it breaks the visited pages' layouts 
+            Use "min-width" instead. 
+        */
+        min-width: var(--body-width);
         height: var(--body-height);
     }
 
