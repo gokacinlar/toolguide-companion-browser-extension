@@ -58,11 +58,11 @@ export class Generators extends HTMLElement {
         return `
             <ul class="${BASIC_TEMPLATE.classes.ul}">
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Password</button></li>
             </ul>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.anotherPage()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.generatePassword()}</div>
             </div>
             `;
     }
@@ -70,18 +70,28 @@ export class Generators extends HTMLElement {
     // Render the Lorem Ipsum Generator
     private loremIpsumGeneratorTemplate(): string {
         return `
-            <div class="${STYLES.converter.div}">
+            <section class="${STYLES.converter.div}">
                 <div class="input-group mb-3 px-1">
                     <input type="number" class="form-control lorem-value" min="1" max="99" placeholder="How many lines of Lorem do you want? (1-99)" aria-label="How many lines of Lorem do you want? (1-99)" aria-describedby="generateLorem">
                     <button class="btn btn-outline-primary fs-5" type="button" id="generateLorem">Generate</button>
                 </div>
                 <div class="lorem-textarea d-flex flex-column align-items-start justify-content-start mb-3 px-1">
-                    <textarea class="lorem-output-value w-100 form-control fs-5" id="loremOutput" title="Result" placeholder="Result" name="lorem-result"></textarea>
+                    <textarea class="lorem-output-value w-100 form-control fs-5" id="loremOutput" title="Result" placeholder="Result" name="lorem-result" readonly></textarea>
                 </div>
-                <div class="lorem-actions mb-3 px-1">
-                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearLorem">Clear</button>
+                <div class="lorem-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
+                    <div class="lorem-button-actions">
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyLorem">Copy</button>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearLorem">Clear</button>
+                    </div>
+                    <div class="lorem-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
+                        <div class="d-flex">
+                            <div>
+                                Copied to clipboard.
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
             `;
     }
 
@@ -104,13 +114,26 @@ export class Generators extends HTMLElement {
         return result;
     }
 
-
-    private anotherPage(): string {
+    // Render password generator content
+    private generatePassword(): string {
         return `
-            <div>
-                <h2>Another Content!</h2>
-                <p>This is the content for the Another Content component.</p>
-            </div>
+            <section>
+                <div id="gpControls">
+                    <div class="btn-group container column mx-0 px-1">
+                        <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
+                        <label class="btn btn-primary fw-medium" for="btn-check">Lowercase</label>
+
+                        <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
+                        <label class="btn btn-primary fw-medium" for="btn-check2">Uppercase</label>
+
+                        <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
+                        <label class="btn btn-primary fw-medium" for="btn-check3">Digits</label>
+
+                        <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
+                        <label class="btn btn-primary fw-medium" for="btn-check4">Special Characters</label>
+                    </div>
+                </div>
+            </section>
         `;
     }
 
@@ -139,8 +162,26 @@ export class Generators extends HTMLElement {
         clearLoremOutput.addEventListener("click", () => {
             loremOutput.value = "";
         });
-    }
 
+        // Function to copy Lorem Ipsum from Output textarea
+        const copyLoremOutput = document.querySelector("#copyLorem") as HTMLButtonElement;
+        copyLoremOutput.addEventListener("click", () => {
+            const loremOutputValue = loremOutput.value; // Get the data
+            if (loremOutputValue.length >= 1) {
+                navigator.clipboard.writeText(loremOutputValue).then(() => {
+                    const displaySuccess = document.querySelector(".lorem-copied-alert") as HTMLElement;
+                    displaySuccess.style.display = "inline-block";
+                    displaySuccess.style.opacity = "1";
+                    setTimeout(() => {
+                        displaySuccess.style.opacity = "0";
+                    }, 2000);
+                });
+            } else {
+                alert("Could not copy: Please provide a value.");
+                return;
+            }
+        });
+    }
 }
 
 customElements.define("app-generators", Generators);
