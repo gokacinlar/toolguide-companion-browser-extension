@@ -140,7 +140,7 @@
     /* Lorem Ipsum Generator */
 
     textarea[name="lorem-result"] {
-        min-height: 175px !important;
+        min-height: 170px !important;
         resize: none !important;
     }
 }
