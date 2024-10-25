@@ -68,7 +68,7 @@ class Footer extends HTMLElement {
 
     renderFooterRight(): string {
         return `
-            <div class="d-flex flex-row gap-1 bg-dark rounded-pill px-1 py-1 shadow-lg pe-none">
+            <div class="d-flex flex-row gap-2 bg-dark rounded-pill px-2 py-2 mx-0 my-0 shadow-lg pe-none">
                 <div id="versionNumber">
                     <h5 class="d-flex flex-row align-items-center justify-content-start text-white mb-0 rounded-pill bg-discovery py-1 px-1 gap-1 shadow-sm">
                         <img src="${IMAGE_SOURCES.auxiliary.version}" class="footer-auxiliary-icon">
