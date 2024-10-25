@@ -62,7 +62,7 @@ export class Generators extends HTMLElement {
             </ul>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.generatePassword()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.generatePasswordTemplate()}</div>
             </div>
             `;
     }
@@ -115,36 +115,160 @@ export class Generators extends HTMLElement {
     }
 
     // Render password generator content
-    private generatePassword(): string {
+    private generatePasswordTemplate(): string {
         return `
             <section>
                 <div id="gpControls">
-                    <div class="btn-group container column mx-0 px-1">
-                        <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
-                        <label class="btn btn-primary fw-medium" for="btn-check">Lowercase</label>
-
-                        <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
-                        <label class="btn btn-primary fw-medium" for="btn-check2">Uppercase</label>
-
-                        <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
-                        <label class="btn btn-primary fw-medium" for="btn-check3">Digits</label>
-
-                        <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
-                        <label class="btn btn-primary fw-medium" for="btn-check4">Special Characters</label>
+                    <div class="btn-group container column mx-0 px-1 d-flex flex-row align-content-center justify-content-between">
+                        <div class="shadow-lg">
+                            <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
+                            <label class="btn btn-primary fw-medium fs-5" for="btn-check">Lowercase</label>
+                        </div>
+                        <div class="shadow-lg">
+                            <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
+                            <label class="btn btn-primary fw-medium fs-5" for="btn-check2">Uppercase</label>
+                        </div>
+                        <div class="shadow-lg">
+                            <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
+                            <label class="btn btn-primary fw-medium fs-5" for="btn-check3">Digits</label>
+                        </div>
+                        <div class="shadow-lg">
+                            <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
+                            <label class="btn btn-primary fw-medium fs-5" for="btn-check4">Special Characters</label>
+                        </div>
+                    </div£>
+                </div>
+                <div>
+                    <div class="input-group mb-3 mt-3 px-1">
+                        <input type="number" class="form-control password-value" min="1" max="99" placeholder="Password length (1-99)" aria-label="Password length (1-99)" aria-describedby="generatePassword">
+                        <button class="btn btn-outline-primary fs-5" type="button" id="generatePassword">Generate</button>
+                    </div>
+                </div>
+                <div>
+                    <div class="password-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
+                        <textarea class="password-output-value w-100 form-control fs-5" id="passwordOutput" title="Result" placeholder="Result" name="password-result" readonly></textarea>
+                    </div>
+                </div>
+                <div class="password-button-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
+                    <div class=""password-button-actions>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyPassword">Copy</button>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearPassword">Clear</button>
+                    </div>
+                    <div class="copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
+                        <div class="d-flex">
+                            <div>
+                                Copied to clipboard.
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
         `;
     }
 
-    connectedCallback() {
+    // Function to generate password
+    private generatePassword() {
+        // Define passwordLength
+        const passwordLengthInput = document.querySelector(".password-value") as HTMLInputElement;
+        let passwordLength: number = parseInt(passwordLengthInput.value);
+
+        // Define passwordContent
+        const passwordValues: { [key: string]: string } = {
+            "lowercase": "abcdefghijklmnopqrstuvwxyz",
+            "uppercase": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+            "numbers": "1234567890",
+            "specialCharacters": "!@#$%^&*"
+        };
+
+        // Get the selected options from password generation template
+        const lowercaseCheckbox = document.querySelector("#btn-check") as HTMLInputElement;
+        const uppercaseCheckbox = document.querySelector("#btn-check2") as HTMLInputElement;
+        const numbersCheckbox = document.querySelector("#btn-check3") as HTMLInputElement;
+        const specialCharactersCheckbox = document.querySelector("#btn-check4") as HTMLInputElement;
+
+        let passwordContent: string = "";
+
+        // Add the conditions of user selected inputs according to passwordValues
+        if (lowercaseCheckbox.checked) {
+            passwordContent += passwordValues["lowercase"];
+        }
+        if (uppercaseCheckbox.checked) {
+            passwordContent += passwordValues["uppercase"];
+        }
+        if (numbersCheckbox.checked) {
+            passwordContent += passwordValues["numbers"];
+        }
+        if (specialCharactersCheckbox.checked) {
+            passwordContent += passwordValues["specialCharacters"];
+        }
+
+        // Check if at least one option is selected
+        if (passwordContent.length === 0) {
+            alert("Please select at least one option.");
+            return;
+        }
+
+        // Check if password length is provided and is a number
+        if (isNaN(passwordLength) || passwordLength < 1 || passwordLength > 99) {
+            alert("Please provide a password length between 1 and 99.");
+            return;
+        }
+
+        // Generate the password
+        let password: string = "";
+        for (let i = 0; i < passwordLength; i++) {
+            // Same as in lorem generator
+            const randomIndex = Math.floor(Math.random() * passwordContent.length);
+            password += passwordContent[randomIndex];
+        }
+
+        // Display the generated password
+        const passwordOutput = document.querySelector("#passwordOutput") as HTMLTextAreaElement;
+        passwordOutput.value = password;
+    }
+
+    connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("loremIpsumGenerator", document);
+
+        /**
+         * HELPER FUNCTIONS
+         */
+
+        // Function to clear given inputs' content
+        const clearContent = (clear: any): void => {
+            clear.value = "";
+        }
+
+        // Function to copy content from textareas
+        const copyContentFromTextArea = (target: HTMLElement, data: HTMLTextAreaElement): void => {
+            target.addEventListener("click", function () {
+                const targetDataValue = data.value;
+                if (targetDataValue.length >= 1) {
+                    navigator.clipboard.writeText(targetDataValue).then(() => {
+                        const displaySuccess = document.querySelector(".copied-alert") as HTMLElement;
+                        displaySuccess.style.display = "inline-block";
+                        displaySuccess.style.opacity = "1";
+                        setTimeout(() => {
+                            displaySuccess.style.opacity = "0";
+                        }, 2000);
+                    });
+                } else {
+                    alert("Could not copy: Please provide a value.");
+                    return;
+                }
+            });
+        }
+
+        /**
+         * CLASS ACTIONS ARE CALLED HERE
+         */
 
         // Run the generation of lorem when the extension loads in the connectedCallBack
         const generateLoremBtn = document.querySelector("#generateLorem") as HTMLButtonElement;
         const loremValue = document.querySelector(".lorem-value") as HTMLInputElement;
         const loremOutput = document.querySelector("#loremOutput") as HTMLTextAreaElement;
+        const passwordOutput = document.querySelector("#passwordOutput") as HTMLTextAreaElement;
 
         generateLoremBtn.addEventListener("click", () => {
             // Check if input value is provided between acceptable parameters
@@ -157,29 +281,28 @@ export class Generators extends HTMLElement {
             }
         });
 
-        // Function to clear Lorem Ipsum Output textarea
-        const clearLoremOutput = document.querySelector("#clearLorem") as HTMLButtonElement;
-        clearLoremOutput.addEventListener("click", () => {
-            loremOutput.value = "";
+        // Password Generation
+        const generatePasswordBtn = document.querySelector("#generatePassword") as HTMLButtonElement;
+        generatePasswordBtn.addEventListener("click", () => {
+            this.generatePassword();
         });
 
         // Function to copy Lorem Ipsum from Output textarea
         const copyLoremOutput = document.querySelector("#copyLorem") as HTMLButtonElement;
-        copyLoremOutput.addEventListener("click", () => {
-            const loremOutputValue = loremOutput.value; // Get the data
-            if (loremOutputValue.length >= 1) {
-                navigator.clipboard.writeText(loremOutputValue).then(() => {
-                    const displaySuccess = document.querySelector(".lorem-copied-alert") as HTMLElement;
-                    displaySuccess.style.display = "inline-block";
-                    displaySuccess.style.opacity = "1";
-                    setTimeout(() => {
-                        displaySuccess.style.opacity = "0";
-                    }, 2000);
-                });
-            } else {
-                alert("Could not copy: Please provide a value.");
-                return;
-            }
+        copyContentFromTextArea(copyLoremOutput, loremOutput);
+
+        const copyPasswordOutput = document.querySelector("#copyPassword") as HTMLButtonElement;
+        copyContentFromTextArea(copyPasswordOutput, passwordOutput);
+
+        // Function to clear textarea values
+        const clearLoremOutput = document.querySelector("#clearLorem") as HTMLButtonElement;
+        clearLoremOutput.addEventListener("click", function () {
+            clearContent(loremOutput);
+        });
+
+        const clearPasswordOutput = document.querySelector("#clearPassword") as HTMLButtonElement;
+        clearPasswordOutput.addEventListener("click", function () {
+            clearContent(passwordOutput);
         });
     }
 }
