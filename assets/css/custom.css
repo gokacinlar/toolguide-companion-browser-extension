@@ -143,6 +143,13 @@
         min-height: 170px !important;
         resize: none !important;
     }
+
+    /* Password Generator */
+
+    textarea[name="password-result"] {
+        height: 125px !important;
+        resize: none !important;
+    }
 }
 
 /* App Calculations */
