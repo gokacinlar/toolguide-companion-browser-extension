@@ -57,6 +57,11 @@
         height: var(--body-height);
     }
 
+    .disabled-div {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
     /* Welcome message */
 
     .welcome-message-logo {

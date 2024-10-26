@@ -32,7 +32,7 @@ export class Generators extends HTMLElement {
 
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
-            anotherPageId: "anotherPageId"
+            passwordGenerator: "passwordGenerator"
         }
 
         const template = this.template.createTemplate(this.generators());
@@ -58,11 +58,11 @@ export class Generators extends HTMLElement {
         return `
             <ul class="${BASIC_TEMPLATE.classes.ul}">
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Password</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
             </ul>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.generatePasswordTemplate()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
             </div>
             `;
     }
@@ -117,52 +117,64 @@ export class Generators extends HTMLElement {
     // Render password generator content
     private generatePasswordTemplate(): string {
         return `
-            <section>
-                <div id="gpControls">
-                    <div class="btn-group container column mx-0 px-1 d-flex flex-row align-content-center justify-content-between">
-                        <div class="shadow-lg">
-                            <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
-                            <label class="btn btn-primary fw-medium fs-5" for="btn-check">Lowercase</label>
-                        </div>
-                        <div class="shadow-lg">
-                            <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
-                            <label class="btn btn-primary fw-medium fs-5" for="btn-check2">Uppercase</label>
-                        </div>
-                        <div class="shadow-lg">
-                            <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
-                            <label class="btn btn-primary fw-medium fs-5" for="btn-check3">Digits</label>
-                        </div>
-                        <div class="shadow-lg">
-                            <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
-                            <label class="btn btn-primary fw-medium fs-5" for="btn-check4">Special Characters</label>
-                        </div>
-                    </div£>
-                </div>
-                <div>
-                    <div class="input-group mb-3 mt-3 px-1">
-                        <input type="number" class="form-control password-value" min="1" max="99" placeholder="Password length (1-99)" aria-label="Password length (1-99)" aria-describedby="generatePassword">
-                        <button class="btn btn-outline-primary fs-5" type="button" id="generatePassword">Generate</button>
+            <section class="position-relative">
+                <div class="password-initial-div">
+                    <div id="gpControls">
+                        <div class="btn-group container column mx-0 px-1 d-flex flex-row align-content-center justify-content-between">
+                            <div class="shadow-lg">
+                                <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
+                                <label class="btn btn-primary fw-medium fs-5" for="btn-check">Lowercase</label>
+                            </div>
+                            <div class="shadow-lg">
+                                <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
+                                <label class="btn btn-primary fw-medium fs-5" for="btn-check2">Uppercase</label>
+                            </div>
+                            <div class="shadow-lg">
+                                <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
+                                <label class="btn btn-primary fw-medium fs-5" for="btn-check3">Digits</label>
+                            </div>
+                            <div class="shadow-lg">
+                                <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
+                                <label class="btn btn-primary fw-medium fs-5" for="btn-check4">Special Characters</label>
+                            </div>
+                        </div£>
                     </div>
-                </div>
-                <div>
-                    <div class="password-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
-                        <textarea class="password-output-value w-100 form-control fs-5" id="passwordOutput" title="Result" placeholder="Result" name="password-result" readonly></textarea>
+                    <div>
+                        <div class="input-group mb-3 mt-3 px-1">
+                            <input type="number" class="form-control password-value" min="1" max="99" placeholder="Password length (1-99)" aria-label="Password length (1-99)" aria-describedby="generatePassword">
+                            <button class="btn btn-outline-primary fs-5" type="button" id="generatePassword">Generate</button>
+                        </div>
                     </div>
-                </div>
-                <div class="password-button-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
-                    <div class=""password-button-actions>
-                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyPassword">Copy</button>
-                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearPassword">Clear</button>
+                    <div>
+                        <div class="password-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
+                            <textarea class="password-output-value w-100 form-control fs-5" id="passwordOutput" title="Result" placeholder="Result" name="password-result" readonly></textarea>
+                        </div>
                     </div>
-                    <div class="copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
-                        <div class="d-flex">
-                            <div>
-                                Copied to clipboard.
+                    <div class="password-button-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
+                        <div class=""password-button-actions>
+                            <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyPassword">Copy</button>
+                            <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearPassword">Clear</button>
+                        </div>
+                        <div class="copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
+                            <div class="d-flex">
+                                <div>
+                                    Copied to clipboard.
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+            <div class="weak-password-detector alert alert-warning position-absolute top-50 start-50 translate-middle w-75 z-50" role="alert" style="display: none>
+                <div class="d-flex flex-column gap-4 w-100">
+                    <div class="d-flex flex-column gap-2">
+                        <h6 class="mb-0">Important warning!</h6>    
+                        <p class="mb-0">Please use a strong password, including not only letters but <span class="fw-semibold">digits & special characters.</span></p>
+                        <p class="mb-0">Minimum of 14 characters long password is recommended.</p>
+                        <button id="closeWarning" class="btn btn-default">Close</button>
+                    </div>
+                </div>
+            </div>
         `;
     }
 
@@ -225,6 +237,59 @@ export class Generators extends HTMLElement {
         // Display the generated password
         const passwordOutput = document.querySelector("#passwordOutput") as HTMLTextAreaElement;
         passwordOutput.value = password;
+
+        /**  OPTINAL: Check password strength
+        let result = this.checkPasswordStrength(passwordOutput.value);
+        console.log(`Digits: ${result.digitPercentage}%`);
+        console.log(`Letters: ${result.letterPercentage}%`);
+        console.log(`Special Characters: ${result.specialCharacterPercentage}%`);
+
+        if (passwordOutput.value.length < 12 && (result.digitPercentage < 10) && (result.specialCharacterPercentage < 10)) {
+            const weakPasswordWarningDiv: any = document.querySelector(".weak-password-detector");
+            weakPasswordWarningDiv.style.display = "block";
+        }
+        */
+    }
+
+    // Function to check password strength
+    private checkPasswordStrength = (text: any): any => {
+        // Check if password filed is empty
+        if (text.length === 0) {
+            return {
+                digitPercentage: 0,
+                letterPercentage: 0,
+                specialCharacterPercentage: 0
+            };
+        }
+
+        let totalChars: number = text.length;
+        let digits: number = 0;
+        let letters: number = 0;
+        let specialCharacters: number = 0;
+
+        // Search for digits & letters in the password output
+        for (let i = 0; i < totalChars; i++) {
+            let char: any = text[i];
+            if (!isNaN(char)) {
+                digits++;
+            } else if (char.match(/[a-zA-Z]/)) {
+                letters++;
+            } else if (char.match(/[^a-zA-Z0-9]/)) {
+                specialCharacters++;
+            }
+        }
+
+        // Calculate them to show in percentage manners
+        let digitPercentage: number = (digits / totalChars) * 100;
+        let letterPercentage: number = (letters / totalChars) * 100;
+        let specialCharacterPercentage: number = (specialCharacters / totalChars) * 100;
+
+        // Return a string representation
+        return {
+            digitPercentage: digitPercentage.toFixed(2),
+            letterPercentage: letterPercentage.toFixed(2),
+            specialCharacterPercentage: specialCharacterPercentage.toFixed(2)
+        };
     }
 
     connectedCallback(): void {
@@ -303,6 +368,28 @@ export class Generators extends HTMLElement {
         const clearPasswordOutput = document.querySelector("#clearPassword") as HTMLButtonElement;
         clearPasswordOutput.addEventListener("click", function () {
             clearContent(passwordOutput);
+        });
+
+        // Remove the warning div
+        const removeweakPasswordWarningDiv = document.querySelector("#closeWarning") as HTMLButtonElement;
+        const weakPasswordWarningDiv = document.querySelector(".weak-password-detector") as HTMLDivElement;
+        const mainPlaceHolder = document.querySelector(".password-initial-div");
+
+        // Add warning div to sessionStorage to prevent appearing again
+        // Check if the warning div is removed before
+        if (sessionStorage.getItem("dismissedWarning") === "true") {
+            weakPasswordWarningDiv.remove();
+            mainPlaceHolder?.classList.remove("disabled-div");
+        } else {
+            if (weakPasswordWarningDiv) {
+                mainPlaceHolder?.classList.add("disabled-div");
+            }
+        }
+
+        removeweakPasswordWarningDiv.addEventListener("click", () => {
+            weakPasswordWarningDiv.remove();
+            mainPlaceHolder?.classList.remove("disabled-div");
+            sessionStorage.setItem("dismissedWarning", "true");
         });
     }
 }
