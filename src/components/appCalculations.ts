@@ -276,7 +276,7 @@ export class AppCalculations extends HTMLElement {
     }
 
     // Function to detect keypress events and do things
-    private keyPressDetection() {
+    private keyPressDetection(): void {
         const calculatorDiv = document.querySelector(".calculator-itself") as HTMLElement;
         calculatorDiv.addEventListener("keydown", (e) => {
             const keyPressed: Event | string = e.key;
@@ -381,15 +381,25 @@ export class AppCalculations extends HTMLElement {
      */
 
     // Get the index numbers & values of the Hex value
-    private getIndex(array: Array<number>): void {
+    private getIndex = (array: Array<number>): void => {
         const [r, g, b]: Array<number> = array;
         this.processRgbValues(r, g, b);
     }
 
     // Console.log them
-    private processRgbValues(r: number, g: number, b: number): void {
-        console.log(r, g, b);
+    private processRgbValues = (r: number, g: number, b: number): void => {
+        const rInput = document.querySelector(`input[placeholder="Red"]`) as HTMLInputElement;
+        const gInput = document.querySelector(`input[placeholder="Green"]`) as HTMLInputElement;
+        const bInput = document.querySelector(`input[placeholder="Blue"]`) as HTMLInputElement;
+
+        // Stringify the input & add the desired length to it
+        if (rInput && gInput && bInput) {
+            rInput.value = r.toString().padStart(3, "0");
+            gInput.value = g.toString().padStart(3, "0");
+            bInput.value = b.toString().padStart(3, "0");
+        }
     }
+
 
     // Function to display alert message if inputs are empty
     private displayAlert = (message: string) => {
@@ -439,21 +449,24 @@ export class AppCalculations extends HTMLElement {
             }, 0);
         });
 
+        // Listen for conversion to RGB from HEX
         getHex.addEventListener("click", () => {
             if (!this.detectHexValue(inp)) {
                 this.displayAlert("Uncomplete HEX value detected (min. 6 digits).");
             } else {
-                // Pass the value
-                console.log(this.convertToRgbFromHex(inp.value));
+                const rgbArray = this.convertToRgbFromHex(inp.value);
+                if (rgbArray) {
+                    this.getIndex(rgbArray);
+                }
             }
         });
 
+        const r = document.querySelector(`input[placeholder="Red"]`) as HTMLInputElement;
+        const g = document.querySelector(`input[placeholder="Green"]`) as HTMLInputElement;
+        const b = document.querySelector(`input[placeholder="Blue"]`) as HTMLInputElement;
+
         const getRgb = document.querySelector("#RgbToHex") as HTMLButtonElement;
         getRgb.addEventListener("click", () => {
-            let r = document.querySelector(`input[placeholder="Red"]`) as HTMLInputElement;
-            let g = document.querySelector(`input[placeholder="Green"]`) as HTMLInputElement;
-            let b = document.querySelector(`input[placeholder="Blue"]`) as HTMLInputElement;
-
             if (r && g && b) {
                 if (!r.value || !g.value || !b.value) {
                     this.displayAlert("Please provide a value!");
