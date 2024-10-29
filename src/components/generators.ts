@@ -84,10 +84,8 @@ export class Generators extends HTMLElement {
                         <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearLorem">Clear</button>
                     </div>
                     <div class="lorem-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
-                        <div class="d-flex">
-                            <div>
-                                Copied to clipboard.
-                            </div>
+                        <div>
+                            Copied to clipboard.
                         </div>
                     </div>
                 </div>
@@ -103,7 +101,21 @@ export class Generators extends HTMLElement {
             "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
             "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "Nunc accumsan sem ut ligula scelerisque sollicitudin.",
+            "Ut at sagittis augue, praesentium voluptate voluptas sit aspernatur.",
+            "Maecenas faucibus mollis interdum, auctor a ornare ut, laoreet in dolor.",
+            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+            "Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.",
+            "Donec eu libero sit amet quam egestas semper, auctor faucibus, pharetra in, orci.",
+            "Quisque id mi, mattis eget, ultricies ut, pharetra sit amet, diam.",
+            "Suspendisse potenti, in eleifend sapien, sed, vestibulum purus, sit amet, diam.",
+            "Aliquam erat volutpat, sed, vestibulum purus, sit amet, diam.",
+            "Ut venenatis tellus in metus laoreet, sit amet, ultrices semper.",
+            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+            "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.",
+            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+            "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
         ];
 
         let result: string = "";
@@ -151,15 +163,13 @@ export class Generators extends HTMLElement {
                         </div>
                     </div>
                     <div class="password-button-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
-                        <div class=""password-button-actions>
+                        <div class="password-button-actions">
                             <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyPassword">Copy</button>
                             <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearPassword">Clear</button>
                         </div>
-                        <div class="copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
-                            <div class="d-flex">
-                                <div>
-                                    Copied to clipboard.
-                                </div>
+                        <div class="password-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
+                            <div>
+                                Copied to clipboard.
                             </div>
                         </div>
                     </div>
@@ -306,13 +316,12 @@ export class Generators extends HTMLElement {
         }
 
         // Function to copy content from textareas
-        const copyContentFromTextArea = (target: HTMLElement, data: HTMLTextAreaElement): void => {
+        const copyContentFromTextArea = (target: HTMLElement, data: HTMLTextAreaElement, element: string): void => {
             target.addEventListener("click", function () {
                 const targetDataValue = data.value;
                 if (targetDataValue.length >= 1) {
                     navigator.clipboard.writeText(targetDataValue).then(() => {
-                        const displaySuccess = document.querySelector(".copied-alert") as HTMLElement;
-                        displaySuccess.style.display = "inline-block";
+                        const displaySuccess = document.querySelector(element) as HTMLElement;
                         displaySuccess.style.opacity = "1";
                         setTimeout(() => {
                             displaySuccess.style.opacity = "0";
@@ -354,10 +363,10 @@ export class Generators extends HTMLElement {
 
         // Function to copy Lorem Ipsum from Output textarea
         const copyLoremOutput = document.querySelector("#copyLorem") as HTMLButtonElement;
-        copyContentFromTextArea(copyLoremOutput, loremOutput);
+        copyContentFromTextArea(copyLoremOutput, loremOutput, ".lorem-copied-alert");
 
         const copyPasswordOutput = document.querySelector("#copyPassword") as HTMLButtonElement;
-        copyContentFromTextArea(copyPasswordOutput, passwordOutput);
+        copyContentFromTextArea(copyPasswordOutput, passwordOutput, ".password-copied-alert");
 
         // Function to clear textarea values
         const clearLoremOutput = document.querySelector("#clearLorem") as HTMLButtonElement;
