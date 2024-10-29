@@ -23,7 +23,7 @@ export class AppCalculations extends HTMLElement {
 
         this.Ids = {
             basicCalculator: "basicCalculator",
-            anotherPageId: "anotherPageId"
+            colorCodeCalculator: "colorCodeCalculator"
         }
 
         const template = this.template.createTemplate(this.appCalculations());
@@ -35,11 +35,15 @@ export class AppCalculations extends HTMLElement {
         return `
             <ul class="${BASIC_TEMPLATE.classes.ul}">
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorCodeCalculator}">Color Code</button></li>
             </ul>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="basicCalculator" style="display: none;">${this.basicCalculator()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="anotherPageId" style="display: none;">${this.anotherPage()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="basicCalculator" style="display: none;">
+                    ${this.basicCalculator()}
+                </div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="colorCodeCalculator" style="display: none;">
+                    ${this.colorCodeCalculator()}
+                </div>
             </div>
         `;
     }
@@ -98,7 +102,7 @@ export class AppCalculations extends HTMLElement {
     // Calculator itself
     private basicCalculator(): string {
         return `
-            <div class="container d-flex flex-column gap-3 px-1">
+            <section class="calculator-itself container d-flex flex-column gap-3 px-1" tabindex="0">
                 <div class="row justify-content-start">
                     <div class="col-6">
                     <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
@@ -165,21 +169,116 @@ export class AppCalculations extends HTMLElement {
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
         `;
     }
 
-    private anotherPage(): string {
+    // Color Code Calculator Template
+    private colorCodeCalculator(): string {
         return `
-            <div>
-                <h2>Another Content!</h2>
-                <p>This is the content for the Another Content component.</p>
-            </div>
+            <section>
+                <div class="container column mx-0 px-1">
+                    <div class="cc-inputs input-group mb-3">
+                        <span class="input-group-text" id="hexValue">HEX</span>
+                        <input id="hexValueInput" type="text" class="form-control" placeholder="Hex Value" aria-label="Hex Value" aria-describedby="hexValue"/>
+                    </div>
+                    <div class="cc-inputs input-group mb-3">
+                        <span class="input-group-text" id="rgbValue">RGB</span>
+                        <input type="number" class="form-control" maxlength="255" minlength="0" placeholder="Red" aria-label="RGB Color Value: Red" aria-describedby="rgbValue"/>
+                        <input type="number" class="form-control" maxlength="255" minlength="0" placeholder="Green" aria-label="RGB Color Value: Green" aria-describedby="rgbValue"/>
+                        <input type="number" class="form-control" maxlength="255" minlength="0" placeholder="Blue" aria-label="RGB Color Value: Blue" aria-describedby="rgbValue"/>
+                    </div>
+                    <div class="cc-converter-btn mb-3 btn-group w-100">
+                        <button class="btn btn-outline-primary fs-5" type="button" id="hexToRgb">HEX to RGB</button>
+                        <button class="btn btn-outline-primary fs-5" type="button" id="RgbToHex">RGB to HEX</button>
+                    </div>
+                    <div class="color-code-button-actions">
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyHex">Copy HEX Value</button>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyRgb">Copy RGB Value</button>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearColorBoth">Clear</button>
+                    </div>
+                    <div class="color-code-alert transition ease-in-out duration-300 alert alert-danger mt-3" role="alert" style="opacity: 0;">
+                        <div class="d-flex gap-4">
+                            <h6 class="color-code-alert-message mb-0"></h6>
+                        </div>
+                    </div>
+                </div>
+            </section>
         `;
     }
 
+    // Function to detect hex value from given inputs' value
+    private detectHexValue(target: HTMLInputElement): boolean {
+        const targetValue: string = target.value;
+        // Check if target value is string or not first
+        if (typeof targetValue !== "string" || targetValue.trim() === "") {
+            return false;
+        }
+        // Define regex data to hold hex value to be later used
+        const hexRegex: RegExp = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+        // Return a bool with .test if target is hex or not
+        if (hexRegex.test(targetValue) === true) {
+            return hexRegex.test(targetValue);
+        } else {
+            console.error("Value is not HEX");
+            return false;
+        }
+    }
+
+    private detectRgbValue(r: HTMLInputElement, g: HTMLInputElement, b: HTMLInputElement): boolean {
+        // Check if inputs are populated, if not, do not proceed
+        if (!r.value || !g.value || !b.value) {
+            return false;
+        }
+
+        // Parse inputs as integers
+        const rValue: number = parseInt(r.value);
+        const gValue: number = parseInt(g.value);
+        const bValue: number = parseInt(b.value);
+
+        // Check if values are numbers or not
+        if (isNaN(rValue) || isNaN(gValue) || isNaN(bValue)) {
+            return false;
+        }
+
+        // Check if these values are valid RGB codes
+        if (rValue < 0 || rValue > 255 || gValue < 0 || gValue > 255 || bValue < 0 || bValue > 255) {
+            return false;
+        }
+
+        // Ensure that the numbers in each input are maxed at three digits
+        // using padStart, which defines max length of an output
+        // https://www.codecademy.com/resources/docs/javascript/strings/padStart
+        r.value = rValue.toString().padStart(3, "0");
+        g.value = gValue.toString().padStart(3, "0");
+        b.value = bValue.toString().padStart(3, "0");
+
+        console.log(r.value, g.value, b.value);
+
+        return true;
+    }
+
+    // Function to convert HEX(ademical) code to RGB values
+    private convertToRgbFromHex(hexValue: any): Array<number> {
+        let hexRgbArray: string[] | null = hexValue.slice(1).match(/.{1,2}/g);
+        if (!hexRgbArray) {
+            throw new Error("Invalid hex color code");
+        }
+
+        // Convert Hexademical value to Decimal with base 16
+        let rgbOutput: Array<number> = [
+            parseInt(hexRgbArray[0], 16),
+            parseInt(hexRgbArray[1], 16),
+            parseInt(hexRgbArray[2], 16)
+        ];
+        this.getIndex(rgbOutput);
+        return rgbOutput;
+    }
+
+    // Function to detect keypress events and do things
     private keyPressDetection() {
-        document.addEventListener("keydown", (e) => {
+        const calculatorDiv = document.querySelector(".calculator-itself") as HTMLElement;
+        calculatorDiv.addEventListener("keydown", (e) => {
             const keyPressed: Event | string = e.key;
             const validKeys: string = "1234567890/*-+.";
             const calcOutput = document.querySelector(".calc-output-result") as HTMLInputElement;
@@ -277,6 +376,31 @@ export class AppCalculations extends HTMLElement {
         });
     }
 
+    /**
+     * HELPER FUNCTIONS
+     */
+
+    // Get the index numbers & values of the Hex value
+    private getIndex(array: Array<number>): void {
+        const [r, g, b]: Array<number> = array;
+        this.processRgbValues(r, g, b);
+    }
+
+    // Console.log them
+    private processRgbValues(r: number, g: number, b: number): void {
+        console.log(r, g, b);
+    }
+
+    // Function to display alert message if inputs are empty
+    private displayAlert = (message: string) => {
+        const colorCodeAlertDiv = document.querySelector(".color-code-alert") as HTMLDivElement;
+        const colorCodeAlertDivMessage = document.querySelector(".color-code-alert-message") as HTMLHeadingElement;
+        colorCodeAlertDiv.style.opacity = "1";
+        colorCodeAlertDivMessage.textContent = message;
+        setTimeout(() => {
+            colorCodeAlertDiv.style.opacity = "0";
+        }, 2000);
+    }
 
     connectedCallback() {
         // Check event listener for basicCalculator components to prevent
@@ -286,9 +410,60 @@ export class AppCalculations extends HTMLElement {
             this.openPage("basicCalculator", document);
             this.printData();
             this.keyPressDetection();
-
             this.listenersSetUp = true;
         }
+
+        /**
+         * CLASS ACTIONS ARE CALLED HERE
+         */
+
+        const getHex = document.querySelector("#hexToRgb") as HTMLButtonElement;
+        const inp = document.querySelector("#hexValueInput") as HTMLInputElement;
+        let numberSign = "#";
+
+        // Add the "#" symbol when first clicked into the input section
+        inp.addEventListener("click", function () {
+            if (!inp.value.includes(numberSign)) {
+                inp.value = numberSign + inp.value;
+            }
+        });
+
+        // Trigger the removal of "#" symbol if user pastes a HEX code starting with it
+        inp.addEventListener("paste", function (e) {
+            setTimeout(function () {
+                // Check if string starts with "#"
+                if (inp.value.startsWith(numberSign + numberSign)) {
+                    // Extract the "#" using subString method
+                    inp.value = inp.value.substring(1);
+                }
+            }, 0);
+        });
+
+        getHex.addEventListener("click", () => {
+            if (!this.detectHexValue(inp)) {
+                this.displayAlert("Uncomplete HEX value detected (min. 6 digits).");
+            } else {
+                // Pass the value
+                console.log(this.convertToRgbFromHex(inp.value));
+            }
+        });
+
+        const getRgb = document.querySelector("#RgbToHex") as HTMLButtonElement;
+        getRgb.addEventListener("click", () => {
+            let r = document.querySelector(`input[placeholder="Red"]`) as HTMLInputElement;
+            let g = document.querySelector(`input[placeholder="Green"]`) as HTMLInputElement;
+            let b = document.querySelector(`input[placeholder="Blue"]`) as HTMLInputElement;
+
+            if (r && g && b) {
+                if (!r.value || !g.value || !b.value) {
+                    this.displayAlert("Please provide a value!");
+                } else {
+                    console.log(this.detectRgbValue(r, g, b));
+                }
+            } else {
+                console.error("One or more color input elements has not been found.");
+            }
+        });
     }
 }
 
