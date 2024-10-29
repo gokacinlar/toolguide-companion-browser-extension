@@ -7,8 +7,8 @@ const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
         ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
         button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
         componentElement: "component-tab-content-element py-2 my-2",
-        calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
-        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
+        calcButtons: "calc-button btn btn-primary rounded-pill fs-1 w-100 shadow-sm px-3 py-3",
+        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-1 fw-medium w-100 shadow-sm px-3 py-3"
     }
 }
 
@@ -105,7 +105,7 @@ export class AppCalculations extends HTMLElement {
             <section class="calculator-itself container d-flex flex-column gap-3 px-1" tabindex="0">
                 <div class="row justify-content-start">
                     <div class="col-6">
-                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-none fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
+                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-opacity-25 shadow-lg fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
                     </div>
                     <div class="col-2">
                         <button type="button" data-value="AC" data-action="clear" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">AC</button>
@@ -192,10 +192,14 @@ export class AppCalculations extends HTMLElement {
                         <button class="btn btn-outline-primary fs-5" type="button" id="hexToRgb">HEX to RGB</button>
                         <button class="btn btn-outline-primary fs-5" type="button" id="RgbToHex">RGB to HEX</button>
                     </div>
-                    <div class="color-code-button-actions">
-                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyHex">Copy HEX Value</button>
-                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyRgb">Copy RGB Value</button>
-                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearColorBoth">Clear</button>
+                    <div class="color-code-button-actions d-flex flex-row align-content-start justify-content-between">
+                        <div>
+                            <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyHex">Copy HEX Value</button>
+                            <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyRgb">Copy RGB Value</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearColorBoth">Clear</button>
+                        </div>
                     </div>
                     <div class="color-code-alert transition ease-in-out duration-300 alert alert-danger mt-3" role="alert" style="opacity: 0;">
                         <div class="d-flex gap-4">
@@ -273,6 +277,19 @@ export class AppCalculations extends HTMLElement {
         ];
         this.getIndex(rgbOutput);
         return rgbOutput;
+    }
+
+    // Function to convert RGB value to HEX value
+    // thanks: https://stackoverflow.com/a/39040285
+    private componentToHex(elem: any) {
+        let hex: string = elem.toString(16);
+        // Add single digit to prevent a missing digit from Hex value
+        // to make sure the resulting string is always two characters long
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    private rgbToHex(r: number, g: number, b: number, target: HTMLInputElement): string {
+        return target.value = this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
     }
 
     // Function to detect keypress events and do things
@@ -461,6 +478,7 @@ export class AppCalculations extends HTMLElement {
             }
         });
 
+        // Define RGB input elements
         const r = document.querySelector(`input[placeholder="Red"]`) as HTMLInputElement;
         const g = document.querySelector(`input[placeholder="Green"]`) as HTMLInputElement;
         const b = document.querySelector(`input[placeholder="Blue"]`) as HTMLInputElement;
@@ -471,12 +489,34 @@ export class AppCalculations extends HTMLElement {
                 if (!r.value || !g.value || !b.value) {
                     this.displayAlert("Please provide a value!");
                 } else {
-                    console.log(this.detectRgbValue(r, g, b));
+                    // Parse the string to integer to make it viable as an input for
+                    // rgbToHex function
+                    const rValue = parseInt(r.value);
+                    const gValue = parseInt(g.value);
+                    const bValue = parseInt(b.value);
+                    if (isNaN(rValue) || isNaN(gValue) || isNaN(bValue)) {
+                        this.displayAlert("Invalid RGB values");
+                    } else {
+                        this.rgbToHex(rValue, gValue, bValue, inp);
+                    }
                 }
             } else {
                 console.error("One or more color input elements has not been found.");
             }
         });
+
+        const clearColorCodes = document.querySelector("#clearColorBoth") as HTMLButtonElement;
+        clearColorCodes.addEventListener("click", function () {
+            clearInput(inp);
+            const inputDivs = document.querySelectorAll(`input[aria-describedby="rgbValue"]`) as NodeListOf<HTMLInputElement>;
+            inputDivs.forEach((x) => {
+                clearInput(x);
+            });
+        });
+
+        const clearInput = (elem: HTMLInputElement) => {
+            elem.value = "";
+        };
     }
 }
 
