@@ -16,12 +16,12 @@ const IMAGE_SOURCES: { [key: string]: ImageSource } = {
         ref: "https://github.com/gokacinlar/dev-toolguide"
     },
     webstore: {
-        src: "/images/icons/webstore.svg",
+        src: "/images/icons/chrome-webstore.svg",
         ref: ""
     },
     support: {
         src: "/images/icons/support.svg",
-        ref: ""
+        ref: "https://buymeacoffee.com/gokacinlar"
     },
     auxiliary: {
         version: "/images/icons/gear.svg"
@@ -35,15 +35,10 @@ const STYLES = {
 class Footer extends HTMLElement {
     private templateHelper: Template;
     private version: { [key: string]: string };
-    private footerSections: { [key: string]: string };
 
     constructor() {
         super();
         this.templateHelper = new Template();
-        this.footerSections = {
-            footerRight: "",
-            footerLeft: ""
-        };
 
         this.version = {
             number: "v1.0.0",
@@ -53,20 +48,20 @@ class Footer extends HTMLElement {
         this.appendChild(template.content.cloneNode(true));
     }
 
-    renderFooter(): string {
+    private renderFooter(): string {
         return `
             <footer class="${STYLES.footerStyling}">
-                <section class="${this.footerSections.footerRight}">
+                <section>
                     ${this.renderFooterRight()}
                 </section>
-                <section class="${this.footerSections.footerLeft}">
+                <section>
                     ${this.renderFooterLeft()}
                 </section>
             </footer>
         `;
     }
 
-    renderFooterRight(): string {
+    private renderFooterRight(): string {
         return `
             <div class="d-flex flex-row gap-2 bg-dark rounded-pill px-2 py-2 mx-0 my-0 shadow-lg pe-none">
                 <div id="versionNumber">
@@ -82,7 +77,7 @@ class Footer extends HTMLElement {
         `;
     }
 
-    renderFooterLeft(): string {
+    private renderFooterLeft(): string {
         return `
             <div>
                 ${this.renderImageLink(IMAGE_SOURCES.support, "Support")}
@@ -93,7 +88,7 @@ class Footer extends HTMLElement {
         `;
     }
 
-    // Function to render images in Footer's Right Side
+    // Function to render images in Footer"s Right Side
     private renderImageLink(image: ImageSource, title: string): string {
         return `
             <a href="${image.ref}" aria-label="${title}" target="_blank">
@@ -122,17 +117,53 @@ class Footer extends HTMLElement {
     }
 
     // Add zeroes if the number is less than 10 for UI clarity
-    private checkTime(i: number | any) {
+    private checkTime(i: number | any): number {
         if (i < 10) {
             i = "0" + i;
         }
         return i;
     }
 
+    private getBrowserName(): string {
+        const userAgent = navigator.userAgent;
+
+        switch (true) {
+            case userAgent.indexOf("Edge") > -1:
+                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/edge-webstore.svg");
+                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
+                return "Edge";
+            case userAgent.indexOf("Opera") != -1 || userAgent.indexOf("OPR") != -1:
+                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/opera-webstore.svg");
+                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
+                return "Opera";
+            case userAgent.indexOf("Chrome") != -1:
+                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/chrome-webstore.svg");
+                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
+                return "Chrome";
+            case userAgent.indexOf("Firefox") != -1:
+                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/firefox-webstore.svg");
+                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
+                return "Firefox";
+            default:
+                return "unknown";
+        }
+    }
+
+    // Function to change footer image src depending on browser
+    private changeSrc = (key: string, newSrc: string) => {
+        key = newSrc;
+    }
+
+    // Function to change footer image ref depending on browser
+    private changeRef = (key: string, newRef: string) => {
+        key = newRef;
+    }
+
     connectedCallback() {
         const clock = document.querySelector("#footerClock") as HTMLElement;
         this.clockTime(clock); // Call the function for immediate appearance in the UI
         setInterval(() => this.clockTime(clock), 1000);
+        console.log(this.getBrowserName());
     }
 }
 
