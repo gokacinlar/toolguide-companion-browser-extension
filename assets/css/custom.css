@@ -135,25 +135,26 @@
         -o-border-radius: 50%;
     }
 
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"]) {
+        resize: none !important;
+    }
+
     /* Unit Converter */
 
     textarea[name="result"] {
         max-height: 100px;
-        resize: none !important;
     }
 
     /* Lorem Ipsum Generator */
 
     textarea[name="lorem-result"] {
         min-height: 170px !important;
-        resize: none !important;
     }
 
     /* Password Generator */
 
     textarea[name="password-result"] {
         height: 125px !important;
-        resize: none !important;
     }
 }
 
@@ -163,6 +164,10 @@
     list-style-type: none;
     margin: 0;
     padding: 0;
+}
+
+.calculator-itself {
+    outline: none;
 }
 
 .calc-output-result {
