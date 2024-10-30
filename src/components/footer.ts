@@ -28,6 +28,21 @@ const IMAGE_SOURCES: { [key: string]: ImageSource } = {
     }
 };
 
+const IMAGE_SOURCES_ALTERNATIVES: { [key: string]: ImageSource } = {
+    firefox: {
+        src: "/images/icons/firefox-webstore.svg",
+        ref: "https://dervisoksuzoglu.net"
+    },
+    opera: {
+        src: "/images/icons/opera-webstore.svg",
+        ref: ""
+    },
+    edge: {
+        src: "/images/icons/edge-webstore.svg",
+        ref: ""
+    }
+}
+
 const STYLES = {
     footerStyling: "footer-content py-2 px-2 my-1 mx-1 mb-2 d-flex flex-row align-content-center align-items-center justify-content-between rounded-3 shadow-lg"
 };
@@ -78,11 +93,30 @@ class Footer extends HTMLElement {
     }
 
     private renderFooterLeft(): string {
+        // Get the users' browser name data
+        const userAgent = navigator.userAgent;
+
+        // Define the array of browser specific icons in this scope to be later used
+        const webstoreSources = {
+            Edge: IMAGE_SOURCES_ALTERNATIVES.edge,
+            Opera: IMAGE_SOURCES_ALTERNATIVES.opera,
+            Firefox: IMAGE_SOURCES_ALTERNATIVES.firefox,
+        };
+
+        // Find the matching browser key in the user agent string
+        const matchingKey = Object.keys(webstoreSources).find(key => userAgent.indexOf(key) > -1);
+
+        // Get the corresponding browser specific icon source, if not, set default to the generic webstore icon
+        let webstoreSource = IMAGE_SOURCES.webstore;
+        if (matchingKey) {
+            webstoreSource = (webstoreSources as { [key: string]: ImageSource })[matchingKey];
+        }
+
         return `
             <div>
                 ${this.renderImageLink(IMAGE_SOURCES.support, "Support")}
                 ${this.renderImageLink(IMAGE_SOURCES.source, "Website")}
-                ${this.renderImageLink(IMAGE_SOURCES.webstore, "Webstore")}
+                ${this.renderImageLink(webstoreSource, "Webstore")}
                 ${this.renderImageLink(IMAGE_SOURCES.github, "GitHub")}
             </div>
         `;
@@ -90,8 +124,11 @@ class Footer extends HTMLElement {
 
     // Function to render images in Footer"s Right Side
     private renderImageLink(image: ImageSource, title: string): string {
+        // Add "text-decoration: none", "color: transparent" to <a> element because it will try to display a dot in 
+        // its content since we do not use any text in it. Browser will try to populate it
+        // https://stackoverflow.com/a/52566572
         return `
-            <a href="${image.ref}" aria-label="${title}" target="_blank">
+            <a href="${image.ref}" aria-label="${title}" target="_blank" style="text-decoration: none; color: transparent;">
                 <img src="${image.src}" class="footer-links img-fluid" title="${title}" alt="${title} Icon">
             </a>
         `;
@@ -124,46 +161,10 @@ class Footer extends HTMLElement {
         return i;
     }
 
-    private getBrowserName(): string {
-        const userAgent = navigator.userAgent;
-
-        switch (true) {
-            case userAgent.indexOf("Edge") > -1:
-                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/edge-webstore.svg");
-                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
-                return "Edge";
-            case userAgent.indexOf("Opera") != -1 || userAgent.indexOf("OPR") != -1:
-                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/opera-webstore.svg");
-                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
-                return "Opera";
-            case userAgent.indexOf("Chrome") != -1:
-                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/chrome-webstore.svg");
-                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
-                return "Chrome";
-            case userAgent.indexOf("Firefox") != -1:
-                this.changeSrc(IMAGE_SOURCES.webstore.src, "/images/icons/firefox-webstore.svg");
-                this.changeRef(IMAGE_SOURCES.webstore.ref, "populate");
-                return "Firefox";
-            default:
-                return "unknown";
-        }
-    }
-
-    // Function to change footer image src depending on browser
-    private changeSrc = (key: string, newSrc: string) => {
-        key = newSrc;
-    }
-
-    // Function to change footer image ref depending on browser
-    private changeRef = (key: string, newRef: string) => {
-        key = newRef;
-    }
-
     connectedCallback() {
         const clock = document.querySelector("#footerClock") as HTMLElement;
         this.clockTime(clock); // Call the function for immediate appearance in the UI
         setInterval(() => this.clockTime(clock), 1000);
-        console.log(this.getBrowserName());
     }
 }
 
