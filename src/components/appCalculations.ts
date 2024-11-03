@@ -23,7 +23,8 @@ export class AppCalculations extends HTMLElement {
 
         this.Ids = {
             basicCalculator: "basicCalculator",
-            colorCodeCalculator: "colorCodeCalculator"
+            colorCodeCalculator: "colorCodeCalculator",
+            financialCalculator: "financialCalculator"
         }
 
         const template = this.template.createTemplate(this.appCalculations());
@@ -36,6 +37,7 @@ export class AppCalculations extends HTMLElement {
             <ul class="${BASIC_TEMPLATE.classes.ul}">
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorCodeCalculator}">Color Code</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.financialCalculator}">Financial</button></li>
             </ul>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="basicCalculator" style="display: none;">
@@ -43,6 +45,9 @@ export class AppCalculations extends HTMLElement {
                 </div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="colorCodeCalculator" style="display: none;">
                     ${this.colorCodeCalculator()}
+                </div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="financialCalculator" style="display: none;">
+                    ${this.financialCalculator()}
                 </div>
             </div>
         `;
@@ -201,14 +206,77 @@ export class AppCalculations extends HTMLElement {
                             <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearColorBoth">Clear</button>
                         </div>
                     </div>
-                    <div class="color-code-alert transition ease-in-out duration-300 alert alert-danger mt-3" role="alert" style="opacity: 0;">
-                        <div class="d-flex gap-4">
+                    <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                        <div class="color-code-alert alert alert-danger transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
                             <h6 class="color-code-alert-message mb-0"></h6>
+                        </div>
+                        <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="mb-0">Copied to clipboard.</h6>
                         </div>
                     </div>
                 </div>
             </section>
         `;
+    }
+
+    // Financial Calculator
+    private financialCalculator(): string {
+        return `
+            <section>
+                <div class="container row mx-0 px-0 gx-2">
+                    <div class="col-6 px-0">
+                        <div>
+                            <h3 class="bg-success-subtle px-1 py-1 rounded-4 text-center pe-none">Inflation Calculator</h3>
+                        </div>
+                        <div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">₺ or $</span>
+                                <input id="infRateOne" type="number" class="form-control" min="1" aria-label="Kıyaslanacak Fiyat" placeholder="First Price"/>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">₺ or $</span>
+                                <input id="infRateTwo" type="number" class="form-control" min="1" aria-label="Güncel Fiyat"/ placeholder="Second Price">
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">%</span>
+                                <input id="infRateActual" type="number" class="form-control" min="1" aria-label="Enflasyon Oranı" placeholder="Inflation Rate"/>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Output:</span>
+                                <input id="infRateOutput" class="form-control" type="number" aria-label="Inflation Calculation Output" readonly/>
+                            </div>
+                            <div>
+                                <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="calcInf">Calculate</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 px-0">
+                        <div>
+                            <h3 class="bg-success-subtle px-1 py-1 rounded-4 text-center pe-none">Interest Calculator</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    // Function to perform the inflation calculation
+    private inflationCalculation(prevPrice: number, currPrice: number, infRate: number): number {
+        // First check if previous price is acceptable
+        if (prevPrice <= 1) {
+            throw new Error(`Previous price must be bigger than "zero (0)".`);
+        }
+        // Check if inflation rate is acceptable
+        if (infRate <= 0) {
+            throw new Error(`Inflation rate must be bigger than "zero (0)".`)
+        }
+
+        // Actual calculation
+        // ((T – B) / B) x 100
+        const infRateCalculation: number = ((currPrice - prevPrice) / prevPrice) * 100;
+        const adjustedRate: number = infRateCalculation - infRate;
+
+        return adjustedRate;
     }
 
     // Function to detect hex value from given inputs' value
@@ -517,6 +585,46 @@ export class AppCalculations extends HTMLElement {
         const clearInput = (elem: HTMLInputElement) => {
             elem.value = "";
         };
+
+        // Hex Value copying
+        const copyHexBtn = document.querySelector("#copyHex") as HTMLButtonElement;
+        copyHexBtn.addEventListener("click", () => {
+            const inputValueLength: string = inp.value;
+            if (inputValueLength.length === 0) {
+                this.displayAlert("Please provide an HEX value.");
+            }
+
+            const valueAdjusted = numberSign + inp.value;
+            if (inp.value && !inp.value.startsWith(numberSign)) {
+                navigator.clipboard.writeText(valueAdjusted).then(() => {
+                    const displaySuccess = document.querySelector(".color-code-success") as HTMLElement;
+                    displaySuccess.style.opacity = "1";
+                    setTimeout(() => {
+                        displaySuccess.style.opacity = "0";
+                    }, 2000);
+                });
+            } else if (inp.value.startsWith(numberSign)) {
+                navigator.clipboard.writeText(inp.value).then(() => {
+                    const displaySuccess = document.querySelector(".color-code-success") as HTMLElement;
+                    displaySuccess.style.opacity = "1";
+                    setTimeout(() => {
+                        displaySuccess.style.opacity = "0";
+                    }, 2000);
+                });
+            }
+        });
+
+        // Inflation calculation
+        const infCalculatorBtn = document.querySelector("#calcInf") as HTMLButtonElement;
+        infCalculatorBtn.addEventListener("click", () => {
+            const firstVal = document.querySelector("#infRateOne") as HTMLInputElement;
+            const secondVal = document.querySelector("#infRateTwo") as HTMLInputElement;
+            const infRate = document.querySelector("#infRateActual") as HTMLInputElement;
+            const infRateOutput = document.querySelector("#infRateOutput") as HTMLInputElement;
+
+            const result = this.inflationCalculation(parseFloat(firstVal.value), parseFloat(secondVal.value), parseFloat(infRate.value))
+            infRateOutput.value = result.toString();
+        });
     }
 }
 
