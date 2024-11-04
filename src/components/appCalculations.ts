@@ -223,36 +223,59 @@ export class AppCalculations extends HTMLElement {
     private financialCalculator(): string {
         return `
             <section>
-                <div class="container row mx-0 px-0 gx-2">
-                    <div class="col-6 px-0">
+                <div class="container row mx-0 px-0 d-flex flex-row align-content-center justify-content-around">
+                    <div class="col-5 px-0">
                         <div>
                             <h3 class="bg-success-subtle px-1 py-1 rounded-4 text-center pe-none">Inflation Calculator</h3>
                         </div>
                         <div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">₺ or $</span>
-                                <input id="infRateOne" type="number" class="form-control" min="1" aria-label="Kıyaslanacak Fiyat" placeholder="First Price"/>
+                                <input id="infRateOne" type="number" class="form-control" min="1" aria-label="Kıyaslanacak Fiyat" placeholder="first price" aria-describedby="infRateVal"/>
                             </div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text">₺ or $</span>
-                                <input id="infRateTwo" type="number" class="form-control" min="1" aria-label="Güncel Fiyat"/ placeholder="Second Price">
+                                <input id="infRateTwo" type="number" class="form-control" min="1" aria-label="Güncel Fiyat" placeholder="second price" aria-describedby="infRateVal"/>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text">%</span>
-                                <input id="infRateActual" type="number" class="form-control" min="1" aria-label="Enflasyon Oranı" placeholder="Inflation Rate"/>
+                                <span class="input-group-text">Inflation (%)</span>
+                                <input id="infRateOutput" class="form-control" type="number" aria-label="Inflation Calculation Output" aria-describedby="infRateVal" readonly/>
                             </div>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text">Output:</span>
-                                <input id="infRateOutput" class="form-control" type="number" aria-label="Inflation Calculation Output" readonly/>
-                            </div>
-                            <div>
+                            <div class="d-flex flex-row align-content-center justify-content-start gap-2">
                                 <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="calcInf">Calculate</button>
+                                <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="infClear">Clear</button>
+                            </div>
+                            <div class="d-inline-block finanical-alert alert alert-danger transition ease-in-out duration-300 mt-3 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                                <h6 class="finanical-alert-message mb-0"></h6>
                             </div>
                         </div>
                     </div>
-                    <div class="col-6 px-0">
+                    <div class="col-5 px-0">
                         <div>
                             <h3 class="bg-success-subtle px-1 py-1 rounded-4 text-center pe-none">Interest Calculator</h3>
+                        </div>
+                        <div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Loan</span>
+                                <input id="intLoan" type="number" class="form-control" min="1" aria-label="Principal" placeholder="amount of money" aria-describedby="intRateVal"/>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Rate</span>
+                                <input id="intRate" type="number" class="form-control" min="1" aria-label="Rate of Interest" placeholder="interest rate" aria-describedby="intRateVal"/>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Tenure</span>
+                                <input id="intTenure" type="number" class="form-control" min="1" aria-label="Tenure of Interest" placeholder="in months" aria-describedby="intRateVal"/>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">Interest</span>
+                                <input id="intRateOutput" class="form-control" type="number" aria-label="Interest Rate Output" aria-describedby="intRateVal" readonly/>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-start gap-2">
+                                <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="calcInt">Calculate</button>
+                                <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="intClear">Clear</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -261,22 +284,30 @@ export class AppCalculations extends HTMLElement {
     }
 
     // Function to perform the inflation calculation
-    private inflationCalculation(prevPrice: number, currPrice: number, infRate: number): number {
+    private inflationCalculation(prevPrice: number, currPrice: number): number {
         // First check if previous price is acceptable
         if (prevPrice <= 1) {
             throw new Error(`Previous price must be bigger than "zero (0)".`);
-        }
-        // Check if inflation rate is acceptable
-        if (infRate <= 0) {
-            throw new Error(`Inflation rate must be bigger than "zero (0)".`)
         }
 
         // Actual calculation
         // ((T – B) / B) x 100
         const infRateCalculation: number = ((currPrice - prevPrice) / prevPrice) * 100;
-        const adjustedRate: number = infRateCalculation - infRate;
 
-        return adjustedRate;
+        return infRateCalculation;
+    }
+
+    // Function to perform interest calculation
+    private interestCalculation(p: string, r: string, t: string, target: any, timeUnit: string): string {
+        let time: number = parseInt(t);
+        if (timeUnit === "months") {
+            time /= 12;
+        }
+        // Actual calculation: P x R x T / 100
+        const result: number = (parseInt(p) * parseInt(r) * time / 100);
+        const elem: string = target.value = result.toString();
+
+        return elem;
     }
 
     // Function to detect hex value from given inputs' value
@@ -326,7 +357,6 @@ export class AppCalculations extends HTMLElement {
         b.value = bValue.toString().padStart(3, "0");
 
         console.log(r.value, g.value, b.value);
-
         return true;
     }
 
@@ -378,6 +408,10 @@ export class AppCalculations extends HTMLElement {
                     calcOutput.value += keyPressed;
                 } else if (keyPressed === "Delete") {
                     calcOutput.value = "";
+                } else if (keyPressed === "Backspace") {
+                    const stringified = calcOutput.value.toString();
+                    // Remove the last index of value string using slice method
+                    calcOutput.value = stringified.slice(0, -1);
                 }
             }
         });
@@ -487,14 +521,25 @@ export class AppCalculations extends HTMLElement {
 
 
     // Function to display alert message if inputs are empty
-    private displayAlert = (message: string) => {
-        const colorCodeAlertDiv = document.querySelector(".color-code-alert") as HTMLDivElement;
-        const colorCodeAlertDivMessage = document.querySelector(".color-code-alert-message") as HTMLHeadingElement;
+    private displayAlert = (div: string, mdiv: string, message: string) => {
+        const colorCodeAlertDiv = document.querySelector(div) as HTMLDivElement;
+        const colorCodeAlertDivMessage = document.querySelector(mdiv) as HTMLHeadingElement;
         colorCodeAlertDiv.style.opacity = "1";
         colorCodeAlertDivMessage.textContent = message;
         setTimeout(() => {
             colorCodeAlertDiv.style.opacity = "0";
         }, 2000);
+    }
+
+    // Function to display success message
+    private displaySuccess = (elem: any) => {
+        navigator.clipboard.writeText(elem).then(() => {
+            const displaySuccess = document.querySelector(".color-code-success") as HTMLDivElement;
+            displaySuccess.style.opacity = "1";
+            setTimeout(() => {
+                displaySuccess.style.opacity = "0";
+            }, 2000);
+        });
     }
 
     connectedCallback() {
@@ -537,7 +582,7 @@ export class AppCalculations extends HTMLElement {
         // Listen for conversion to RGB from HEX
         getHex.addEventListener("click", () => {
             if (!this.detectHexValue(inp)) {
-                this.displayAlert("Uncomplete HEX value detected (min. 6 digits).");
+                this.displayAlert(".color-code-alert", ".color-code-alert-message", "Uncomplete HEX value detected (min. 6 digits).");
             } else {
                 const rgbArray = this.convertToRgbFromHex(inp.value);
                 if (rgbArray) {
@@ -555,7 +600,7 @@ export class AppCalculations extends HTMLElement {
         getRgb.addEventListener("click", () => {
             if (r && g && b) {
                 if (!r.value || !g.value || !b.value) {
-                    this.displayAlert("Please provide a value!");
+                    this.displayAlert(".color-code-alert", ".color-code-alert-message", "Please provide a value!");
                 } else {
                     // Parse the string to integer to make it viable as an input for
                     // rgbToHex function
@@ -563,7 +608,7 @@ export class AppCalculations extends HTMLElement {
                     const gValue = parseInt(g.value);
                     const bValue = parseInt(b.value);
                     if (isNaN(rValue) || isNaN(gValue) || isNaN(bValue)) {
-                        this.displayAlert("Invalid RGB values");
+                        this.displayAlert(".color-code-alert", ".color-code-alert-message", "Invalid RGB values");
                     } else {
                         this.rgbToHex(rValue, gValue, bValue, inp);
                     }
@@ -591,39 +636,80 @@ export class AppCalculations extends HTMLElement {
         copyHexBtn.addEventListener("click", () => {
             const inputValueLength: string = inp.value;
             if (inputValueLength.length === 0) {
-                this.displayAlert("Please provide an HEX value.");
+                this.displayAlert(".color-code-alert", ".color-code-alert-message", "Please provide an HEX value.");
             }
 
             const valueAdjusted = numberSign + inp.value;
             if (inp.value && !inp.value.startsWith(numberSign)) {
-                navigator.clipboard.writeText(valueAdjusted).then(() => {
-                    const displaySuccess = document.querySelector(".color-code-success") as HTMLElement;
-                    displaySuccess.style.opacity = "1";
-                    setTimeout(() => {
-                        displaySuccess.style.opacity = "0";
-                    }, 2000);
-                });
+                this.displaySuccess(valueAdjusted);
             } else if (inp.value.startsWith(numberSign)) {
-                navigator.clipboard.writeText(inp.value).then(() => {
-                    const displaySuccess = document.querySelector(".color-code-success") as HTMLElement;
-                    displaySuccess.style.opacity = "1";
-                    setTimeout(() => {
-                        displaySuccess.style.opacity = "0";
-                    }, 2000);
-                });
+                this.displaySuccess(inp.value);
+            }
+        });
+
+        // Rgb value copying
+        const copyRgbBtn = document.querySelector("#copyRgb") as HTMLButtonElement;
+        copyRgbBtn.addEventListener("click", () => {
+            const rgbInputs = document.querySelectorAll(`input[aria-describedby="rgbValue"]`) as NodeListOf<HTMLInputElement>;
+            // Check with every() method if nodelistof rgbInputs' length are acceptable
+            if (!Array.from(rgbInputs).every((x) => x.value.length > 0)) {
+                this.displayAlert(".color-code-alert", ".color-code-alert-message", "Please provide RGB values.");
+                return;
+            }
+
+            if (this.detectRgbValue(rgbInputs[0], rgbInputs[1], rgbInputs[2]) === true) {
+                // Hold the values in template literal and copy them
+                const rgbValues: string = `${rgbInputs[0].value} ${rgbInputs[1].value} ${rgbInputs[2].value}`;
+                this.displaySuccess(rgbValues);
+            } else {
+                return this.displayAlert(".color-code-alert", ".color-code-alert-message", "RGB values are not correct!")
             }
         });
 
         // Inflation calculation
+        const firstVal = document.querySelector("#infRateOne") as HTMLInputElement;
+        const secondVal = document.querySelector("#infRateTwo") as HTMLInputElement;
+        const infRateOutput = document.querySelector("#infRateOutput") as HTMLInputElement;
+
         const infCalculatorBtn = document.querySelector("#calcInf") as HTMLButtonElement;
         infCalculatorBtn.addEventListener("click", () => {
-            const firstVal = document.querySelector("#infRateOne") as HTMLInputElement;
-            const secondVal = document.querySelector("#infRateTwo") as HTMLInputElement;
-            const infRate = document.querySelector("#infRateActual") as HTMLInputElement;
-            const infRateOutput = document.querySelector("#infRateOutput") as HTMLInputElement;
+            const fvLength = firstVal.value;
+            const svLength = secondVal.value;
 
-            const result = this.inflationCalculation(parseFloat(firstVal.value), parseFloat(secondVal.value), parseFloat(infRate.value))
+            if (fvLength.length === 0 || svLength.length === 0) {
+                this.displayAlert(".finanical-alert", ".finanical-alert-message", "Please provide values.");
+            }
+
+            const result = this.inflationCalculation(parseFloat(firstVal.value), parseFloat(secondVal.value)).toFixed(2);
             infRateOutput.value = result.toString();
+        });
+
+        const infClearBtn = document.querySelector("#infClear") as HTMLButtonElement;
+        infClearBtn.addEventListener("click", () => {
+            const infElems = document.querySelectorAll(`input[aria-describedby="infRateVal"]`) as NodeListOf<HTMLInputElement>;
+            infElems.forEach((x) => {
+                x.value = "";
+            });
+        });
+
+        // Interest Calculation
+        const intLoan = document.querySelector("#intLoan") as HTMLInputElement;
+        const intRate = document.querySelector("#intRate") as HTMLInputElement;
+        const intTenure = document.querySelector("#intTenure") as HTMLInputElement;
+        const intDisplay = document.querySelector("#intRateOutput") as HTMLInputElement;
+
+        const intCalculatorBtn = document.querySelector("#calcInt") as HTMLButtonElement;
+        intCalculatorBtn.addEventListener("click", () => {
+
+            this.interestCalculation(intLoan.value, intRate.value, intTenure.value, intDisplay, "months");
+        });
+
+        const intClearBtn = document.querySelector("#intClear") as HTMLButtonElement;
+        intClearBtn.addEventListener("click", () => {
+            const intElems = document.querySelectorAll(`input[aria-describedby="intRateVal"]`) as NodeListOf<HTMLInputElement>;
+            intElems.forEach((x) => {
+                x.value = "";
+            });
         });
     }
 }
