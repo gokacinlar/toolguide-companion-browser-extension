@@ -521,7 +521,7 @@ export class AppCalculations extends HTMLElement {
 
 
     // Function to display alert message if inputs are empty
-    private displayAlert = (div: string, mdiv: string, message: string) => {
+    public displayAlert = (div: string, mdiv: string, message: string) => {
         const colorCodeAlertDiv = document.querySelector(div) as HTMLDivElement;
         const colorCodeAlertDivMessage = document.querySelector(mdiv) as HTMLHeadingElement;
         colorCodeAlertDiv.style.opacity = "1";
