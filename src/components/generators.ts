@@ -78,14 +78,19 @@ export class Generators extends HTMLElement {
                 <div class="lorem-textarea d-flex flex-column align-items-start justify-content-start mb-3 px-1">
                     <textarea class="lorem-output-value w-100 form-control fs-5" id="loremOutput" title="Result" placeholder="Result" name="lorem-result" readonly></textarea>
                 </div>
-                <div class="lorem-actions mb-3 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
+                <div class="lorem-actions mb-0 px-1 d-flex flex-row align-content-start justify-content-between gap-2">
                     <div class="lorem-button-actions">
                         <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyLorem">Copy</button>
                         <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearLorem">Clear</button>
                     </div>
-                    <div class="lorem-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
-                        <div>
-                            Copied to clipboard.
+                    <div class="d-flex flex-row align-content-center justify-content-between">
+                        <div class="d-inline-block lorem-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                            <h6 class="lorem-alert-message mb-0"></h6>
+                        </div>
+                        <div class="d-inline-block lorem-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                            <div>
+                                <h6 class="lorem-alert-message mb-0">Copied to clipboard.</h6>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,9 +172,14 @@ export class Generators extends HTMLElement {
                             <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyPassword">Copy</button>
                             <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="clearPassword">Clear</button>
                         </div>
-                        <div class="password-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill py-2" role="alert" style="opacity: 0;">
-                            <div>
-                                Copied to clipboard.
+                        <div class="d-flex flex-row align-content-center justify-content-between">
+                            <div class="d-inline-block password-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                                <h6 class="password-alert-message mb-0"></h6>
+                            </div>
+                            <div class="d-inline-block password-copied-alert alert alert-success transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                                <div>
+                                    <h6 class="lorem-alert-message mb-0">Copied to clipboard.</h6>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -178,7 +188,7 @@ export class Generators extends HTMLElement {
             <div class="weak-password-detector alert alert-warning position-absolute top-50 start-50 translate-middle w-75 z-50" role="alert" style="display: none>
                 <div class="d-flex flex-column gap-4 w-100">
                     <div class="d-flex flex-column gap-2">
-                        <h6 class="mb-0">Important warning!</h6>    
+                        <h6 class="mb-0">Important warning!</h6>
                         <p class="mb-0">Please use a strong password, including not only letters but <span class="fw-semibold">digits & special characters.</span></p>
                         <p class="mb-0">Minimum of 14 characters long password is recommended.</p>
                         <button id="closeWarning" class="btn btn-default">Close</button>
@@ -226,13 +236,13 @@ export class Generators extends HTMLElement {
 
         // Check if at least one option is selected
         if (passwordContent.length === 0) {
-            alert("Please select at least one option.");
+            this.appCalculation.displayAlert("password-alert", "password-alert-message", "Please select an option.");
             return;
         }
 
         // Check if password length is provided and is a number
         if (isNaN(passwordLength) || passwordLength < 1 || passwordLength > 99) {
-            alert("Please provide a password length between 1 and 99.");
+            this.appCalculation.displayAlert(".password-alert", ".password-alert-message", "Please provide a value.");
             return;
         }
 
@@ -317,7 +327,7 @@ export class Generators extends HTMLElement {
 
         // Function to copy content from textareas
         const copyContentFromTextArea = (target: HTMLElement, data: HTMLTextAreaElement, element: string): void => {
-            target.addEventListener("click", function () {
+            target.addEventListener("click", () => {
                 const targetDataValue = data.value;
                 if (targetDataValue.length >= 1) {
                     navigator.clipboard.writeText(targetDataValue).then(() => {
@@ -328,7 +338,7 @@ export class Generators extends HTMLElement {
                         }, 2000);
                     });
                 } else {
-                    alert("Could not copy: Please provide a value.");
+                    this.appCalculation.displayAlert(".lorem-alert", ".lorem-alert-message", "Please provide a value.");
                     return;
                 }
             });
