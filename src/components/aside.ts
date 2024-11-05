@@ -22,6 +22,14 @@ const BUTTON_TEMPLATE: { [key: string]: ButtonTemplate } = {
     generators: {
         name: "Generators",
         imgSrc: "/images/icons/aside/generators.svg"
+    },
+    utilities: {
+        name: "Utilities",
+        imgSrc: "/images/icons/aside/utilities.svg"
+    },
+    webdev: {
+        name: "Web Dev.",
+        imgSrc: "/images/icons/aside/webdev.svg"
     }
 }
 
@@ -41,7 +49,7 @@ class Aside extends HTMLElement {
 
         this.documentStylings = {
             template: "aside-buttons d-flex flex-column gap-2 py-2 px-2 mb-1 align-items-center justify-content-start rounded-3 shadow-lg",
-            btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3 d-flex flex-row align-items-center justify-content-center gap-2"
+            btnStyling: "btn btn-outline-light w-100 fs-5 shadow-md rounded-3 d-flex flex-row align-items-center justify-content-even gap-2"
         };
 
         const template = this.templateHelper.createTemplate(this.renderContent());
