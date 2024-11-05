@@ -128,6 +128,8 @@
     }
 
     .aside-button-icons {
+        min-height: 26px;
+        min-width: 26px;
         border-radius: 50%;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
@@ -135,26 +137,29 @@
         -o-border-radius: 50%;
     }
 
-    textarea:is([name="result"], [name="lorem-result"], [name="password-result"]) {
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [name="jsonInput"], [name="jsonOutput"]) {
         resize: none !important;
     }
 
     /* Unit Converter */
-
     textarea[name="result"] {
         max-height: 100px;
     }
 
     /* Lorem Ipsum Generator */
-
     textarea[name="lorem-result"] {
         min-height: 170px !important;
     }
 
     /* Password Generator */
-
     textarea[name="password-result"] {
         height: 125px !important;
+    }
+
+    /* JSON Formatter */
+    textarea[name="jsonInput"],
+    textarea[name="jsonOutput"] {
+        height: 250px;
     }
 }
 
