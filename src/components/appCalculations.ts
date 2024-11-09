@@ -532,7 +532,7 @@ export class AppCalculations extends HTMLElement {
     }
 
     // Function to display success message
-    private displaySuccess = (elem: any) => {
+    public displaySuccess = (elem: any) => {
         navigator.clipboard.writeText(elem).then(() => {
             const displaySuccess = document.querySelector(".color-code-success") as HTMLDivElement;
             displaySuccess.style.opacity = "1";
