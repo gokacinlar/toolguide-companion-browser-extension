@@ -79,7 +79,7 @@ export class Formatters extends HTMLElement {
 
     private jsonFormatter(): string {
         return `
-            <section class="container row mx-0 px-0 d-flex align-content-center justify-content-around">
+            <section class="container row mx-0 px-0 d-flex align-content-center justify-content-around position-relative">
                 <div id="jsonInput" class="col-5 mx-0 px-0">
                     <div id="jiBtns" class="mb-3">
                         <div class="btn-group d-flex flex-row align-content-center justify-content-start gap-2" role="group" aria-label="JavaScript Formatting Options">
@@ -94,8 +94,8 @@ export class Formatters extends HTMLElement {
                         </div>
                     </div>
                     <div>
-                        <div class="">
-                            <textarea name="jsonInput" class="form-control shadow-md" id="jsonTextAreaInput" rows="7" placeholder="Input"></textarea>
+                        <div>
+                            <textarea name="jsonInput" class="form-control shadow-md" id="jsonTextAreaInput" aria-label="json-data" rows="7" placeholder="Input"></textarea>
                         </div>
                     </div>
                 </div>
@@ -107,8 +107,16 @@ export class Formatters extends HTMLElement {
                     </div>
                     <div>
                         <div class="">
-                            <textarea name="jsonOutput" class="form-control shadow-md" id="jsonTextAreaOutput" rows="7" placeholder="Input" readonly></textarea>
+                            <textarea name="jsonOutput" class="form-control shadow-md" id="jsonTextAreaOutput" aria-label="json-data" rows="7" placeholder="Output" readonly></textarea>
                         </div>
+                    </div>
+                </div>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between position-absolute bottom-0 end-0 px-0 py-0">
+                    <div class="json-alert alert alert-danger transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="json-alert-message mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
                     </div>
                 </div>
             </section>
@@ -135,6 +143,17 @@ export class Formatters extends HTMLElement {
      * HELPER FUNCTIONS
      */
 
+    private isJson(elem: string): boolean {
+        try {
+            // Use JSON.parse to detect JSON patterns
+            JSON.parse(elem);
+            return true;
+        } catch (error) {
+            console.error("Input is not a valid JSON.", error);
+            return false;
+        }
+    }
+
     private minifyJson(elem: string): string {
         // Trim the whitespace from JSON using stringify()
         try {
@@ -143,6 +162,17 @@ export class Formatters extends HTMLElement {
             return jsonStringified;
         } catch (error) {
             console.error("Error minifying JSON:", error);
+            return elem;
+        }
+    }
+
+    private beautifyJson(elem: string): string {
+        try {
+            const initJsonValue = JSON.parse(elem);
+            const jsonBeautified = JSON.stringify(initJsonValue, null, 2);
+            return jsonBeautified;
+        } catch (error) {
+            console.error("Error beautifying JSON:", error);
             return elem;
         }
     }
@@ -163,23 +193,53 @@ export class Formatters extends HTMLElement {
                 });
                 x.checked = true;
 
+                const jsonFormatBtn = document.querySelector("#jsonFormatBtn") as HTMLButtonElement;
+                const jsonInputElement = document.querySelector("#jsonTextAreaInput") as HTMLTextAreaElement;
+                const jieOutputArea = document.querySelector("#jsonTextAreaOutput") as HTMLTextAreaElement;
+                const jieCopied = jsonInputElement.value;
+
                 if (x.id === "btnradio1") {
-                    const jsonFormatBtn = document.querySelector("#jsonFormatBtn") as HTMLButtonElement;
                     jsonFormatBtn.addEventListener("click", () => {
-                        const jsonInputElement = document.querySelector("#jsonTextAreaInput") as HTMLTextAreaElement;
-                        const jieCopied = jsonInputElement.value;
                         // Use string.raw to interpret every escape sequence to make sure we're getting the input right
                         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw#description
                         const jieCopiedString = String.raw`${jieCopied}`;
-                        const finalResult = this.minifyJson(jieCopiedString);
-
-                        const jieOutputArea = document.querySelector("#jsonTextAreaOutput") as HTMLTextAreaElement;
-                        jieOutputArea.value = finalResult;
+                        if (this.isJson(jieCopiedString) == true) {
+                            const finalResult = this.minifyJson(jieCopiedString);
+                            jieOutputArea.value = finalResult;
+                        } else {
+                            jieOutputArea.value = "Invalid JSON data."
+                        }
                     });
                 } else if (x.id === "btnradio2") {
-                    return;
+                    jsonFormatBtn.addEventListener("click", () => {
+                        const jieCopiedString = String.raw`${jieCopied}`;
+                        if (this.isJson(jieCopiedString) == true) {
+                            const finalResult = this.beautifyJson(jieCopiedString);
+                            jieOutputArea.value = finalResult;
+                        } else {
+                            jieOutputArea.value = "Invalid JSON data."
+                        }
+                    });
                 }
             });
+        });
+
+        const clearJsonBtn = document.querySelector("#jsonClearBtn") as HTMLButtonElement;
+        clearJsonBtn.addEventListener("click", () => {
+            const jsonData = document.querySelectorAll(`textarea[aria-label="json-data"]`) as NodeListOf<HTMLTextAreaElement>;
+            jsonData.forEach((x) => {
+                x.value = ""
+            });
+        });
+
+        const copyJsonBtn = document.querySelector("#jsonCopyBtn") as HTMLButtonElement;
+        copyJsonBtn.addEventListener("click", () => {
+            const jieOutputArea = document.querySelector("#jsonTextAreaOutput") as HTMLTextAreaElement;
+            if (jieOutputArea.value.length >= 1) {
+                this.appCalculation.displaySuccess(jieOutputArea.value);
+            } else {
+                this.appCalculation.displayAlert(".json-alert", ".json-alert-message", "Please provide a value.")
+            }
         });
     }
 }
