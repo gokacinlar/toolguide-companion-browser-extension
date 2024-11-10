@@ -95,7 +95,7 @@ export class Formatters extends HTMLElement {
                     </div>
                     <div>
                         <div>
-                            <textarea name="jsonInput" class="form-control shadow-md" id="jsonTextAreaInput" aria-label="json-data" rows="7" placeholder="Input"></textarea>
+                            <textarea name="jsonInput" class="form-control shadow-md" id="jsonTextAreaInput" aria-label="json-data" rows="7" placeholder="Input" aria-describedby="textarea-value"></textarea>
                         </div>
                     </div>
                 </div>
@@ -107,7 +107,7 @@ export class Formatters extends HTMLElement {
                     </div>
                     <div>
                         <div class="">
-                            <textarea name="jsonOutput" class="form-control shadow-md" id="jsonTextAreaOutput" aria-label="json-data" rows="7" placeholder="Output" readonly></textarea>
+                            <textarea name="jsonOutput" class="form-control shadow-md" id="jsonTextAreaOutput" aria-label="json-data" rows="7" placeholder="Output" aria-describedby="textarea-value" readonly></textarea>
                         </div>
                     </div>
                 </div>
@@ -124,7 +124,45 @@ export class Formatters extends HTMLElement {
     }
 
     private xmlFormatter(): string {
-        return `x`;
+        return `
+            <section class="container row mx-0 px-0 d-flex align-content-center justify-content-around position-relative">
+                <div id="jsonInput" class="col-5 mx-0 px-0">
+                    <div id="jiBtns" class="mb-3">
+                        <div role="group" aria-label="XML Formatting Button">
+                            <div class="w-100">
+                                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" checked/>
+                                <label class="btn btn-default fs-4 w-100 rounded-pill shadow-md" for="btnradio3">Beautify</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div>
+                            <textarea name="xmlInput" class="form-control shadow-md" id="xmlTextAreaInput" aria-label="xml-data" rows="7" placeholder="Input" aria-describedby="textarea-value"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div id="jsonOutput" class="col-6 mx-0 px-0">
+                    <div class="btn-group w-100 d-flex flex-row align-content-center justify-content-between gap-2 mb-3" role="group">
+                        <button id="xmlFormatBtn" type="button" class="btn btn-outline-discovery fs-4 rounded-pill shadow-lg">Format</button>
+                        <button id="xmlCopyBtn" type="button" class="btn btn-outline-discovery fs-4 rounded-pill shadow-lg">Copy</button>
+                        <button id="xmlClearBtn" type="button" class="btn btn-outline-discovery fs-4 rounded-pill shadow-lg">Clear</button>
+                    </div>
+                    <div>
+                        <div class="">
+                            <textarea name="xmlOutput" class="form-control shadow-md" id="xmlTextAreaOutput" aria-label="xml-data" rows="7" placeholder="Output" aria-describedby="textarea-value" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between position-absolute bottom-0 end-0 px-0 py-0">
+                    <div class="json-alert alert alert-danger transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="json-alert-message mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
+                </div>
+            </section>
+        `;
     }
 
     private htmlFormatter(): string {
@@ -143,6 +181,7 @@ export class Formatters extends HTMLElement {
      * HELPER FUNCTIONS
      */
 
+    // Function to detect JSON patterns
     private isJson(elem: string): boolean {
         try {
             // Use JSON.parse to detect JSON patterns
@@ -154,6 +193,7 @@ export class Formatters extends HTMLElement {
         }
     }
 
+    // Function to minify JSON
     private minifyJson(elem: string): string {
         // Trim the whitespace from JSON using stringify()
         try {
@@ -166,6 +206,7 @@ export class Formatters extends HTMLElement {
         }
     }
 
+    // Function to beautify JSON
     private beautifyJson(elem: string): string {
         try {
             const initJsonValue = JSON.parse(elem);
@@ -177,9 +218,59 @@ export class Formatters extends HTMLElement {
         }
     }
 
+    // Function to beautify XML
+    private beautifyXml(elem: string): string {
+        try {
+            // Hold the xml, indendations and level which we'll use to
+            // manage nesting levels for UI clarity
+            let formattedXml: string = "";
+            let indent: string = "";
+            let nestingLevel: number = 0;
+
+            // Split the XML string first to be later used as nodes
+            // first lead by = https://stackoverflow.com/a/49458964
+            elem.split(/>\s*</).forEach((node) => {
+                // Case if there are empty nodes
+                if (!node.trim()) {
+                    return;
+                }
+
+                // Case if the node is a closing tag
+                if (node.match(/^\/\w/)) {
+                    // Decrease nesting
+                    nestingLevel--;
+                    indent = Array(nestingLevel).fill("  ").join("");
+                    formattedXml += indent + "<" + node + ">\r\n";
+                }
+                // Case if the node is an opening tag
+                else if (node.match(/^\w/)) {
+                    // Increase nesting
+                    nestingLevel++;
+                    indent = Array(nestingLevel).fill("  ").join("");
+                    formattedXml += indent + "<" + node + ">\r\n";
+                }
+                // Case if the node is a self-closing tag
+                else if (node.match(/^\/$/)) {
+                    nestingLevel--;
+                    indent = Array(nestingLevel).fill("  ").join("");
+                    formattedXml += indent + "/>\r\n";
+                }
+            });
+
+            return formattedXml;
+        } catch (error) {
+            console.error("Error beautifying XML:", error);
+            return elem;
+        }
+    }
+
     connectedCallback(): void {
         this.handleNavigation(); // Set up event listeners for navigation buttons
         this.appCalculation.openPage("jsonFormatter", document);
+
+        /**
+         * JSON Section
+         */
 
         const jsonInputs = document.querySelectorAll(`input[name="btnradio"]`) as NodeListOf<HTMLInputElement>;
         jsonInputs.forEach((x) => {
@@ -200,24 +291,32 @@ export class Formatters extends HTMLElement {
 
                 if (x.id === "btnradio1") {
                     jsonFormatBtn.addEventListener("click", () => {
-                        // Use string.raw to interpret every escape sequence to make sure we're getting the input right
-                        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw#description
-                        const jieCopiedString = String.raw`${jieCopied}`;
-                        if (this.isJson(jieCopiedString) == true) {
-                            const finalResult = this.minifyJson(jieCopiedString);
-                            jieOutputArea.value = finalResult;
+                        if (jsonInputElement.value.length >= 1) {
+                            // Use string.raw to interpret every escape sequence to make sure we're getting the input right
+                            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/raw#description
+                            const jieCopiedString = String.raw`${jieCopied}`;
+                            if (this.isJson(jieCopiedString) == true) {
+                                const finalResult = this.minifyJson(jieCopiedString);
+                                jieOutputArea.value = finalResult;
+                            } else {
+                                jieOutputArea.value = "Invalid JSON data."
+                            }
                         } else {
-                            jieOutputArea.value = "Invalid JSON data."
+                            this.appCalculation.displayAlert(".json-alert", ".json-alert-message", "Please provide a value.");
                         }
                     });
                 } else if (x.id === "btnradio2") {
                     jsonFormatBtn.addEventListener("click", () => {
-                        const jieCopiedString = String.raw`${jieCopied}`;
-                        if (this.isJson(jieCopiedString) == true) {
-                            const finalResult = this.beautifyJson(jieCopiedString);
-                            jieOutputArea.value = finalResult;
+                        if (jsonInputElement.value.length >= 1) {
+                            const jieCopiedString = String.raw`${jieCopied}`;
+                            if (this.isJson(jieCopiedString) == true) {
+                                const finalResult = this.beautifyJson(jieCopiedString);
+                                jieOutputArea.value = finalResult;
+                            } else {
+                                jieOutputArea.value = "Invalid JSON data."
+                            }
                         } else {
-                            jieOutputArea.value = "Invalid JSON data."
+                            this.appCalculation.displayAlert(".json-alert", ".json-alert-message", "Please provide a value.");
                         }
                     });
                 }
@@ -238,8 +337,21 @@ export class Formatters extends HTMLElement {
             if (jieOutputArea.value.length >= 1) {
                 this.appCalculation.displaySuccess(jieOutputArea.value);
             } else {
-                this.appCalculation.displayAlert(".json-alert", ".json-alert-message", "Please provide a value.")
+                this.appCalculation.displayAlert(".json-alert", ".json-alert-message", "Please provide a value.");
             }
+        });
+
+        /**
+         * XML Section
+         */
+
+        const xmlDataInput = document.querySelector("#xmlTextAreaInput") as HTMLTextAreaElement;
+        const xmlDataOutput = document.querySelector("#xmlTextAreaOutput") as HTMLTextAreaElement;
+        const formatXmlBtn = document.querySelector("#xmlFormatBtn") as HTMLButtonElement;
+
+        formatXmlBtn.addEventListener("click", () => {
+            const data: string = xmlDataInput.value;
+            xmlDataOutput.value = this.beautifyXml(data);
         });
     }
 }
