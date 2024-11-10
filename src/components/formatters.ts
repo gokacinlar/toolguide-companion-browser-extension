@@ -218,50 +218,47 @@ export class Formatters extends HTMLElement {
         }
     }
 
+    // Function to detect XML patterns
+    private isXml(xmlStringInput: string): boolean {
+        // Parse the input string as XML using DOMParser()
+        // instead of regex: /<([^>]+)>/g
+        const parser = new DOMParser();
+        const parsedDoc = parser.parseFromString(xmlStringInput, "application/xml");
+
+        // Check if the parsed document has a parsererror
+        return !parsedDoc.querySelector("parsererror");
+    }
+
     // Function to beautify XML
     private beautifyXml(elem: string): string {
-        try {
-            // Hold the xml, indendations and level which we'll use to
-            // manage nesting levels for UI clarity
-            let formattedXml: string = "";
-            let indent: string = "";
-            let nestingLevel: number = 0;
-
-            // Split the XML string first to be later used as nodes
-            // first lead by = https://stackoverflow.com/a/49458964
-            elem.split(/>\s*</).forEach((node) => {
-                // Case if there are empty nodes
-                if (!node.trim()) {
-                    return;
-                }
-
-                // Case if the node is a closing tag
-                if (node.match(/^\/\w/)) {
-                    // Decrease nesting
-                    nestingLevel--;
-                    indent = Array(nestingLevel).fill("  ").join("");
-                    formattedXml += indent + "<" + node + ">\r\n";
-                }
-                // Case if the node is an opening tag
-                else if (node.match(/^\w/)) {
-                    // Increase nesting
-                    nestingLevel++;
-                    indent = Array(nestingLevel).fill("  ").join("");
-                    formattedXml += indent + "<" + node + ">\r\n";
-                }
-                // Case if the node is a self-closing tag
-                else if (node.match(/^\/$/)) {
-                    nestingLevel--;
-                    indent = Array(nestingLevel).fill("  ").join("");
-                    formattedXml += indent + "/>\r\n";
-                }
-            });
-
-            return formattedXml;
-        } catch (error) {
-            console.error("Error beautifying XML:", error);
-            return elem;
+        // Use XML parsing library instead of regex
+        // it removes any headache https://stackoverflow.com/a/47317538
+        // not working in firefox: https://stackoverflow.com/questions/51989864/undefined-undefined-error-when-calling-xsltprocessor-prototype-importstylesheet
+        const xmlDoc = new DOMParser().parseFromString(elem, "application/xml");
+        // Detect the parseerror output and display a simple error message instead of whole context
+        const parserError = xmlDoc.querySelector("parsererror");
+        // Return error message if XML parsing fails
+        if (parserError) {
+            return `Invalid XML: ${parserError.textContent?.trim()}`;
         }
+
+        // Create XSLT document for formatting XML
+        const xsltDoc = new DOMParser().parseFromString(`
+        <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+            <xsl:output method="xml" indent="yes"/>
+            <xsl:strip-space elements="*"/>
+            <xsl:template match="node()|@*">
+                <xsl:copy><xsl:apply-templates select="node()|@*"/></xsl:copy>
+            </xsl:template>
+        </xsl:stylesheet>`, "application/xml");
+
+        // Produce the XML document & initialize it
+        const xsltProcessor = new XSLTProcessor();
+        xsltProcessor.importStylesheet(xsltDoc);
+
+        // Apply transformation to beautify the XML
+        const resultDoc = xsltProcessor.transformToDocument(xmlDoc);
+        return new XMLSerializer().serializeToString(resultDoc);
     }
 
     connectedCallback(): void {
@@ -351,7 +348,13 @@ export class Formatters extends HTMLElement {
 
         formatXmlBtn.addEventListener("click", () => {
             const data: string = xmlDataInput.value;
-            xmlDataOutput.value = this.beautifyXml(data);
+            if (this.isXml(data)) {
+                xmlDataOutput.value = this.beautifyXml(data);
+            } else {
+                xmlDataOutput.value = "Invalid XML data.";
+                console.error("Invalid XML data.");
+                return;
+            }
         });
     }
 }
