@@ -137,7 +137,7 @@
         -o-border-radius: 50%;
     }
 
-    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [name="jsonInput"], [name="jsonOutput"]) {
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"]) {
         resize: none !important;
     }
 
@@ -156,9 +156,8 @@
         height: 125px !important;
     }
 
-    /* JSON Formatter */
-    textarea[name="jsonInput"],
-    textarea[name="jsonOutput"] {
+    /* JSON & XML Formatter */
+    textarea[aria-describedby="textarea-value"] {
         height: 250px;
     }
 }
