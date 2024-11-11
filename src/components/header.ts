@@ -54,7 +54,10 @@ class Header extends HTMLElement {
 
     private renderHeaderUpperContent(): string {
         return `
-            <h1 class="${this.texts.h1}">Dev Toolguide</h1>
+            <div class="d-flex flex-row gap-2 align-content-start justify-content-start">
+                <img src="/images/logo/final-icon-without-text-minified.png" class="img-fluid pe-none header-logo" alt="Dev Toolguide Logo">
+                <h1 class="${this.texts.h1}">Dev Toolguide</h1>
+            </div>
         `;
     }
 
