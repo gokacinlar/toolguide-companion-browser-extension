@@ -24,7 +24,7 @@ export class Converters extends HTMLElement {
         this.appCalculation = new AppCalculations();
 
         this.Ids = {
-            unitConverter: "unitConverter",
+            baseConverter: "baseConverter",
         }
 
         const template = this.template.createTemplate(this.unitConverters());
@@ -35,11 +35,11 @@ export class Converters extends HTMLElement {
     public unitConverters(): string {
         return `
             <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit Converter</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base Converter</button></li>
                 <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
             </ul>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderUnitConverter()}</div>
             </div>
         `;
     }
@@ -104,7 +104,7 @@ export class Converters extends HTMLElement {
 
     connectedCallback() {
         this.handleNavigation();
-        this.appCalculation.openPage("unitConverter", document); // Use the optional chaining operator to ensure shadowRoot is not null
+        this.appCalculation.openPage("baseConverter", document);
 
         // Define HTMLElements within the connectedCallback()
         const inputField = document.querySelector(".form-control") as HTMLInputElement;
