@@ -130,7 +130,7 @@ export class Formatters extends HTMLElement {
                     <div id="jiBtns" class="mb-3">
                         <div role="group" aria-label="XML Formatting Button">
                             <div class="w-100">
-                                <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" checked/>
+                                <input type="radio" class="btn-check" name="btnradio-xml" id="btnradio3" autocomplete="off" checked/>
                                 <label class="btn btn-default fs-4 w-100 rounded-pill shadow-md" for="btnradio3">Beautify</label>
                             </div>
                         </div>
@@ -166,15 +166,15 @@ export class Formatters extends HTMLElement {
     }
 
     private htmlFormatter(): string {
-        return `x`;
+        return `Coming soon...`;
     }
 
     private cssFormatter(): string {
-        return `x`;
+        return `Coming soon...`;
     }
 
     private jsFormatter(): string {
-        return `x`;
+        return `Coming soon...`;
     }
 
     /**
