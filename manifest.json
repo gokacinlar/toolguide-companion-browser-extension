@@ -22,19 +22,20 @@
             ]
         }
     ],
-    "permissions": [
-        "scripting",
-        "activeTab"
-    ],
+    "permissions": [],
     "action": {
         "default_popup": "popup/popup.html",
-        "default_title": "Dev Toolguide"
+        "default_title": "Dev Toolguide",
+        "default_icon": {
+            "16": "images/logo/icon_16x16.png",
+            "48": "images/logo/icon_48x48.png"
+        }
     },
     "default_locale": "en",
     "web_accessible_resources": [
         {
             "resources": [
-                "/images/logo.png"
+                "/images/logo/final-icon-without-text-minified.png"
             ],
             "matches": [
                 "<all_urls>"
