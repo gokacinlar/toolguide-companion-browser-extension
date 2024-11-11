@@ -268,9 +268,8 @@ export class AppCalculations extends HTMLElement {
                                 <input id="intTenure" type="number" class="form-control" min="1" aria-label="Tenure of Interest" placeholder="in months" aria-describedby="intRateVal"/>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text">Interest</span>
+                                <span class="input-group-text">Interest (₺ or $)</span>
                                 <input id="intRateOutput" class="form-control" type="number" aria-label="Interest Rate Output" aria-describedby="intRateVal" readonly/>
-                                <span class="input-group-text">%</span>
                             </div>
                             <div class="d-flex flex-row align-content-center justify-content-start gap-2">
                                 <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="calcInt">Calculate</button>
@@ -402,12 +401,10 @@ export class AppCalculations extends HTMLElement {
                 if (keyPressed === "Enter") {
                     const result = this.calculate(calcOutput.value);
                     calcOutput.value = result !== null ? result.toString() : "Error";
-                } else if (keyPressed === "Escape") {
+                } else if (keyPressed === "Escape" || keyPressed === "Delete") {
                     calcOutput.value = "";
                 } else if (validKeys.includes(keyPressed)) {
                     calcOutput.value += keyPressed;
-                } else if (keyPressed === "Delete") {
-                    calcOutput.value = "";
                 } else if (keyPressed === "Backspace") {
                     const stringified = calcOutput.value.toString();
                     // Remove the last index of value string using slice method
@@ -417,6 +414,7 @@ export class AppCalculations extends HTMLElement {
         });
     }
 
+    // Function to do the actual math calculation
     private calculate(expression: string): number | null {
         const numbers: number[] = [];
         const operators: string[] = [];
@@ -700,7 +698,9 @@ export class AppCalculations extends HTMLElement {
 
         const intCalculatorBtn = document.querySelector("#calcInt") as HTMLButtonElement;
         intCalculatorBtn.addEventListener("click", () => {
-
+            if (intLoan.value.length === 0 || intRate.value.length === 0 || intTenure.value.length === 0) {
+                this.displayAlert(".finanical-alert", ".finanical-alert-message", "Please provide values.");
+            }
             this.interestCalculation(intLoan.value, intRate.value, intTenure.value, intDisplay, "months");
         });
 
