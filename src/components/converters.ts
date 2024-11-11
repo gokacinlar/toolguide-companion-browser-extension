@@ -25,6 +25,9 @@ export class Converters extends HTMLElement {
 
         this.Ids = {
             baseConverter: "baseConverter",
+            unitConverter: "unitConverter",
+            currencyConverter: "currencyConverter",
+            timeZoneConverter: "timeZoneConverter"
         }
 
         const template = this.template.createTemplate(this.unitConverters());
@@ -35,11 +38,16 @@ export class Converters extends HTMLElement {
     public unitConverters(): string {
         return `
             <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base Converter</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.anotherPageId}">Another Page</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
+                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time Zone</button></li>
             </ul>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderUnitConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderBaseConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeZoneConverter()}</div>
             </div>
         `;
     }
@@ -58,47 +66,123 @@ export class Converters extends HTMLElement {
         }
     }
 
-    public renderUnitConverter(): string {
+    // Base Converter
+    public renderBaseConverter(): string {
         return `
-        <section id="unitConverter">
-            <div class="uc-container px-1">
-                <div class="uc-inputs input-group mb-3">
-                    <span class="input-group-text" id="typing-conversion">Input</span>
-                    <input type="text" class="form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="typing-conversion" />
+            <section id="baseConverter">
+                <div class="uc-container px-1">
+                    <div class="uc-inputs input-group mb-3">
+                        <span class="input-group-text" id="typing-conversion">Input</span>
+                        <input type="text" class="form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="typing-conversion" />
+                    </div>
+                    <div class="uc-inputs-selection mb-3">
+                        ${this.renderInputSelection()}
+                    </div>
+                    <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
+                        <label for="ucOutputValue" class="form-label">Results will appear below.</label>
+                        <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <button class="btn btn-discovery uc-convert-btn rounded-pill fs-4 mt-3" id="ucConvertBtn">Convert</button>
+                    </div>
                 </div>
-                <div class="uc-inputs-selection mb-3">
-                    ${this.renderInputSelection()}
-                </div>
-                <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
-                    <label for="ucOutputValue" class="form-label">Results will appear below.</label>
-                    <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                    <button class="btn btn-discovery uc-convert-btn rounded-pill fs-4 mt-3" id="ucConvertBtn">Convert</button>
-                </div>
-            </div>
-        </section>
+            </section>
         `;
     }
 
     private renderInputSelection(): string {
         return `
-        <div class="uc-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
-            <div class="uc-child uc-one w-100">
-                <select class="form-select" aria-label="First Value Select" name="uc-value-one" id="ucValueOne" title="First Value">
-                    <option value="Binary">Binary</option>
-                    <option value="Decimal">Decimal</option>
-                    <option value="Octal">Octal</option>
-                    <option value="Hexademical">Hexademical</option>
-                </select>
+            <div class="uc-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="uc-child uc-one w-100">
+                    <label for="uc-value-one">From:</label>
+                    <select class="form-select" aria-label="First Value Select" name="uc-value-one" id="ucValueOne" title="First Value">
+                        <option value="Binary">Binary</option>
+                        <option value="Decimal">Decimal</option>
+                        <option value="Octal">Octal</option>
+                        <option value="Hexademical">Hexademical</option>
+                    </select>
+                </div>
+                <div class="uc-child uc-two w-100">
+                    <label for="uc-value-two">To:</label>
+                    <select class="form-select" aria-label="Second Value Select" name="uc-value-two" id="ucValueTwo" title="Second Value">
+                        <option value="Binary">Binary</option>
+                        <option value="Decimal">Decimal</option>
+                        <option value="Octal">Octal</option>
+                        <option value="Hexademical">Hexademical</option>
+                    </select>
+                </div>
             </div>
-            <div class="uc-child uc-two w-100">
-                <select class="form-select" aria-label="Second Value Select" name="uc-value-two" id="ucValueTwo" title="Second Value">
-                    <option value="Binary">Binary</option>
-                    <option value="Decimal">Decimal</option>
-                    <option value="Octal">Octal</option>
-                    <option value="Hexademical">Hexademical</option>
-                </select>
+        `;
+    }
+
+    // Unit Converter
+    private renderUnitConverter(): string {
+        return `
+            <section id="unitConverter">
+                <div class="uc-container px-1">
+                    <div class="uc-inputs input-group mb-3">
+                        <span class="input-group-text" id="unitConversionInput">Input</span>
+                        <input type="text" class="form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="unitConversionInput"/>
+                    </div>
+                    <div class="uc-inputs-selection mb-3">
+                        ${this.renderUnitConverterInputSelection()}
+                    </div>
+                    <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
+                        <label for="rucOutputValue" class="form-label">Results will appear below.</label>
+                        <textarea class="uc-output-value w-100 form-control fs-3" id="rucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                            <div>
+                                <button class="btn btn-discovery uc-convert-btn rounded-pill fs-4 mt-3" id="rucConvertBtn">Convert</button>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100">
+                                <div class="ruc-alert alert alert-danger transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="ruc-alert-message mb-0"></h6>
+                                </div>
+                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="mb-0">Copied to clipboard.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+        `;
+    }
+
+    private renderUnitConverterInputSelection(): string {
+        return `
+            <div class="ruc-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="uc-child uc-one w-100">
+                    <label for="ruc-value-one">From:</label>
+                    <select class="form-select" aria-label="First Value Select" name="ruc-value-one" id="rucValueOne" title="First Value">
+                        <option value="Millimeter">Millimeter</option>
+                        <option value="Centimeter">Centimeter</option>
+                        <option value="Meter">Meter</option>
+                        <option value="Kilometer">Kilometer</option>
+                    </select>
+                </div>
+                <div class="ruc-child uc-two w-100">
+                    <label for="ruc-value-two">To:</label>
+                    <select class="form-select" aria-label="First Value Select" name="ruc-value-one" id="rucValueOne" title="First Value">
+                        <option value="Millimeter">Millimeter</option>
+                        <option value="Centimeter">Centimeter</option>
+                        <option value="Meter">Meter</option>
+                        <option value="Kilometer">Kilometer</option>
+                    </select>
+                </div>
             </div>
-        </div>
+        `;
+    }
+
+    // Currency Converter
+    private renderCurrencyConverter(): string {
+        return `
+            Coming soon...
+        `;
+    }
+
+    // Timezone Converter
+    private renderTimeZoneConverter(): string {
+        return `
+            Coming soon...
         `;
     }
 
@@ -113,8 +197,8 @@ export class Converters extends HTMLElement {
         const valueOneSelect = document.getElementById("ucValueOne") as HTMLInputElement;
         const valueTwoSelect = document.getElementById("ucValueTwo") as HTMLInputElement;
 
-        // Function to do the conversion
-        function convertValue(inputValue: string, fromUnit: string, toUnit: string): string {
+        // Function to do the conversion in Base Conversion
+        const convertValue = (inputValue: string, fromUnit: string, toUnit: string): string => {
             const dataValues: { [key: string]: number } = {
                 "Binary": 2,
                 "Decimal": 10,
@@ -140,6 +224,52 @@ export class Converters extends HTMLElement {
                 return convertedValue;
             } catch (error) {
                 return `Invalid ${fromUnit} number.`;
+            }
+        }
+
+        // Unit Converter functions
+        // Define HTMLElements of Unit Converter
+        const rucInputField = document.querySelector(".ruc-form-control") as HTMLInputElement;
+        const rucOutputTextarea = document.getElementById("rucOutputValue") as HTMLTextAreaElement;
+        const rucConvertBtn = document.getElementById("rucConvertBtn") as HTMLButtonElement;
+        const rucValueOneSelect = document.getElementById("rucValueOne") as HTMLInputElement;
+        const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLInputElement;
+
+        const unitConvert = (inputValue: number, from: string, to: string) => {
+            if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
+                throw new Error("Input value must be a number.");
+            }
+
+            // Define conversion values to be calculated
+            const conversionFactors: {
+                [unit1: string]: { [unit2: string]: number; };
+            } = {
+                "Millimeter": {
+                    "Centimeter": 0.1,
+                    "Meter": 0.001,
+                    "Kilometer": 0.000001
+                },
+                "Centimeter": {
+                    "Millimeter": 10,
+                    "Meter": 0.01,
+                    "Kilometer": 0.00001
+                },
+                "Meter": {
+                    "Millimeter": 1000,
+                    "Centimeter": 100,
+                    "Kilometer": 0.001
+                },
+                "Kilometer": {
+                    "Millimeter": 1000000,
+                    "Centimeter": 100000,
+                    "Meter": 1000
+                }
+            };
+
+            // Check if the conversion is possible
+            if (!conversionFactors[from] || !conversionFactors[from][to]) {
+                this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Conversion invalid.");
+                throw new Error(`Conversion from ${from} to ${to} is not supported.`);
             }
         }
 
