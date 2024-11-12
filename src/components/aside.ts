@@ -30,6 +30,10 @@ const BUTTON_TEMPLATE: { [key: string]: ButtonTemplate } = {
     webdev: {
         name: "Web Dev.",
         imgSrc: "/images/icons/aside/webdev.svg"
+    },
+    ciphers: {
+        name: "Ciphers",
+        imgSrc: "/images/icons/aside/ciphers.svg"
     }
 }
 

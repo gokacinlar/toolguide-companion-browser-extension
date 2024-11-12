@@ -4,6 +4,7 @@ import { AppCalculations } from "./appCalculations.js";
 import { Converters } from "./converters.js";
 import { Generators } from "./generators.js";
 import { Formatters } from "./formatters.js";
+import { Ciphers } from "./ciphers.js";
 
 interface stylings {
     [key: string]: string;
@@ -29,6 +30,7 @@ export class Main extends HTMLElement {
     private converters: Converters;
     private generators: Generators;
     private formatters: Formatters;
+    private ciphers: Ciphers;
 
     constructor() {
         super();
@@ -37,6 +39,7 @@ export class Main extends HTMLElement {
         this.converters = new Converters();
         this.generators = new Generators();
         this.formatters = new Formatters();
+        this.ciphers = new Ciphers();
 
         const template = this.templateHelper.createTemplate(this.renderContent());
         this.appendChild(template.content.cloneNode(true));
@@ -82,6 +85,11 @@ export class Main extends HTMLElement {
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";
                     dynamicContent.appendChild(this.formatters);
+                    break;
+                case "ciphers":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.ciphers);
                     break;
                 default:
                     dynamicContent.innerHTML = this.renderDefault();
