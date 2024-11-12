@@ -145,7 +145,7 @@
         -o-border-radius: 50%;
     }
 
-    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"]) {
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"], [name="cc-textarea"]) {
         resize: none !important;
     }
 
@@ -167,6 +167,11 @@
     /* JSON & XML Formatter */
     textarea[aria-describedby="textarea-value"] {
         height: 250px;
+    }
+
+    /* Caesars Cipher */
+    textarea[name="cc-textarea"] {
+        height: 60px;
     }
 }
 
