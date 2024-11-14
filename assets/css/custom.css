@@ -76,10 +76,17 @@
 
     /* Header */
 
-    .header-logo {
+    .header-logo,
+    .main-support-icon {
         width: 32px;
         height: 32px;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+
+    .intro-icon {
+        width: 128px;
+        height: auto;
+        filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.2)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
     }
 
     /* Footer */
@@ -145,7 +152,7 @@
         -o-border-radius: 50%;
     }
 
-    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"], [name="cc-textarea"]) {
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"], [name="cc-textarea"], [name="rot13-textarea"]) {
         resize: none !important;
     }
 
@@ -172,6 +179,13 @@
     /* Caesars Cipher */
     textarea[name="cc-textarea"] {
         height: 60px;
+    }
+
+    /* ETC */
+
+    .info-box-icon {
+        width: 24px;
+        height: auto;
     }
 }
 
