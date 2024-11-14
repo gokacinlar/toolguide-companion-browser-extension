@@ -14,7 +14,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	 - Financial Calculator
 - Converters:
 	- Base Number Converter
-	- Unit Converter **(in progress)**
+	- Unit Converter
 	- Currency Calculator **(in progress)**
 	- Time Zone Calculator **(in progress)**
 - Formatters:
@@ -30,7 +30,10 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- Screenshot **(planned)**
 	- Video Capture **(planned)**
 - Web Dev **(planned)**:
-
+- Ciphers:
+	- Caesar's Cipher
+	- ROT-13
+ 
 ## Usage & Installation
 
 Extension will be available upon approval from Chrome, Edge, Firefox & Opera's webstores. However, if you want to use the extension locally, **simply clone the repository** and do;
