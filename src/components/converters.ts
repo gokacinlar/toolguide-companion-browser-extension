@@ -128,12 +128,12 @@ export class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="rucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="rucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
                             <div>
                                 <button class="btn btn-discovery ruc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="rucConvertBtn">Convert</button>
                             </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100">
-                                <div class="ruc-alert alert alert-danger transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                                <div class="ruc-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
                                     <h6 class="ruc-alert-message mb-0"></h6>
                                 </div>
                                 <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
@@ -365,7 +365,7 @@ export class Converters extends HTMLElement {
             const rucIfParsed = parseFloat(rucInputField.value);
             // Check if input is a number or not
             if (isNaN(rucIfParsed)) {
-                this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Invalid input value.");
+                this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Value must be a number.");
                 return;
             }
             // Perform the calculation
