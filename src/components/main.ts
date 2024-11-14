@@ -17,7 +17,7 @@ const STYLINGS: { [key: string]: stylings } = {
     },
     documentStyling: {
         main: "d-flex flex-column align-content-center justify-content-start",
-        mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-1"
+        mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-2"
     },
     ids: {
         dynamicContent: "dynamicContent"
@@ -50,8 +50,14 @@ export class Main extends HTMLElement {
         return `
         <main class="${STYLINGS.documentStyling.main}">
             <div class="${STYLINGS.documentStyling.mainPlaceholder}">
+                <img class="img-fluid intro-icon" src="/images/logo/final-icon-without-text.png" alt="App Icon Logo">
                 <h1>Dev Toolguide</h1>
                 <p>Your browser companion to accomplish many handy stuff!</p>
+                <div class="main-support-section">
+                    <a href="https://buymeacoffee.com/gokacinlar" class="btn btn-success d-flex flex-row gap-2 align-items-center justify-content-center rounded-pill fs-3 px-2 py-2 shadow-md" role="button" title="Redirect to Support Page" target="_blank">
+                        <img src="/images/icons/support.svg" class="img-fluid main-support-icon" alt="Support this project!"><span>Support this project!</span>
+                    </a>
+                </div>
             </div>
             <div id="${STYLINGS.ids.dynamicContent}"></div>
         </main>
