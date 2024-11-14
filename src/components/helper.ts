@@ -9,6 +9,118 @@ export class Template {
     }
 }
 
+export const BASIC_TEMPLATE = {
+    classes: {
+        ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
+        button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
+        componentElement: "component-tab-content-element py-2 my-2",
+        calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
+        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
+    }
+}
+
+/**
+ * MAIN
+ */
+
+export const STYLINGS: {
+    [key: string]: { [value: string]: string; };
+} = {
+    welcome: {
+        div: "d-flex flex-column align-items-center justify-content-center gap-2 px-4 py-4",
+        imgPath: "/images/icons/robot.svg"
+    },
+    documentStyling: {
+        main: "d-flex flex-column align-content-center justify-content-start",
+        mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-2"
+    },
+    ids: {
+        dynamicContent: "dynamicContent"
+    }
+}
+
+/**
+ * ASIDE
+ */
+
+export const BUTTON_TEMPLATE: {
+    [key: string]: { [value: string]: string; };
+} = {
+    calculation: {
+        name: "Calculators",
+        imgSrc: "/images/icons/aside/calculators.svg"
+    },
+    converters: {
+        name: "Converters",
+        imgSrc: "/images/icons/aside/converters.svg"
+    },
+    formatters: {
+        name: "Formatters",
+        imgSrc: "/images/icons/aside/formatters.svg"
+    },
+    generators: {
+        name: "Generators",
+        imgSrc: "/images/icons/aside/generators.svg"
+    },
+    utilities: {
+        name: "Utilities",
+        imgSrc: "/images/icons/aside/utilities.svg"
+    },
+    webdev: {
+        name: "Web Dev.",
+        imgSrc: "/images/icons/aside/webdev.svg"
+    },
+    ciphers: {
+        name: "Ciphers",
+        imgSrc: "/images/icons/aside/ciphers.svg"
+    }
+}
+
+/**
+ * FOOTER
+ */
+
+export const IMAGE_SOURCES: {
+    [key: string]: { [value: string]: string; };
+} = {
+    source: {
+        src: "/images/icons/website.svg",
+        ref: ""
+    },
+    github: {
+        src: "/images/icons/github.svg",
+        ref: "https://github.com/gokacinlar/dev-toolguide"
+    },
+    webstore: {
+        src: "/images/icons/chrome-webstore.svg",
+        ref: ""
+    },
+    support: {
+        src: "/images/icons/support.svg",
+        ref: "https://buymeacoffee.com/gokacinlar"
+    },
+    auxiliary: {
+        version: "/images/icons/gear.svg"
+    }
+};
+
+export const IMAGE_SOURCES_ALTERNATIVES: {
+    [key: string]: { [value: string]: string; };
+} = {
+    firefox: {
+        src: "/images/icons/firefox-webstore.svg",
+        ref: "https://dervisoksuzoglu.net"
+    },
+    opera: {
+        src: "/images/icons/opera-webstore.svg",
+        ref: ""
+    },
+    edge: {
+        src: "/images/icons/edge-webstore.svg",
+        ref: ""
+    }
+}
+
 // Function to get JSON data to be appended into DOM using REST
 
 /*

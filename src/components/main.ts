@@ -1,28 +1,11 @@
 // main.ts
-import { Template } from "./helper.js";
+import { Template, STYLINGS } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
 import { Converters } from "./converters.js";
 import { Generators } from "./generators.js";
 import { Formatters } from "./formatters.js";
 import { Ciphers } from "./ciphers.js";
-
-interface stylings {
-    [key: string]: string;
-}
-
-const STYLINGS: { [key: string]: stylings } = {
-    welcome: {
-        div: "d-flex flex-column align-items-center justify-content-center gap-2 px-4 py-4",
-        imgPath: "/images/icons/robot.svg"
-    },
-    documentStyling: {
-        main: "d-flex flex-column align-content-center justify-content-start",
-        mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-2"
-    },
-    ids: {
-        dynamicContent: "dynamicContent"
-    }
-}
+import { WebDev } from "./webdev.js";
 
 export class Main extends HTMLElement {
     private templateHelper: Template;
@@ -31,6 +14,7 @@ export class Main extends HTMLElement {
     private generators: Generators;
     private formatters: Formatters;
     private ciphers: Ciphers;
+    private webdev: WebDev;
 
     constructor() {
         super();
@@ -40,6 +24,7 @@ export class Main extends HTMLElement {
         this.generators = new Generators();
         this.formatters = new Formatters();
         this.ciphers = new Ciphers();
+        this.webdev = new WebDev();
 
         const template = this.templateHelper.createTemplate(this.renderContent());
         this.appendChild(template.content.cloneNode(true));
@@ -96,6 +81,11 @@ export class Main extends HTMLElement {
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";
                     dynamicContent.appendChild(this.ciphers);
+                    break;
+                case "webdev":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.webdev);
                     break;
                 default:
                     dynamicContent.innerHTML = this.renderDefault();

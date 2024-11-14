@@ -1,17 +1,5 @@
-import { Template } from "./helper.js";
+import { Template, BASIC_TEMPLATE } from "./helper.js";
 import { AppCalculations } from "./appCalculations.js";
-
-interface BasicTemplate { [key: string]: string }
-
-const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
-    classes: {
-        ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-        button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
-        componentElement: "component-tab-content-element py-2 my-2",
-        calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
-        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
-    }
-}
 
 export class Converters extends HTMLElement {
     private template: Template;

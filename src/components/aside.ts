@@ -1,41 +1,5 @@
-import { Template } from "./helper.js";
+import { Template, BUTTON_TEMPLATE } from "./helper.js";
 import { Main } from "./main.js";
-
-interface ButtonTemplate {
-    name: string;
-    imgSrc: string;
-}
-
-const BUTTON_TEMPLATE: { [key: string]: ButtonTemplate } = {
-    calculation: {
-        name: "Calculators",
-        imgSrc: "/images/icons/aside/calculators.svg"
-    },
-    converters: {
-        name: "Converters",
-        imgSrc: "/images/icons/aside/converters.svg"
-    },
-    formatters: {
-        name: "Formatters",
-        imgSrc: "/images/icons/aside/formatters.svg"
-    },
-    generators: {
-        name: "Generators",
-        imgSrc: "/images/icons/aside/generators.svg"
-    },
-    utilities: {
-        name: "Utilities",
-        imgSrc: "/images/icons/aside/utilities.svg"
-    },
-    webdev: {
-        name: "Web Dev.",
-        imgSrc: "/images/icons/aside/webdev.svg"
-    },
-    ciphers: {
-        name: "Ciphers",
-        imgSrc: "/images/icons/aside/ciphers.svg"
-    }
-}
 
 class Aside extends HTMLElement {
     private documentStylings: {

@@ -1,46 +1,8 @@
-import { Template } from "./helper.js";
+import { Template, IMAGE_SOURCES, IMAGE_SOURCES_ALTERNATIVES } from "./helper.js";
 
 // Define an interface for the structure of nested objects within imgSources
 interface ImageSource {
     [key: string]: string;
-}
-
-// Use Constants for image sources for better readability and maintainability
-const IMAGE_SOURCES: { [key: string]: ImageSource } = {
-    source: {
-        src: "/images/icons/website.svg",
-        ref: ""
-    },
-    github: {
-        src: "/images/icons/github.svg",
-        ref: "https://github.com/gokacinlar/dev-toolguide"
-    },
-    webstore: {
-        src: "/images/icons/chrome-webstore.svg",
-        ref: ""
-    },
-    support: {
-        src: "/images/icons/support.svg",
-        ref: "https://buymeacoffee.com/gokacinlar"
-    },
-    auxiliary: {
-        version: "/images/icons/gear.svg"
-    }
-};
-
-const IMAGE_SOURCES_ALTERNATIVES: { [key: string]: ImageSource } = {
-    firefox: {
-        src: "/images/icons/firefox-webstore.svg",
-        ref: "https://dervisoksuzoglu.net"
-    },
-    opera: {
-        src: "/images/icons/opera-webstore.svg",
-        ref: ""
-    },
-    edge: {
-        src: "/images/icons/edge-webstore.svg",
-        ref: ""
-    }
 }
 
 const STYLES = {

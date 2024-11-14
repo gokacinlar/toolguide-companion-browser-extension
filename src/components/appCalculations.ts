@@ -1,16 +1,4 @@
-import { Template } from "./helper.js";
-
-interface BasicTemplate { [key: string]: string }
-
-const BASIC_TEMPLATE: { [key: string]: BasicTemplate } = {
-    classes: {
-        ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-        button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
-        componentElement: "component-tab-content-element py-2 my-2",
-        calcButtons: "calc-button btn btn-primary rounded-pill fs-1 w-100 shadow-sm px-3 py-3",
-        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-1 fw-medium w-100 shadow-sm px-3 py-3"
-    }
-}
+import { Template, BASIC_TEMPLATE } from "./helper.js";
 
 export class AppCalculations extends HTMLElement {
     private listenersSetUp: boolean = false; // Set flag for event listeners in the basicCalculator()
