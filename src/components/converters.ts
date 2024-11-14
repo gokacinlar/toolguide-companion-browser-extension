@@ -81,7 +81,7 @@ export class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="ucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <button class="btn btn-discovery uc-convert-btn rounded-pill fs-4 mt-3" id="ucConvertBtn">Convert</button>
+                        <button class="btn btn-discovery uc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="ucConvertBtn">Convert</button>
                     </div>
                 </div>
             </section>
@@ -130,7 +130,7 @@ export class Converters extends HTMLElement {
                         <textarea class="uc-output-value w-100 form-control fs-3" id="rucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
                         <div class="alerts d-flex flex-row align-content-center justify-content-between">
                             <div>
-                                <button class="btn btn-discovery ruc-convert-btn rounded-pill fs-4 mt-3" id="rucConvertBtn">Convert</button>
+                                <button class="btn btn-discovery ruc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="rucConvertBtn">Convert</button>
                             </div>
                             <div class="d-flex flex-row align-content-center justify-content-center w-100">
                                 <div class="ruc-alert alert alert-danger transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
@@ -157,6 +157,10 @@ export class Converters extends HTMLElement {
                         <option value="Centimeter">Centimeter</option>
                         <option value="Meter">Meter</option>
                         <option value="Kilometer">Kilometer</option>
+                        <option value="Inch">Inch</option>
+                        <option value="Feet">Feet</option>
+                        <option value="Yard">Yard</option>
+                        <option value="Mile">Mile</option>
                     </select>
                 </div>
                 <div class="ruc-child uc-two w-100">
@@ -166,6 +170,10 @@ export class Converters extends HTMLElement {
                         <option value="Centimeter">Centimeter</option>
                         <option value="Meter">Meter</option>
                         <option value="Kilometer">Kilometer</option>
+                        <option value="Inch">Inch</option>
+                        <option value="Feet">Feet</option>
+                        <option value="Yard">Yard</option>
+                        <option value="Mile">Mile</option>
                     </select>
                 </div>
             </div>
@@ -174,6 +182,7 @@ export class Converters extends HTMLElement {
 
     private unitConvert = (inputValue: number, from: string, to: string): number => {
         if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
+            this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Input value must be a number.");
             throw new Error("Input value must be a number.");
         }
 
@@ -184,22 +193,74 @@ export class Converters extends HTMLElement {
             "Millimeter": {
                 "Centimeter": 0.1,
                 "Meter": 0.001,
-                "Kilometer": 0.000001
+                "Kilometer": 0.000001,
+                "Inch": 0.0393701,
+                "Feet": 0.00328084,
+                "Yard": 0.00109361,
+                "Mile": 6.2137e-7
             },
             "Centimeter": {
                 "Millimeter": 10,
                 "Meter": 0.01,
-                "Kilometer": 0.00001
+                "Kilometer": 0.00001,
+                "Inch": 0.393701,
+                "Feet": 0.0328084,
+                "Yard": 0.0109361,
+                "Mile": 6.2137e-6
             },
             "Meter": {
                 "Millimeter": 1000,
                 "Centimeter": 100,
-                "Kilometer": 0.001
+                "Kilometer": 0.001,
+                "Inch": 39.3701,
+                "Feet": 3.28084,
+                "Yard": 1.09361,
+                "Mile": 0.000621371
             },
             "Kilometer": {
                 "Millimeter": 1000000,
                 "Centimeter": 100000,
-                "Meter": 1000
+                "Meter": 1000,
+                "Inch": 39370.1,
+                "Feet": 3280.84,
+                "Yard": 1093.61,
+                "Mile": 0.621371
+            },
+            "Inch": {
+                "Millimeter": 25.4,
+                "Centimeter": 2.54,
+                "Meter": 0.0254,
+                "Kilometer": 0.0000254,
+                "Feet": 0.0833333,
+                "Yard": 0.0277778,
+                "Mile": 1.5783e-5
+            },
+            "Feet": {
+                "Millimeter": 304.8,
+                "Centimeter": 30.48,
+                "Meter": 0.3048,
+                "Kilometer": 0.0003048,
+                "Inch": 12,
+                "Yard": 0.333333,
+                "Mile": 0.000189394
+            },
+            "Yard": {
+                "Millimeter": 914.4,
+                "Centimeter": 91.44,
+                "Meter": 0.9144,
+                "Kilometer": 0.0009144,
+                "Inch": 36,
+                "Feet": 3,
+                "Mile": 0.000568182
+            },
+            "Mile": {
+                "Millimeter": 1.609e+6,
+                "Centimeter": 160934,
+                "Meter": 1609.34,
+                "Kilometer": 1.60934,
+                "Inch": 63360,
+                "Feet": 5280,
+                "Yard": 1760
             }
         };
 
