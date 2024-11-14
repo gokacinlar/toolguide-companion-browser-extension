@@ -33,7 +33,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Ciphers:
 	- Caesar's Cipher
 	- ROT-13
- 
+
 ## Usage & Installation
 
 Extension will be available upon approval from Chrome, Edge, Firefox & Opera's webstores. However, if you want to use the extension locally, **simply clone the repository** and do;
