@@ -1,7 +1,7 @@
 import { Template, BASIC_TEMPLATE } from "./helper.js";
-import { AppCalculations } from "./appCalculations.js";
+import AppCalculations from "./appCalculations.js";
 
-export class Converters extends HTMLElement {
+export default class Converters extends HTMLElement {
     private template: Template;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };

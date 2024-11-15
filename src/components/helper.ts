@@ -12,10 +12,10 @@ export class Template {
 export const BASIC_TEMPLATE = {
     classes: {
         ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
-        button: "component-tab-nav-button btn btn-discovery w-100 fs-5 shadow-md rounded-3",
+        button: "component-tab-nav-button btn btn-discovery w-100 fs-4 shadow-lg rounded-3",
         componentElement: "component-tab-content-element py-2 my-2",
-        calcButtons: "calc-button btn btn-primary rounded-pill fs-4 w-100 shadow-sm",
-        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-4 fw-medium w-100 shadow-sm"
+        calcButtons: "calc-button btn btn-primary rounded-pill fs-3 w-100 shadow-md px-3 py-3",
+        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-3 fw-medium w-100 shadow-lg px-3 py-3"
     }
 }
 

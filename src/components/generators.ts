@@ -1,5 +1,5 @@
 import { Template, BASIC_TEMPLATE } from "./helper.js";
-import { AppCalculations } from "./appCalculations.js";
+import AppCalculations from "./appCalculations.js";
 
 const STYLES: {
     [key: string]: { [value: string]: string; };
@@ -9,7 +9,7 @@ const STYLES: {
     }
 }
 
-export class Generators extends HTMLElement {
+export default class Generators extends HTMLElement {
     private template: Template;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };

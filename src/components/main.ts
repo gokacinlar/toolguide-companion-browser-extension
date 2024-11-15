@@ -1,11 +1,11 @@
 // main.ts
 import { Template, STYLINGS } from "./helper.js";
-import { AppCalculations } from "./appCalculations.js";
-import { Converters } from "./converters.js";
-import { Generators } from "./generators.js";
-import { Formatters } from "./formatters.js";
-import { Ciphers } from "./ciphers.js";
-import { WebDev } from "./webdev.js";
+import Converters from "./converters.js";
+import Generators from "./generators.js";
+import AppCalculations from "./appCalculations.js";
+import Formatters from "./formatters.js";
+import Ciphers from "./ciphers.js";
+import WebDev from "./webdev.js";
 
 export class Main extends HTMLElement {
     private templateHelper: Template;
