@@ -1,6 +1,6 @@
 import { Template, BASIC_TEMPLATE } from "./helper.js";
 
-export class AppCalculations extends HTMLElement {
+export default class AppCalculations extends HTMLElement {
     private listenersSetUp: boolean = false; // Set flag for event listeners in the basicCalculator()
     private template: Template;
     private Ids: { [key: string]: string }
@@ -101,7 +101,7 @@ export class AppCalculations extends HTMLElement {
                     <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-opacity-25 shadow-lg fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
                     </div>
                     <div class="col-2">
-                        <button type="button" data-value="AC" data-action="clear" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">AC</button>
+                        <button type="button" data-value="AC" data-action="clear" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Clear">AC</button>
                     </div>
                 </div>
                 <div class="d-flex flex-column gap-3">
@@ -116,7 +116,7 @@ export class AppCalculations extends HTMLElement {
                             <button type="button" data-value="9" class="${BASIC_TEMPLATE.classes.calcButtons}">9</button>
                         </div>
                         <div class="col-2">
-                            <button type="button" data-value="/" data-action="divide" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">/</button>
+                            <button type="button" data-value="/" data-action="divide" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Divide">/</button>
                         </div>
                     </div>
                     <div class="row justify-content-start">
@@ -130,7 +130,7 @@ export class AppCalculations extends HTMLElement {
                             <button type="button" data-value="6" class="${BASIC_TEMPLATE.classes.calcButtons}">6</button>
                         </div>
                         <div class="col-2">
-                            <button type="button" data-value="*" data-action="multiply" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">*</button>
+                            <button type="button" data-value="*" data-action="multiply" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Multiply">*</button>
                         </div>
                     </div>
                     <div class="row justify-content-start">
@@ -144,7 +144,7 @@ export class AppCalculations extends HTMLElement {
                             <button type="button" data-value="3" class="${BASIC_TEMPLATE.classes.calcButtons}">3</button>
                         </div>
                         <div class="col-2">
-                            <button type="button" data-value="-" data-action="subtract" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">-</button>
+                            <button type="button" data-value="-" data-action="subtract" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Subtract">-</button>
                         </div>
                     </div>
                     <div class="row justify-content-start">
@@ -158,7 +158,7 @@ export class AppCalculations extends HTMLElement {
                             <button type="button" data-value="=" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">=</button>
                         </div>
                         <div class="col-2">
-                            <button type="button" data-value="+" data-action="add" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}">+</button>
+                            <button type="button" data-value="+" data-action="add" class="${BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Add">+</button>
                         </div>
                     </div>
                 </div>
