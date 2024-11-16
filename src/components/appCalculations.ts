@@ -592,7 +592,7 @@ export default class AppCalculations extends HTMLElement {
         getRgb.addEventListener("click", () => {
             if (r && g && b) {
                 if (!r.value || !g.value || !b.value) {
-                    this.displayAlert(".color-code-alert", ".color-code-alert-message", "Please provide a value!");
+                    this.displayAlert(".color-code-alert", ".color-code-alert-message", "Please provide a value.");
                 } else {
                     // Parse the string to integer to make it viable as an input for
                     // rgbToHex function
