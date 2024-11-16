@@ -1,6 +1,11 @@
 import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
+// Define conversionFactor interface for conversionFactors arg
+interface ConversionFactor {
+    [unit1: string]: { [unit2: string]: number };
+}
+
 export default class Converters extends HTMLElement {
     private template: Template;
     private overflowing: Overflowing;
@@ -176,99 +181,155 @@ export default class Converters extends HTMLElement {
             </div>
         `;
     }
+    // Define a general object to hold the unitConversion values
+    private unitConversionFactors: ConversionFactor = {
+        "Millimeter": {
+            "Centimeter": 0.1,
+            "Meter": 0.001,
+            "Kilometer": 0.000001,
+            "Inch": 0.0393701,
+            "Feet": 0.00328084,
+            "Yard": 0.00109361,
+            "Mile": 6.2137e-7
+        },
+        "Centimeter": {
+            "Millimeter": 10,
+            "Meter": 0.01,
+            "Kilometer": 0.00001,
+            "Inch": 0.393701,
+            "Feet": 0.0328084,
+            "Yard": 0.0109361,
+            "Mile": 6.2137e-6
+        },
+        "Meter": {
+            "Millimeter": 1000,
+            "Centimeter": 100,
+            "Kilometer": 0.001,
+            "Inch": 39.3701,
+            "Feet": 3.28084,
+            "Yard": 1.09361,
+            "Mile": 0.000621371
+        },
+        "Kilometer": {
+            "Millimeter": 1000000,
+            "Centimeter": 100000,
+            "Meter": 1000,
+            "Inch": 39370.1,
+            "Feet": 3280.84,
+            "Yard": 1093.61,
+            "Mile": 0.621371
+        },
+        "Inch": {
+            "Millimeter": 25.4,
+            "Centimeter": 2.54,
+            "Meter": 0.0254,
+            "Kilometer": 0.0000254,
+            "Feet": 0.0833333,
+            "Yard": 0.0277778,
+            "Mile": 1.5783e-5
+        },
+        "Feet": {
+            "Millimeter": 304.8,
+            "Centimeter": 30.48,
+            "Meter": 0.3048,
+            "Kilometer": 0.0003048,
+            "Inch": 12,
+            "Yard": 0.333333,
+            "Mile": 0.000189394
+        },
+        "Yard": {
+            "Millimeter": 914.4,
+            "Centimeter": 91.44,
+            "Meter": 0.9144,
+            "Kilometer": 0.0009144,
+            "Inch": 36,
+            "Feet": 3,
+            "Mile": 0.000568182
+        },
+        "Mile": {
+            "Millimeter": 1.609e+6,
+            "Centimeter": 160934,
+            "Meter": 1609.34,
+            "Kilometer": 1.60934,
+            "Inch": 63360,
+            "Feet": 5280,
+            "Yard": 1760
+        }
+    }
 
-    private unitConvert = (inputValue: number, from: string, to: string): number => {
+    // Data storage conversion values
+    private dataStorageConversionFactors: ConversionFactor = {
+        "Bits": {
+            "Bytes": 0.125,
+            "Kilobytes": 0.000125,
+            "Megabytes": 0.000000125,
+            "Gigabytes": 0.000000000125,
+            "Terabytes": 0.000000000000125,
+            "Petabytes": 0.000000000000000125
+        },
+        "Bytes": {
+            "Bits": 8,
+            "Kilobytes": 0.001,
+            "Megabytes": 0.000001,
+            "Gigabytes": 0.000000001,
+            "Terabytes": 0.000000000001,
+            "Petabytes": 0.000000000000001
+        },
+        "Kilobytes": {
+            "Bits": 8192,
+            "Bytes": 1024,
+            "Megabytes": 0.001,
+            "Gigabytes": 0.000001,
+            "Terabytes": 0.000000001,
+            "Petabytes": 0.000000000001
+        },
+        "Megabytes": {
+            "Bits": 8388608,
+            "Bytes": 1048576,
+            "Kilobytes": 1024,
+            "Gigabytes": 0.001,
+            "Terabytes": 0.000001,
+            "Petabytes": 0.000000001
+        },
+        "Gigabytes": {
+            "Bits": 8589934592,
+            "Bytes": 1073741824,
+            "Kilobytes": 1048576,
+            "Megabytes": 1024,
+            "Terabytes": 0.001,
+            "Petabytes": 0.000001
+        },
+        "Terabytes": {
+            "Bits": 8796093022208,
+            "Bytes": 1099511627776,
+            "Kilobytes": 1073741824,
+            "Megabytes": 1048576,
+            "Gigabytes": 1024,
+            "Petabytes": 0.001
+        },
+        "Petabytes": {
+            "Bits": 9007199254740992,
+            "Bytes": 1125899906842624,
+            "Kilobytes": 1099511627776,
+            "Megabytes": 1073741824,
+            "Gigabytes": 1048576,
+            "Terabytes": 1024
+        }
+    };
+
+    private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: ConversionFactor): number => {
         if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
             this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Input value must be a number.");
             throw new Error("Input value must be a number.");
         }
 
-        // Define conversion values as base points to let calculation be performed
-        const conversionFactors: {
-            [unit1: string]: { [unit2: string]: number; };
-        } = {
-            "Millimeter": {
-                "Centimeter": 0.1,
-                "Meter": 0.001,
-                "Kilometer": 0.000001,
-                "Inch": 0.0393701,
-                "Feet": 0.00328084,
-                "Yard": 0.00109361,
-                "Mile": 6.2137e-7
-            },
-            "Centimeter": {
-                "Millimeter": 10,
-                "Meter": 0.01,
-                "Kilometer": 0.00001,
-                "Inch": 0.393701,
-                "Feet": 0.0328084,
-                "Yard": 0.0109361,
-                "Mile": 6.2137e-6
-            },
-            "Meter": {
-                "Millimeter": 1000,
-                "Centimeter": 100,
-                "Kilometer": 0.001,
-                "Inch": 39.3701,
-                "Feet": 3.28084,
-                "Yard": 1.09361,
-                "Mile": 0.000621371
-            },
-            "Kilometer": {
-                "Millimeter": 1000000,
-                "Centimeter": 100000,
-                "Meter": 1000,
-                "Inch": 39370.1,
-                "Feet": 3280.84,
-                "Yard": 1093.61,
-                "Mile": 0.621371
-            },
-            "Inch": {
-                "Millimeter": 25.4,
-                "Centimeter": 2.54,
-                "Meter": 0.0254,
-                "Kilometer": 0.0000254,
-                "Feet": 0.0833333,
-                "Yard": 0.0277778,
-                "Mile": 1.5783e-5
-            },
-            "Feet": {
-                "Millimeter": 304.8,
-                "Centimeter": 30.48,
-                "Meter": 0.3048,
-                "Kilometer": 0.0003048,
-                "Inch": 12,
-                "Yard": 0.333333,
-                "Mile": 0.000189394
-            },
-            "Yard": {
-                "Millimeter": 914.4,
-                "Centimeter": 91.44,
-                "Meter": 0.9144,
-                "Kilometer": 0.0009144,
-                "Inch": 36,
-                "Feet": 3,
-                "Mile": 0.000568182
-            },
-            "Mile": {
-                "Millimeter": 1.609e+6,
-                "Centimeter": 160934,
-                "Meter": 1609.34,
-                "Kilometer": 1.60934,
-                "Inch": 63360,
-                "Feet": 5280,
-                "Yard": 1760
-            }
-        };
-
-        // Check if the conversion is possible
         if (!conversionFactors[from] || !conversionFactors[from][to]) {
             this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Conversion invalid.");
             throw new Error("Conversion invalid.");
         }
 
-        const convertedValue = inputValue * conversionFactors[from][to];
-        return convertedValue;
+        // Multiply the input with corresponding "from" > "to" unit with using object keys, values
+        return inputValue * conversionFactors[from][to];
     }
 
     // Data Converter
@@ -281,14 +342,14 @@ export default class Converters extends HTMLElement {
                         <input type="text" class="form-control datac-form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="unitConversionInput"/>
                     </div>
                     <div class="datac-inputs-selection mb-3">
-                        ${this.renderDataConverter()}
+                        ${this.renderDataConverterOptions()}
                     </div>
                     <div class="datac-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="datacOutputValue" class="form-label">Results will appear below.</label>
-                        <textarea class="datac-output-value w-100 form-control fs-3" id="dataOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <textarea class="datac-output-value w-100 form-control fs-3" id="datacOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
                         <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
                             <div>
-                                <button class="btn btn-discovery datac-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="dataConvertBtn">Convert</button>
+                                <button class="btn btn-discovery datac-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="datacConvertBtn">Convert</button>
                             </div>
                             <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
                                 <div class="datac-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
@@ -305,7 +366,7 @@ export default class Converters extends HTMLElement {
         `;
     }
 
-    private renderDataConverter(): string {
+    private renderDataConverterOptions(): string {
         return `
             <div class="datac-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
                 <div class="datac-child uc-one w-100">
@@ -430,8 +491,6 @@ export default class Converters extends HTMLElement {
         const rucInputField = document.querySelector(".ruc-form-control") as HTMLInputElement;
         const rucOutputTextarea = document.getElementById("rucOutputValue") as HTMLTextAreaElement;
         const rucConvertBtn = document.getElementById("rucConvertBtn") as HTMLButtonElement;
-        const rucValueOneSelect = document.getElementById("rucValueOne") as HTMLInputElement;
-        const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLInputElement;
 
         rucConvertBtn.addEventListener("click", () => {
             const rucIfParsed = parseFloat(rucInputField.value);
@@ -440,9 +499,31 @@ export default class Converters extends HTMLElement {
                 this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Value must be a number.");
                 return;
             }
+            const rucValueOneSelect = document.getElementById("rucValueOne") as HTMLInputElement;
+            const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLInputElement;
+
             // Perform the calculation
-            const convertedValue = this.unitConvert(rucIfParsed, rucValueOneSelect.value, rucValueTwoSelect.value);
+            const convertedValue = this.universalUnitConversionFromConversionFactors(rucIfParsed, rucValueOneSelect.value, rucValueTwoSelect.value, this.unitConversionFactors);
             const finalResult = rucOutputTextarea.value = convertedValue.toString();
+        });
+
+        // Data Storage Converter
+        const datacInputField = document.querySelector(".datac-form-control") as HTMLInputElement;
+        const datacOutputTextarea = document.getElementById("datacOutputValue") as HTMLTextAreaElement;
+        const datacConvertBtn = document.getElementById("datacConvertBtn") as HTMLButtonElement;
+
+        datacConvertBtn.addEventListener("click", () => {
+            const datacIfParsed = parseFloat(datacInputField.value)
+            if (isNaN(datacIfParsed)) {
+                this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Value must be a number.");
+                return;
+            }
+            const datacValueOneSelect = document.getElementById("datacValueOne") as HTMLInputElement;
+            const datacValueTwoSelect = document.getElementById("datacValueTwo") as HTMLInputElement;
+
+            // Perform the calculation
+            const convertedValue = this.universalUnitConversionFromConversionFactors(datacIfParsed, datacValueOneSelect.value, datacValueTwoSelect.value, this.dataStorageConversionFactors);
+            const finalResult = datacOutputTextarea.value = convertedValue.toString();
         });
     }
 }
