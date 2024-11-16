@@ -27,7 +27,7 @@
 @property --body-width {
     syntax: "<length>";
     inherits: false;
-    initial-value: 768px;
+    initial-value: 800px;
 }
 
 @property --body-height {
@@ -54,6 +54,7 @@
             Use "min-width" instead. 
         */
         min-width: var(--body-width);
+        max-width: var(--body-width);
         height: var(--body-height);
     }
 
@@ -87,6 +88,25 @@
         width: 128px;
         height: auto;
         filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.2)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+    }
+
+    /* Tab Switching */
+
+    .app-calc-ul {
+        max-width: 586px !important;
+        overflow: scroll;
+        overflow-x: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .component-tab-nav-button {
+        text-wrap: nowrap !important;
+    }
+
+    .tab-nav-icon {
+        width: 32px;
+        height: auto;
     }
 
     /* Footer */

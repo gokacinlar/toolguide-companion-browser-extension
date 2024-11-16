@@ -1,14 +1,16 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Formatters extends HTMLElement {
     private template: Template;
+    private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string }
 
     constructor() {
         super();
         this.template = new Template();
+        this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
 
         this.Ids = {
@@ -39,13 +41,15 @@ export default class Formatters extends HTMLElement {
 
     private formattersTemplate(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.jsonFormatter}">JSON</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.xmlFormatter}">XML</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.htmlFormatter}">HTML</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.cssFormatter}">CSS</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.javaScriptFormatter}">JavaScript</button></li>
-            </ul>
+            <div class="position-relative formatters-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} formatters-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.jsonFormatter}">JSON</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.xmlFormatter}">XML</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.htmlFormatter}">HTML</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.cssFormatter}">CSS</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.javaScriptFormatter}">JavaScript</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="jsonFormatter" style="display: none;">
                     ${this.jsonFormatter()}
@@ -252,6 +256,9 @@ export default class Formatters extends HTMLElement {
     connectedCallback(): void {
         this.handleNavigation(); // Set up event listeners for navigation buttons
         this.appCalculation.openPage("jsonFormatter", document);
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".formatters-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".formatters-ulist");
 
         /**
          * JSON Section

@@ -1,14 +1,15 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 
 export default class AppCalculations extends HTMLElement {
     private listenersSetUp: boolean = false; // Set flag for event listeners in the basicCalculator()
     private template: Template;
+    private overflowing: Overflowing;
     private Ids: { [key: string]: string }
 
     constructor() {
         super();
         this.template = new Template();
-
+        this.overflowing = new Overflowing();
         this.Ids = {
             basicCalculator: "basicCalculator",
             colorCodeCalculator: "colorCodeCalculator",
@@ -22,11 +23,13 @@ export default class AppCalculations extends HTMLElement {
     // Render the main template
     public appCalculations(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorCodeCalculator}">Color Code</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.financialCalculator}">Financial</button></li>
-            </ul>
+            <div class="position-relative app-calc-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} app-calculation-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.basicCalculator}">Basic Calculator</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorCodeCalculator}">Color Code</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.financialCalculator}">Financial</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="basicCalculator" style="display: none;">
                     ${this.basicCalculator()}
@@ -538,6 +541,9 @@ export default class AppCalculations extends HTMLElement {
             this.keyPressDetection();
             this.listenersSetUp = true;
         }
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".app-calc-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".app-calculation-ulist");
 
         /**
          * CLASS ACTIONS ARE CALLED HERE

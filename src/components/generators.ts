@@ -1,4 +1,4 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
 const STYLES: {
@@ -11,14 +11,15 @@ const STYLES: {
 
 export default class Generators extends HTMLElement {
     private template: Template;
+    private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
 
     constructor() {
         super();
         this.template = new Template();
+        this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
-
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
             passwordGenerator: "passwordGenerator"
@@ -45,10 +46,12 @@ export default class Generators extends HTMLElement {
     // Render the main template
     public generators(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
-            </ul>
+            <div class="position-relative generators-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} generators-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
@@ -304,6 +307,9 @@ export default class Generators extends HTMLElement {
     connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("loremIpsumGenerator", document);
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".generators-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".generators-ulist");
 
         /**
          * HELPER FUNCTIONS

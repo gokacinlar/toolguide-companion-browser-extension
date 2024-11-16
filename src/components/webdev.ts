@@ -1,13 +1,16 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class WebDev extends HTMLElement {
     private template: Template;
+    private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
+
     constructor() {
         super();
         this.template = new Template();
+        this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
             colorPicker: "colorPicker"
@@ -34,9 +37,11 @@ export default class WebDev extends HTMLElement {
     // Render the main template
     private webDev(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPicker}">Color Picker</button></li>
-            </ul>
+            <div class="web-dev-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} webdev-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPicker}">Color Picker</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="colorPicker" style="display: none;">${this.renderColorPicker()}</div>
             </div>
@@ -53,6 +58,9 @@ export default class WebDev extends HTMLElement {
     connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("colorPicker", document);
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".web-dev-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".webdev-ulist");
     }
 }
 

@@ -1,21 +1,24 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Converters extends HTMLElement {
     private template: Template;
+    private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
 
     constructor() {
         super();
         this.template = new Template();
+        this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
-
         this.Ids = {
             baseConverter: "baseConverter",
             unitConverter: "unitConverter",
+            dataStorageConverter: "dataStorageConverter",
+            speedConverter: "speedConverter",
             currencyConverter: "currencyConverter",
-            timeZoneConverter: "timeZoneConverter"
+            timeZoneConverter: "timeZoneConverter",
         }
 
         const template = this.template.createTemplate(this.unitConverters());
@@ -25,15 +28,21 @@ export default class Converters extends HTMLElement {
     // Render the main template
     public unitConverters(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time Zone</button></li>
-            </ul>
+            <div class="position-relative converters-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} converters-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base Numbers</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.dataStorageConverter}">Data Storage</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.speedConverter}">Speed</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderBaseConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="dataStorageConverter" style="display: none;">${this.renderDataConverterTemplate()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeZoneConverter()}</div>
             </div>
@@ -262,6 +271,78 @@ export default class Converters extends HTMLElement {
         return convertedValue;
     }
 
+    // Data Converter
+    private renderDataConverterTemplate(): string {
+        return `
+            <section id="dataConverter">
+                <div class="datac-container px-1">
+                    <div class="datac-inputs input-group mb-3">
+                        <span class="input-group-text" id="dataConversionInput">Input</span>
+                        <input type="text" class="form-control datac-form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="unitConversionInput"/>
+                    </div>
+                    <div class="datac-inputs-selection mb-3">
+                        ${this.renderDataConverter()}
+                    </div>
+                    <div class="datac-display d-flex flex-column align-items-start justify-content-start mb-3">
+                        <label for="datacOutputValue" class="form-label">Results will appear below.</label>
+                        <textarea class="datac-output-value w-100 form-control fs-3" id="dataOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                            <div>
+                                <button class="btn btn-discovery datac-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="dataConvertBtn">Convert</button>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                                <div class="datac-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                                    <h6 class="datac-alert-message mb-0"></h6>
+                                </div>
+                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="mb-0">Copied to clipboard.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </section>
+        `;
+    }
+
+    private renderDataConverter(): string {
+        return `
+            <div class="datac-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="datac-child uc-one w-100">
+                    <label for="datac-value-one">From:</label>
+                    <select class="form-select" aria-label="First Value Select" name="datac-value-one" id="datacValueOne" title="First Value">
+                        <option value="Bits">Bits</option>
+                        <option value="Bytes">Bytes</option>
+                        <option value="Kilobytes">Kilobytes</option>
+                        <option value="Megabytes">Megabytes</option>
+                        <option value="Gigabytes">Gigabytes</option>
+                        <option value="Terabytes">Terabytes</option>
+                        <option value="Petabytes">Petabytes</option>
+                    </select>
+                </div>
+                <div class="datac-child uc-two w-100">
+                    <label for="datac-value-two">To:</label>
+                    <select class="form-select" aria-label="Second Value Select" name="datac-value-two" id="datacValueTwo" title="Second Value">
+                        <option value="Bits">Bits</option>
+                        <option value="Bytes">Bytes</option>
+                        <option value="Kilobytes">Kilobytes</option>
+                        <option value="Megabytes">Megabytes</option>
+                        <option value="Gigabytes">Gigabytes</option>
+                        <option value="Terabytes">Terabytes</option>
+                        <option value="Petabytes">Petabytes</option>
+                    </select>
+                </div>
+            </div>
+        `;
+    }
+
+    // Speed Converter
+    private renderSpeedConverter(): string {
+        return `
+            Coming soon...
+        `;
+    }
+
     // Currency Converter
     private renderCurrencyConverter(): string {
         return `
@@ -279,6 +360,9 @@ export default class Converters extends HTMLElement {
     connectedCallback() {
         this.handleNavigation();
         this.appCalculation.openPage("baseConverter", document);
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".converters-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".converters-ulist");
 
         // Define HTMLElements within the connectedCallback()
         const inputField = document.querySelector(".form-control") as HTMLInputElement;

@@ -9,9 +9,78 @@ export class Template {
     }
 }
 
+// Handle tab overflowing in components
+export class Overflowing {
+    // Detect overflowing
+    public isOverFlowing(target: HTMLElement): boolean {
+        if (target.scrollWidth > target.offsetWidth) {
+            return true;
+        }
+        return false;
+    }
+
+    // Add the movement menu
+    public handleTabOverFlowing(elem: HTMLDivElement, target: string): HTMLElement {
+        const tabSwitchingBtnDiv = `
+            <div class="tab-switching-buttons-container">
+                <div class="position-absolute top-0 start-0 d-flex flex-row align-items-center justify-content-between">
+                    <button type="button" id="leftBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Back" style="visibility: hidden;"><img src="/images/icons/nav/left-arrow.svg" class="img-fluid tab-nav-icon"></button>
+                </div>
+                <div class="position-absolute top-0 end-0 d-flex flex-row align-items-center justify-content-between">
+                    <button type="button" id="rightBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Forward"><img src="/images/icons/nav/right-arrow.svg" class="img-fluid tab-nav-icon"></button>
+                </div>
+            </div>
+    `;
+        const domifiedDiv: Document = new DOMParser().parseFromString(tabSwitchingBtnDiv, "text/html");
+        const navMenu = document.querySelector(target) as HTMLUListElement;
+
+        if (this.isOverFlowing(navMenu) == true) {
+            const childNode = domifiedDiv.querySelector(".tab-switching-buttons-container");
+            // Avoid null checking error
+            if (childNode) {
+                elem.appendChild(childNode);
+
+                // Add listeners for right & left button for content movement
+                // and for button appearence
+                const leftBtn = document.querySelector("#leftBtn") as HTMLButtonElement;
+                const rightBtn = document.querySelector("#rightBtn") as HTMLButtonElement;
+
+                // If we use Math.ceil or Math.floor to handle already existing floating-point errors
+                // measured in the px format in our element, it doesn't work very good.
+                // Instead we apply a tolerance value of 1px and base our calculations on that
+                const scrollTolerance = 1;
+                rightBtn.addEventListener("click", () => {
+                    navMenu.scrollLeft += 200;
+                    // Use Math.abs to get the absolute value
+                    const atRightEnd = Math.abs(navMenu.scrollLeft + navMenu.clientWidth - navMenu.scrollWidth) < scrollTolerance;
+                    rightBtn.style.visibility = atRightEnd ? "hidden" : "visible";
+                    leftBtn.style.visibility = "visible";
+                });
+
+                leftBtn.addEventListener("click", () => {
+                    navMenu.scrollLeft -= 200;
+
+                    const atLeftEnd = navMenu.scrollLeft <= scrollTolerance;
+                    leftBtn.style.visibility = atLeftEnd ? "hidden" : "visible";
+                    rightBtn.style.visibility = "visible";
+                });
+
+                navMenu.addEventListener("scroll", () => {
+                    const atRightEnd = Math.abs(navMenu.scrollLeft + navMenu.clientWidth - navMenu.scrollWidth) < scrollTolerance;
+                    const atLeftEnd = navMenu.scrollLeft <= scrollTolerance;
+
+                    rightBtn.style.visibility = atRightEnd ? "hidden" : "visible";
+                    leftBtn.style.visibility = atLeftEnd ? "hidden" : "visible";
+                });
+            }
+        }
+        return elem;
+    }
+}
+
 export const BASIC_TEMPLATE = {
     classes: {
-        ul: "app-calc-ul d-flex flex-row gap-2 align-items-center justify-content-start",
+        ul: "app-calc-ul d-flex flex-row flex-nowrap gap-2 align-items-center justify-content-start position-relative overflow-x-visible",
         button: "component-tab-nav-button btn btn-discovery w-100 fs-4 shadow-lg rounded-3",
         componentElement: "component-tab-content-element py-2 my-2",
         calcButtons: "calc-button btn btn-primary rounded-pill fs-3 w-100 shadow-md px-3 py-3",

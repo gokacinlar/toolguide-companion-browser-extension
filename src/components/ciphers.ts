@@ -1,14 +1,16 @@
-import { Template, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Ciphers extends HTMLElement {
     private template: Template;
+    private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
 
     constructor() {
         super();
         this.template = new Template();
+        this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
 
         this.Ids = {
@@ -37,10 +39,16 @@ export default class Ciphers extends HTMLElement {
     // Render the main template
     private ciphers(): string {
         return `
-            <ul class="${BASIC_TEMPLATE.classes.ul}">
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.rot13}">ROT-13</button></li>
-            </ul>
+            <div class="position-relative cipher-tab-navigation-buttons">
+                <ul class="${BASIC_TEMPLATE.classes.ul} ciphers-ulist">
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.rot13}">ROT-13</button></li>
+                </ul>
+            </div>
             <div id="content">
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="caesarsCipher" style="display: none;">${this.renderCaesarsCipher()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="rot13" style="display: none;">${this.renderRot13()}</div>
@@ -195,6 +203,9 @@ export default class Ciphers extends HTMLElement {
     connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("caesarsCipher", document);
+        // Handle tab overflowing & navigation buttons
+        const tabMenu = document.querySelector(".cipher-tab-navigation-buttons") as HTMLDivElement;
+        this.overflowing.handleTabOverFlowing(tabMenu, ".ciphers-ulist");
 
         // Caesars' Cipher copying & clearing & formatting
         const ccInputValue = document.querySelector("#ccInput > textarea") as HTMLTextAreaElement;
