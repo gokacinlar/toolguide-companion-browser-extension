@@ -42,10 +42,6 @@ export default class Ciphers extends HTMLElement {
             <div class="position-relative cipher-tab-navigation-buttons">
                 <ul class="${BASIC_TEMPLATE.classes.ul} ciphers-ulist">
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.rot13}">ROT-13</button></li>
                 </ul>
             </div>
