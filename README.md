@@ -1,5 +1,4 @@
-
-# Dev Toolguide
+# Toolguide Companion
 ![Dev Toolguide Logo](images/logo/final-icon-without-text-minified.png)
 
 Your toolbox companion to accomplish many handy stuff, without leaving the browser.
@@ -15,6 +14,8 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Converters:
 	- Base Number Converter
 	- Unit Converter
+        - Storage Data Converter
+        - Speed Measurement Converter 
 	- Currency Calculator **(in progress)**
 	- Time Zone Calculator **(in progress)**
 - Formatters:
