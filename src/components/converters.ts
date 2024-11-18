@@ -47,7 +47,7 @@ export default class Converters extends HTMLElement {
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderBaseConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="dataStorageConverter" style="display: none;">${this.renderDataConverterTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverter()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverterTemplate()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeZoneConverter()}</div>
             </div>
@@ -83,7 +83,19 @@ export default class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="ucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <button class="btn btn-discovery uc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="ucConvertBtn">Convert</button>
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                            <div>
+                                <button class="btn btn-discovery uc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="ucConvertBtn">Convert</button>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                                <div class="uc-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                                    <h6 class="uc-alert-message mb-0"></h6>
+                                </div>
+                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="mb-0">Copied to clipboard.</h6>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -317,14 +329,79 @@ export default class Converters extends HTMLElement {
         }
     };
 
+    // Speed Converter Factors
+    private speedDataConversionFactors: ConversionFactor = {
+        "MpS": {
+            "MpS": 1,
+            "MpH": 3600,
+            "KMpS": 0.001,
+            "KMpH": 3.6,
+            "MIpS": 0.000621371,
+            "MIpH": 2.23694,
+            "Knots": 1.94384,
+        },
+        "MpH": {
+            "MpS": 0.000277778,
+            "MpH": 1,
+            "KMpS": 0.000000277778,
+            "KMpH": 0.001,
+            "MIpS": 0.000000172603,
+            "MIpH": 0.000621371,
+            "Knots": 0.000539956,
+        },
+        "KMpS": {
+            "MpS": 1000,
+            "MpH": 3600000,
+            "KMpS": 1,
+            "KMpH": 3600,
+            "MIpS": 621.371,
+            "MIpH": 2236.94,
+            "Knots": 1943.84,
+        },
+        "KMpH": {
+            "MpS": 0.277778,
+            "MpH": 1000,
+            "KMpS": 0.000277778,
+            "KMpH": 1,
+            "MIpS": 0.000172603,
+            "MIpH": 0.621371,
+            "Knots": 0.539956,
+        },
+        "MIpS": {
+            "MpS": 1609.34,
+            "MpH": 5793600,
+            "KMpS": 1.60934,
+            "KMpH": 5793.64,
+            "MIpS": 1,
+            "MIpH": 3600,
+            "Knots": 3128.69,
+        },
+        "MIpH": {
+            "MpS": 0.44704,
+            "MpH": 1609.34,
+            "KMpS": 0.00044704,
+            "KMpH": 1.60934,
+            "MIpS": 0.000277778,
+            "MIpH": 1,
+            "Knots": 0.868976,
+        },
+        "Knots": {
+            "MpS": 0.51444,
+            "MpH": 1852,
+            "KMpS": 0.00051444,
+            "KMpH": 1.852,
+            "MIpS": 0.000868976,
+            "MIpH": 1.15078,
+            "Knots": 1,
+        }
+    }
+
     private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: ConversionFactor): number => {
         if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
-            this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Input value must be a number.");
             throw new Error("Input value must be a number.");
         }
 
         if (!conversionFactors[from] || !conversionFactors[from][to]) {
-            this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Conversion invalid.");
             throw new Error("Conversion invalid.");
         }
 
@@ -362,7 +439,7 @@ export default class Converters extends HTMLElement {
                         </div>
                     </div>
                 </div>
-        </section>
+            </section>
         `;
     }
 
@@ -398,9 +475,67 @@ export default class Converters extends HTMLElement {
     }
 
     // Speed Converter
-    private renderSpeedConverter(): string {
+    private renderSpeedConverterTemplate(): string {
         return `
-            Coming soon...
+            <section id="speedConverter">
+                <div class="speed-container px-1">
+                    <div class="speed-inputs input-group mb-3">
+                        <span class="input-group-text" id="speedConversionInput">Input</span>
+                        <input type="text" class="form-control speed-form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="unitConversionInput"/>
+                    </div>
+                    <div class="speed-inputs-selection mb-3">
+                        ${this.renderSpeedConverterOptions()}
+                    </div>
+                    <div class="speed-display d-flex flex-column align-items-start justify-content-start mb-3">
+                        <label for="speedOutputValue" class="form-label">Results will appear below.</label>
+                        <textarea class="speed-output-value w-100 form-control fs-3" id="speedOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                            <div>
+                                <button class="btn btn-discovery speed-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="speedConvertBtn">Convert</button>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                                <div class="speed-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                                    <h6 class="speed-alert-message mb-0"></h6>
+                                </div>
+                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="mb-0">Copied to clipboard.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    private renderSpeedConverterOptions(): string {
+        return `
+            <div class="speed-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="speed-child uc-one w-100">
+                    <label for="speed-value-one">From:</label>
+                    <select class="form-select" aria-label="First Value Select" name="speed-value-one" id="speedValueOne" title="First Value">
+                        <option value="MpS">Meters per Second (M/S)</option>
+                        <option value="MpH">Meters per Hour (M/H)</option>
+                        <option value="KMpS">Kilometers per Second (KM/S)</option>
+                        <option value="KMpH">Kilometers per Hour (KM/H)</option>
+                        <option value="MIpS">Miles per Second (MI/S)</option>
+                        <option value="MIpH">Miles per Hour (MI/H)</option>
+                        <option value="Knots">Knots (kn)</option>
+                    </select>
+                </div>
+                <div class="speed-child uc-two w-100">
+                    <label for="speed-value-two">To:</label>
+                    <select class="form-select" aria-label="Second Value Select" name="speed-value-two" id="speedValueTwo" title="Second Value">
+                        <option value="MpS">Meters per Second (M/S)</option>
+                        <option value="MpH">Meters per Hour (M/H)</option>
+                        <option value="KMpS">Kilometers per Second (KM/S)</option>
+                        <option value="KMpH">Kilometers per Hour (KM/H)</option>
+                        <option value="MIpS">Miles per Second (MI/S)</option>
+                        <option value="MIpH">Miles per Hour (MI/H)</option>
+                        <option value="Knots">Knots (kn)</option>
+                    </select>
+                </div>
+            </div>
         `;
     }
 
@@ -428,7 +563,6 @@ export default class Converters extends HTMLElement {
         // Define HTMLElements within the connectedCallback()
         const inputField = document.querySelector(".form-control") as HTMLInputElement;
         const outputTextarea = document.getElementById("ucOutputValue") as HTMLTextAreaElement;
-        const convertBtn = document.getElementById("ucConvertBtn") as HTMLButtonElement;
         const valueOneSelect = document.getElementById("ucValueOne") as HTMLInputElement;
         const valueTwoSelect = document.getElementById("ucValueTwo") as HTMLInputElement;
 
@@ -463,18 +597,17 @@ export default class Converters extends HTMLElement {
         }
 
         // Add event listener to convert button, thus do the conversion
+        const convertBtn = document.getElementById("ucConvertBtn") as HTMLButtonElement;
         convertBtn.addEventListener("click", () => {
-            // First clean the input
-            const inputValue = inputField.value.trim();
-            const fromUnit = valueOneSelect.value;
-            const toUnit = valueTwoSelect.value;
-
-            if (inputValue.length === 0) {
-                outputTextarea.value = "Please provide a value.";
-                return;
-            }
+            const inputValue: string = inputField.value;
+            const fromUnit: string = valueOneSelect.value;
+            const toUnit: string = valueTwoSelect.value;
 
             try {
+                if (checkInputLength(inputValue, ".uc-alert", ".uc-alert-message", "Please provide a value.") === false) {
+                    return;
+                }
+
                 const convertedValue = convertValue(inputValue, fromUnit, toUnit);
                 outputTextarea.value = convertedValue;
             } catch (error: unknown) {
@@ -493,14 +626,20 @@ export default class Converters extends HTMLElement {
         const rucConvertBtn = document.getElementById("rucConvertBtn") as HTMLButtonElement;
 
         rucConvertBtn.addEventListener("click", () => {
-            const rucIfParsed = parseFloat(rucInputField.value);
+            const inputValue: string = rucInputField.value;
+            if (checkInputLength(inputValue, ".speed-alert", ".speed-alert-message", "Please provide a value.") === false) {
+                return;
+            }
+
+            const rucIfParsed = parseFloat(inputValue);
             // Check if input is a number or not
             if (isNaN(rucIfParsed)) {
                 this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Value must be a number.");
                 return;
             }
-            const rucValueOneSelect = document.getElementById("rucValueOne") as HTMLInputElement;
-            const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLInputElement;
+
+            const rucValueOneSelect = document.getElementById("rucValueOne") as HTMLOptionElement;
+            const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
             const convertedValue = this.universalUnitConversionFromConversionFactors(rucIfParsed, rucValueOneSelect.value, rucValueTwoSelect.value, this.unitConversionFactors);
@@ -513,18 +652,61 @@ export default class Converters extends HTMLElement {
         const datacConvertBtn = document.getElementById("datacConvertBtn") as HTMLButtonElement;
 
         datacConvertBtn.addEventListener("click", () => {
-            const datacIfParsed = parseFloat(datacInputField.value)
-            if (isNaN(datacIfParsed)) {
-                this.appCalculation.displayAlert(".ruc-alert", ".ruc-alert-message", "Value must be a number.");
+            const inputValue: string = datacInputField.value;
+            if (checkInputLength(inputValue, ".datac-alert", ".datac-alert-message", "Please provide a value") === false) {
                 return;
             }
-            const datacValueOneSelect = document.getElementById("datacValueOne") as HTMLInputElement;
-            const datacValueTwoSelect = document.getElementById("datacValueTwo") as HTMLInputElement;
+
+            const datacIfParsed = parseFloat(inputValue);
+            if (isNaN(datacIfParsed)) {
+                this.appCalculation.displayAlert(".datac-alert", ".datac-alert-message", "Value must be a number.");
+                return;
+            }
+            const datacValueOneSelect = document.getElementById("datacValueOne") as HTMLOptionElement;
+            const datacValueTwoSelect = document.getElementById("datacValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
             const convertedValue = this.universalUnitConversionFromConversionFactors(datacIfParsed, datacValueOneSelect.value, datacValueTwoSelect.value, this.dataStorageConversionFactors);
             const finalResult = datacOutputTextarea.value = convertedValue.toString();
         });
+
+        // Speed Converter
+        const speedInputTextarea = document.querySelector(".speed-form-control") as HTMLInputElement;
+        const speedOutputTextarea = document.getElementById("speedOutputValue") as HTMLTextAreaElement;
+
+        const speedConvertBtn = document.querySelector("#speedConvertBtn") as HTMLButtonElement;
+        speedConvertBtn.addEventListener("click", () => {
+            const inputValue: string = speedInputTextarea.value;
+            if (checkInputLength(inputValue, ".speed-alert", ".speed-alert-message", "Please provide a value.") === false) {
+                return;
+            }
+
+            const speedItParsed = parseFloat(inputValue)
+            if (isNaN(speedItParsed)) {
+                this.appCalculation.displayAlert(".speed-alert", ".speed-alert-message", "Value must be a number.");
+                return;
+            }
+
+            const speedValueOneSelect = document.getElementById("speedValueOne") as HTMLOptionElement;
+            const speedValueTwoSelect = document.getElementById("speedValueTwo") as HTMLOptionElement;
+
+            // Perform the calculation
+            const convertedValue = this.universalUnitConversionFromConversionFactors(speedItParsed, speedValueOneSelect.value, speedValueTwoSelect.value, this.speedDataConversionFactors);
+            const finalResult = speedOutputTextarea.value = convertedValue.toString();
+        });
+
+        /**
+         * HELPER FUNCTIONS
+         */
+
+        const checkInputLength = (elem: string, alertDiv: string, alertMessageDiv: string, alertMessage: string): boolean => {
+            if (elem.length) {
+                return true;
+            } else {
+                this.appCalculation.displayAlert(alertDiv, alertMessageDiv, alertMessage);
+                return false;
+            }
+        }
     }
 }
 
