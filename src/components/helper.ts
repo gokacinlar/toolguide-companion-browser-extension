@@ -1,3 +1,5 @@
+import type * as Types from "../types.js";
+
 // Create a template content to be appended to every Light DOM
 export class Template {
     public createTemplate(content: any): HTMLTemplateElement {
@@ -194,12 +196,8 @@ export const IMAGE_SOURCES_ALTERNATIVES: {
 
 /*
 
-interface AppVersionNumber {
-    version: string;
-}
-
 export class AppVersion {
-    public async getVersion(): Promise<AppVersionNumber[] | any> {
+    public async getVersion(): Promise<Types.AppVersionNumber[] | any> {
         // User headers
         const headers: Headers = new Headers();
         headers.set("Content-Type", "application/json");
@@ -216,7 +214,7 @@ export class AppVersion {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const jsonData: AppVersionNumber[] = await response.json();
+            const jsonData: Types.AppVersionNumber[] = await response.json();
             return jsonData;
         } catch (error) {
             console.error("Could not retrieve JSON: ", error);

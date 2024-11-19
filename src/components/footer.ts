@@ -1,9 +1,5 @@
 import { Template, IMAGE_SOURCES, IMAGE_SOURCES_ALTERNATIVES } from "./helper.js";
-
-// Define an interface for the structure of nested objects within imgSources
-interface ImageSource {
-    [key: string]: string;
-}
+import type * as Types from '../types.js';
 
 const STYLES = {
     footerStyling: "footer-content py-2 px-2 my-1 mx-1 mb-2 d-flex flex-row align-content-center align-items-center justify-content-between rounded-3 shadow-lg"
@@ -71,7 +67,7 @@ class Footer extends HTMLElement {
         // Get the corresponding browser specific icon source, if not, set default to the generic webstore icon
         let webstoreSource = IMAGE_SOURCES.webstore;
         if (matchingKey) {
-            webstoreSource = (webstoreSources as { [key: string]: ImageSource })[matchingKey];
+            webstoreSource = (webstoreSources as { [key: string]: Types.ImageSource })[matchingKey];
         }
 
         return `
@@ -85,7 +81,7 @@ class Footer extends HTMLElement {
     }
 
     // Function to render images in Footer"s Right Side
-    private renderImageLink(image: ImageSource, title: string): string {
+    private renderImageLink(image: Types.ImageSource, title: string): string {
         // Add "text-decoration: none", "color: transparent" to <a> element because it will try to display a dot in 
         // its content since we do not use any text in it. Browser will try to populate it
         // https://stackoverflow.com/a/52566572
