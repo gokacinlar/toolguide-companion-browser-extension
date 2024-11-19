@@ -1,4 +1,3 @@
-
 # Toolguide Companion
 ![Toolguide Companion Logo](images/logo/final-icon-without-text-minified.png)
 
@@ -15,8 +14,10 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Converters:
 	- Base Number Converter
 	- Unit Converter
+	- Storage Data Converter
+	- Speed Measurement Converter
+	- Time Calculator **(in progress)**
 	- Currency Calculator **(in progress)**
-	- Time Zone Calculator **(in progress)**
 - Formatters:
 	- JSON Formatter
 	- XML Formatter
