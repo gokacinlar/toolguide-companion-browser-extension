@@ -161,33 +161,30 @@ export default class Converters extends HTMLElement {
         `;
     }
 
+    lengthOptions = [
+        { key: "Millimeter", value: "Millimeter" },
+        { key: "Centimeter", value: "Centimeter" },
+        { key: "Meter", value: "Meter" },
+        { key: "Kilometer", value: "Kilometer" },
+        { key: "Inch", value: "Inch" },
+        { key: "Feet", value: "Feet" },
+        { key: "Yard", value: "Yard" },
+        { key: "Mile", value: "Mile" },
+    ];
+
     private renderUnitConverterInputSelection(): string {
         return `
             <div class="ruc-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
                 <div class="ruc-child uc-one w-100">
                     <label for="ruc-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="ruc-value-one" id="rucValueOne" title="First Value">
-                        <option value="Millimeter">Millimeter</option>
-                        <option value="Centimeter">Centimeter</option>
-                        <option value="Meter">Meter</option>
-                        <option value="Kilometer">Kilometer</option>
-                        <option value="Inch">Inch</option>
-                        <option value="Feet">Feet</option>
-                        <option value="Yard">Yard</option>
-                        <option value="Mile">Mile</option>
+                        ${this.generateOptions(this.lengthOptions)}
                     </select>
                 </div>
                 <div class="ruc-child uc-two w-100">
                     <label for="ruc-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="ruc-value-two" id="rucValueTwo" title="Second Value">
-                        <option value="Millimeter">Millimeter</option>
-                        <option value="Centimeter">Centimeter</option>
-                        <option value="Meter">Meter</option>
-                        <option value="Kilometer">Kilometer</option>
-                        <option value="Inch">Inch</option>
-                        <option value="Feet">Feet</option>
-                        <option value="Yard">Yard</option>
-                        <option value="Mile">Mile</option>
+                        ${this.generateOptions(this.lengthOptions)}
                     </select>
                 </div>
             </div>
@@ -443,31 +440,29 @@ export default class Converters extends HTMLElement {
         `;
     }
 
+    dataConverterOptions = [
+        { key: "Bits", value: "Bits" },
+        { key: "Bytes", value: "Bytes" },
+        { key: "Kilobytes", value: "Kilobytes" },
+        { key: "Megabytes", value: "Megabytes" },
+        { key: "Gigabytes", value: "Gigabytes" },
+        { key: "Terabytes", value: "Terabytes" },
+        { key: "Petabytes", value: "Petabytes" },
+    ];
+
     private renderDataConverterOptions(): string {
         return `
             <div class="datac-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
                 <div class="datac-child uc-one w-100">
                     <label for="datac-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="datac-value-one" id="datacValueOne" title="First Value">
-                        <option value="Bits">Bits</option>
-                        <option value="Bytes">Bytes</option>
-                        <option value="Kilobytes">Kilobytes</option>
-                        <option value="Megabytes">Megabytes</option>
-                        <option value="Gigabytes">Gigabytes</option>
-                        <option value="Terabytes">Terabytes</option>
-                        <option value="Petabytes">Petabytes</option>
+                        ${this.generateOptions(this.dataConverterOptions)}
                     </select>
                 </div>
                 <div class="datac-child uc-two w-100">
                     <label for="datac-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="datac-value-two" id="datacValueTwo" title="Second Value">
-                        <option value="Bits">Bits</option>
-                        <option value="Bytes">Bytes</option>
-                        <option value="Kilobytes">Kilobytes</option>
-                        <option value="Megabytes">Megabytes</option>
-                        <option value="Gigabytes">Gigabytes</option>
-                        <option value="Terabytes">Terabytes</option>
-                        <option value="Petabytes">Petabytes</option>
+                        ${this.generateOptions(this.dataConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -508,31 +503,29 @@ export default class Converters extends HTMLElement {
         `;
     }
 
+    speedConverterOptions = [
+        { key: "MpS", value: "Meters per Second (M/S)" },
+        { key: "MpH", value: "Meters per Hour (M/H)" },
+        { key: "KMpS", value: "Kilometers per Second (KM/S)" },
+        { key: "KMpH", value: "Kilometers per Hour (KM/H)" },
+        { key: "MIpS", value: "Miles per Second (MI/S)" },
+        { key: "MIpH", value: "Miles per Hour (MI/H)" },
+        { key: "Knots", value: "Knots (kn)" },
+    ];
+
     private renderSpeedConverterOptions(): string {
         return `
             <div class="speed-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
                 <div class="speed-child uc-one w-100">
                     <label for="speed-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="speed-value-one" id="speedValueOne" title="First Value">
-                        <option value="MpS">Meters per Second (M/S)</option>
-                        <option value="MpH">Meters per Hour (M/H)</option>
-                        <option value="KMpS">Kilometers per Second (KM/S)</option>
-                        <option value="KMpH">Kilometers per Hour (KM/H)</option>
-                        <option value="MIpS">Miles per Second (MI/S)</option>
-                        <option value="MIpH">Miles per Hour (MI/H)</option>
-                        <option value="Knots">Knots (kn)</option>
+                        ${this.generateOptions(this.speedConverterOptions)}
                     </select>
                 </div>
                 <div class="speed-child uc-two w-100">
                     <label for="speed-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="speed-value-two" id="speedValueTwo" title="Second Value">
-                        <option value="MpS">Meters per Second (M/S)</option>
-                        <option value="MpH">Meters per Hour (M/H)</option>
-                        <option value="KMpS">Kilometers per Second (KM/S)</option>
-                        <option value="KMpH">Kilometers per Hour (KM/H)</option>
-                        <option value="MIpS">Miles per Second (MI/S)</option>
-                        <option value="MIpH">Miles per Hour (MI/H)</option>
-                        <option value="Knots">Knots (kn)</option>
+                        ${this.generateOptions(this.speedConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -552,6 +545,14 @@ export default class Converters extends HTMLElement {
             Coming soon...
         `;
     }
+
+    // Function to dynamically generate the <option> values
+    private generateOptions = (options: { key: string; value: string }[]): string => {
+        // Create a new option element with iterating over options object as given input
+        return options.map((option) => {
+            return `<option value="${option.value}">${option.value}</option>`;
+        }).join("");
+    };
 
     connectedCallback() {
         this.handleNavigation();
