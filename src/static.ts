@@ -342,6 +342,13 @@ export class UnitFactors {
 }
 
 export class ConversionValues {
+    public baseConverterOptions: Types.Option[] = [
+        { key: "Binary", value: "Binary" },
+        { key: "Decimal", value: "Decimal" },
+        { key: "Octal", value: "Octal" },
+        { key: "Hexademical", value: "Hexademical" }
+    ]
+
     public dataConverterOptions: Types.Option[] = [
         { key: "Bits", value: "Bits" },
         { key: "Bytes", value: "Bytes" },
