@@ -1,10 +1,6 @@
 import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
 import AppCalculations from "./appCalculations.js";
-
-// Define conversionFactor interface for conversionFactors arg
-interface ConversionFactor {
-    [unit1: string]: { [unit2: string]: number };
-}
+import type * as Types from '../types.js';
 
 export default class Converters extends HTMLElement {
     private template: Template;
@@ -39,8 +35,8 @@ export default class Converters extends HTMLElement {
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.dataStorageConverter}">Data Storage</button></li>
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.speedConverter}">Speed</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
                     <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time</button></li>
+                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -48,8 +44,8 @@ export default class Converters extends HTMLElement {
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="dataStorageConverter" style="display: none;">${this.renderDataConverterTemplate()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverterTemplate()}</div>
+                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeConverter()}</div>
                 <div class="${BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeZoneConverter()}</div>
             </div>
         `;
     }
@@ -190,8 +186,9 @@ export default class Converters extends HTMLElement {
             </div>
         `;
     }
+
     // Define a general object to hold the unitConversion values
-    private unitConversionFactors: ConversionFactor = {
+    private unitConversionFactors: Types.ConversionFactor = {
         "Millimeter": {
             "Centimeter": 0.1,
             "Meter": 0.001,
@@ -267,7 +264,7 @@ export default class Converters extends HTMLElement {
     }
 
     // Data storage conversion values
-    private dataStorageConversionFactors: ConversionFactor = {
+    private dataStorageConversionFactors: Types.ConversionFactor = {
         "Bits": {
             "Bytes": 0.125,
             "Kilobytes": 0.000125,
@@ -327,7 +324,7 @@ export default class Converters extends HTMLElement {
     };
 
     // Speed Converter Factors
-    private speedDataConversionFactors: ConversionFactor = {
+    private speedDataConversionFactors: Types.ConversionFactor = {
         "MpS": {
             "MpS": 1,
             "MpH": 3600,
@@ -393,7 +390,142 @@ export default class Converters extends HTMLElement {
         }
     }
 
-    private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: ConversionFactor): number => {
+    private timeDataConversionFactors: Types.ConversionFactor = {
+        "Millisecond": {
+            "Second": 0.001,
+            "Minute": 0.0000166667,
+            "Hour": 2.777777777E-7,
+            "Day": 1.157407407E-8,
+            "Week": 1.653439153E-9,
+            "Month": 3.805175038E-10,
+            "Year": 3.168808781E-11,
+            "Decade": 3.168808781E-12,
+            "Century": 3.168808781E-13,
+            "Millenium": 3.168808781E-14
+        },
+        "Second": {
+            "Millisecond": 1000,
+            "Minute": 0.0166666667,
+            "Hour": 0.0002777778,
+            "Day": 0.0000115741,
+            "Week": 0.0000016534,
+            "Month": 3.805175038E-7,
+            "Year": 3.168808781E-8,
+            "Decade": 3.168808781E-9,
+            "Century": 3.168808781E-10,
+            "Millenium": 3.168808781E-11
+        },
+        "Minute": {
+            "Millisecond": 60000,
+            "Second": 60,
+            "Hour": 0.0166666667,
+            "Day": 0.0006944444,
+            "Week": 0.0000992063,
+            "Month": 0.0000228311,
+            "Year": 0.0000019013,
+            "Decade": 1.901285268E-7,
+            "Century": 1.901285268E-8,
+            "Millenium": 1.901285268E-9
+        },
+        "Hour": {
+            "Millisecond": 3600000,
+            "Second": 3600,
+            "Minute": 60,
+            "Day": 0.0416666667,
+            "Week": 0.005952381,
+            "Month": 0.001369863,
+            "Year": 0.0001140771,
+            "Decade": 0.0000114077,
+            "Century": 0.0000011408,
+            "Millenium": 1.140771161E-7
+        },
+        "Day": {
+            "Millisecond": 86400000,
+            "Second": 86400,
+            "Minute": 1440,
+            "Hour": 24,
+            "Week": 0.1428571429,
+            "Month": 0.0328767123,
+            "Year": 0.0027378508,
+            "Decade": 0.0002737851,
+            "Century": 0.0000273785,
+            "Millenium": 0.0000027379
+        },
+        "Week": {
+            "Millisecond": 604800000,
+            "Second": 604800,
+            "Minute": 10080,
+            "Hour": 168,
+            "Day": 7,
+            "Month": 0.2301369863,
+            "Year": 0.0191649555,
+            "Decade": 0.0019164956,
+            "Century": 0.0001916496,
+            "Millenium": 0.000019165
+        },
+        "Month": {
+            "Millisecond": 2628000000,
+            "Second": 2628000,
+            "Minute": 43800,
+            "Hour": 730,
+            "Day": 30,
+            "Week": 4,
+            "Year": 0.0832762948,
+            "Decade": 0.0083276295,
+            "Century": 0.0008327629,
+            "Millenium": 0.0000832763
+        },
+        "Year": {
+            "Millisecond": 31557600000,
+            "Second": 31557600,
+            "Minute": 525960,
+            "Hour": 8766,
+            "Day": 365,
+            "Week": 52,
+            "Month": 12,
+            "Decade": 0.1,
+            "Century": 0.01,
+            "Millenium": 0.001
+        },
+        "Decade": {
+            "Millisecond": 315576000000,
+            "Second": 315576000,
+            "Minute": 5259600,
+            "Hour": 87660,
+            "Day": 3652.5,
+            "Week": 521,
+            "Month": 120,
+            "Year": 10,
+            "Century": 0.1,
+            "Millenium": 0.01
+        },
+        "Century": {
+            "Millisecond": 3155760000000,
+            "Second": 3155760000,
+            "Minute": 52596000,
+            "Hour": 876600,
+            "Day": 36525,
+            "Week": 5217,
+            "Month": 1200,
+            "Year": 100,
+            "Decade": 10,
+            "Millenium": 0.1
+        },
+        "Millenium": {
+            "Millisecond": 31557600000000,
+            "Second": 31557600000,
+            "Minute": 525960000,
+            "Hour": 8766000,
+            "Day": 365250,
+            "Week": 52178,
+            "Month": 12008,
+            "Year": 1000,
+            "Decade": 100,
+            "Century": 10
+        }
+    }
+
+    private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: Types.ConversionFactor): number => {
         if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
             throw new Error("Input value must be a number.");
         }
@@ -440,7 +572,7 @@ export default class Converters extends HTMLElement {
         `;
     }
 
-    dataConverterOptions = [
+    private dataConverterOptions: Types.Option[] = [
         { key: "Bits", value: "Bits" },
         { key: "Bytes", value: "Bytes" },
         { key: "Kilobytes", value: "Kilobytes" },
@@ -503,7 +635,7 @@ export default class Converters extends HTMLElement {
         `;
     }
 
-    speedConverterOptions = [
+    private speedConverterOptions: Types.Option[] = [
         { key: "MpS", value: "Meters per Second (M/S)" },
         { key: "MpH", value: "Meters per Hour (M/H)" },
         { key: "KMpS", value: "Kilometers per Second (KM/S)" },
@@ -532,22 +664,82 @@ export default class Converters extends HTMLElement {
         `;
     }
 
+    // Timezone Converter
+    private renderTimeConverter(): string {
+        return `
+            <section id="timeConverter">
+                <div class="time-container px-1">
+                    <div class="time-inputs input-group mb-3">
+                        <span class="input-group-text" id="timeConversionInput">Input</span>
+                        <input type="text" class="form-control time-form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="unitConversionInput"/>
+                    </div>
+                    <div class="time-inputs-selection mb-3">
+                        ${this.renderTimeConverterOptions()}
+                    </div>
+                    <div class="time-display d-flex flex-column align-items-start justify-content-start mb-3">
+                        <label for="timeOutputValue" class="form-label">Results will appear below.</label>
+                        <textarea class="time-output-value w-100 form-control fs-3" id="timeOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                            <div>
+                                <button class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="timeConvertBtn">Convert</button>
+                            </div>
+                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                                <div class="time-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                                    <h6 class="time-alert-message mb-0"></h6>
+                                </div>
+                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                                    <h6 class="mb-0">Copied to clipboard.</h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    private timeConverterOptions: Types.Option[] = [
+        { key: "Millisecond", value: "Millisecond" },
+        { key: "Second", value: "Second" },
+        { key: "Minute", value: "Minute" },
+        { key: "Hour", value: "Hour" },
+        { key: "Day", value: "Day" },
+        { key: "Week", value: "Week" },
+        { key: "Month", value: "Month" },
+        { key: "Year", value: "Year" },
+        { key: "Decade", value: "Decade" },
+        { key: "Century", value: "Century" },
+        { key: "Millenium", value: "Millenium" }
+    ]
+
+    private renderTimeConverterOptions(): string {
+        return `
+            <div class="time-selection-container d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="time-child uc-one w-100">
+                    <label for="time-value-one">From:</label>
+                    <select class="form-select" aria-label="First Value Select" name="time-value-one" id="timeValueOne" title="First Value">
+                        ${this.generateOptions(this.timeConverterOptions)}
+                    </select>
+                </div>
+                <div class="time-child uc-two w-100">
+                    <label for="time-value-two">To:</label>
+                    <select class="form-select" aria-label="Second Value Select" name="time-value-two" id="timeValueTwo" title="Second Value">
+                        ${this.generateOptions(this.timeConverterOptions)}
+                    </select>
+                </div>
+            </div>
+        `;
+    }
+
     // Currency Converter
     private renderCurrencyConverter(): string {
         return `
-            Coming soon...
-        `;
-    }
-
-    // Timezone Converter
-    private renderTimeZoneConverter(): string {
-        return `
-            Coming soon...
-        `;
+                Coming soon...
+            `;
     }
 
     // Function to dynamically generate the <option> values
-    private generateOptions = (options: { key: string; value: string }[]): string => {
+    private generateOptions = (options: Types.Option[]): string => {
         // Create a new option element with iterating over options object as given input
         return options.map((option) => {
             return `<option value="${option.value}">${option.value}</option>`;
@@ -628,7 +820,7 @@ export default class Converters extends HTMLElement {
 
         rucConvertBtn.addEventListener("click", () => {
             const inputValue: string = rucInputField.value;
-            if (checkInputLength(inputValue, ".speed-alert", ".speed-alert-message", "Please provide a value.") === false) {
+            if (checkInputLength(inputValue, ".ruc-alert", ".ruc-alert-message", "Please provide a value.") === false) {
                 return;
             }
 
@@ -694,6 +886,31 @@ export default class Converters extends HTMLElement {
             // Perform the calculation
             const convertedValue = this.universalUnitConversionFromConversionFactors(speedItParsed, speedValueOneSelect.value, speedValueTwoSelect.value, this.speedDataConversionFactors);
             const finalResult = speedOutputTextarea.value = convertedValue.toString();
+        });
+
+        // Time Converter
+        const timeInputTextarea = document.querySelector(".time-form-control") as HTMLInputElement;
+        const timeOutputTextarea = document.getElementById("timeOutputValue") as HTMLTextAreaElement;
+
+        const timeConvertBtn = document.querySelector("#timeConvertBtn") as HTMLButtonElement;
+        timeConvertBtn.addEventListener("click", () => {
+            const inputValue: string = timeInputTextarea.value;
+            if (checkInputLength(inputValue, ".time-alert", ".time-alert-message", "Please provide a value.") === false) {
+                return;
+            }
+
+            const timeItParsed = parseFloat(inputValue)
+            if (isNaN(timeItParsed)) {
+                this.appCalculation.displayAlert(".time-alert", ".time-alert-message", "Value must be a number.");
+                return;
+            }
+
+            const timeValueOneSelect = document.getElementById("timeValueOne") as HTMLOptionElement;
+            const timeValueTwoSelect = document.getElementById("timeValueTwo") as HTMLOptionElement;
+
+            // Perform the calculation
+            const convertedValue = this.universalUnitConversionFromConversionFactors(timeItParsed, timeValueOneSelect.value, timeValueTwoSelect.value, this.timeDataConversionFactors);
+            const finalResult = timeOutputTextarea.value = convertedValue.toString();
         });
 
         /**
