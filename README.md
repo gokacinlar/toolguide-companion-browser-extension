@@ -1,4 +1,5 @@
 # Toolguide Companion
+
 ![Toolguide Companion Logo](images/logo/final-icon-without-text-minified.png)
 
 Your toolbox companion to accomplish many handy stuff, without leaving the browser.
