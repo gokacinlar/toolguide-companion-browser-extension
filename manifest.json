@@ -1,5 +1,5 @@
 {
-    "name": "Dev Toolguide",
+    "name": "Toolguide Companion",
     "author": "Derviş Öksüzoğlu",
     "version": "1.0.0",
     "manifest_version": 3,
@@ -25,7 +25,7 @@
     "permissions": [],
     "action": {
         "default_popup": "popup/popup.html",
-        "default_title": "Dev Toolguide",
+        "default_title": "Toolguide Companion",
         "default_icon": {
             "16": "images/logo/icon_16x16.png",
             "48": "images/logo/icon_48x48.png"

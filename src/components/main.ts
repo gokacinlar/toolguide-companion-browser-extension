@@ -36,7 +36,7 @@ export class Main extends HTMLElement {
         <main class="${STYLINGS.documentStyling.main}">
             <div class="${STYLINGS.documentStyling.mainPlaceholder}">
                 <img class="img-fluid intro-icon" src="/images/logo/final-icon-without-text.png" alt="App Icon Logo">
-                <h1>Dev Toolguide</h1>
+                <h1>Toolguide Companion</h1>
                 <p>Your browser companion to accomplish many handy stuff!</p>
                 <div class="main-support-section">
                     <a href="https://buymeacoffee.com/gokacinlar" class="btn btn-success d-flex flex-row gap-2 align-items-center justify-content-center rounded-pill fs-3 px-2 py-2 shadow-md" role="button" title="Redirect to Support Page" target="_blank">
