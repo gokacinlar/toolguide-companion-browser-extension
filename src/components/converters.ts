@@ -1,9 +1,12 @@
 import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { UnitFactors, ConversionValues } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 import type * as Types from '../types.js';
 
 export default class Converters extends HTMLElement {
     private template: Template;
+    private staticUnitFactors: UnitFactors;
+    private staticConversionValues: ConversionValues;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -11,6 +14,8 @@ export default class Converters extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.staticUnitFactors = new UnitFactors();
+        this.staticConversionValues = new ConversionValues();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
@@ -79,19 +84,7 @@ export default class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="ucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                            <div>
-                                <button class="btn btn-discovery uc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="ucConvertBtn">Convert</button>
-                            </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                                <div class="uc-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                                    <h6 class="uc-alert-message mb-0"></h6>
-                                </div>
-                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                                    <h6 class="mb-0">Copied to clipboard.</h6>
-                                </div>
-                            </div>
-                        </div>
+                        ${this.generateAlerts("ucConvertBtn", "uc-alert", "uc-alert-message")}
                     </div>
                 </div>
             </section>
@@ -138,35 +131,12 @@ export default class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="rucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="rucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                            <div>
-                                <button class="btn btn-discovery ruc-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="rucConvertBtn">Convert</button>
-                            </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                                <div class="ruc-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                                    <h6 class="ruc-alert-message mb-0"></h6>
-                                </div>
-                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                                    <h6 class="mb-0">Copied to clipboard.</h6>
-                                </div>
-                            </div>
-                        </div>
+                        ${this.generateAlerts("rucConvertBtn", "ruc-alert", "ruc-alert-message")}
                     </div>
                 </div>
         </section>
         `;
     }
-
-    lengthOptions = [
-        { key: "Millimeter", value: "Millimeter" },
-        { key: "Centimeter", value: "Centimeter" },
-        { key: "Meter", value: "Meter" },
-        { key: "Kilometer", value: "Kilometer" },
-        { key: "Inch", value: "Inch" },
-        { key: "Feet", value: "Feet" },
-        { key: "Yard", value: "Yard" },
-        { key: "Mile", value: "Mile" },
-    ];
 
     private renderUnitConverterInputSelection(): string {
         return `
@@ -174,368 +144,17 @@ export default class Converters extends HTMLElement {
                 <div class="ruc-child uc-one w-100">
                     <label for="ruc-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="ruc-value-one" id="rucValueOne" title="First Value">
-                        ${this.generateOptions(this.lengthOptions)}
+                        ${this.generateOptions(this.staticConversionValues.lengthOptions)}
                     </select>
                 </div>
                 <div class="ruc-child uc-two w-100">
                     <label for="ruc-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="ruc-value-two" id="rucValueTwo" title="Second Value">
-                        ${this.generateOptions(this.lengthOptions)}
+                        ${this.generateOptions(this.staticConversionValues.lengthOptions)}
                     </select>
                 </div>
             </div>
         `;
-    }
-
-    // Define a general object to hold the unitConversion values
-    private unitConversionFactors: Types.ConversionFactor = {
-        "Millimeter": {
-            "Centimeter": 0.1,
-            "Meter": 0.001,
-            "Kilometer": 0.000001,
-            "Inch": 0.0393701,
-            "Feet": 0.00328084,
-            "Yard": 0.00109361,
-            "Mile": 6.2137e-7
-        },
-        "Centimeter": {
-            "Millimeter": 10,
-            "Meter": 0.01,
-            "Kilometer": 0.00001,
-            "Inch": 0.393701,
-            "Feet": 0.0328084,
-            "Yard": 0.0109361,
-            "Mile": 6.2137e-6
-        },
-        "Meter": {
-            "Millimeter": 1000,
-            "Centimeter": 100,
-            "Kilometer": 0.001,
-            "Inch": 39.3701,
-            "Feet": 3.28084,
-            "Yard": 1.09361,
-            "Mile": 0.000621371
-        },
-        "Kilometer": {
-            "Millimeter": 1000000,
-            "Centimeter": 100000,
-            "Meter": 1000,
-            "Inch": 39370.1,
-            "Feet": 3280.84,
-            "Yard": 1093.61,
-            "Mile": 0.621371
-        },
-        "Inch": {
-            "Millimeter": 25.4,
-            "Centimeter": 2.54,
-            "Meter": 0.0254,
-            "Kilometer": 0.0000254,
-            "Feet": 0.0833333,
-            "Yard": 0.0277778,
-            "Mile": 1.5783e-5
-        },
-        "Feet": {
-            "Millimeter": 304.8,
-            "Centimeter": 30.48,
-            "Meter": 0.3048,
-            "Kilometer": 0.0003048,
-            "Inch": 12,
-            "Yard": 0.333333,
-            "Mile": 0.000189394
-        },
-        "Yard": {
-            "Millimeter": 914.4,
-            "Centimeter": 91.44,
-            "Meter": 0.9144,
-            "Kilometer": 0.0009144,
-            "Inch": 36,
-            "Feet": 3,
-            "Mile": 0.000568182
-        },
-        "Mile": {
-            "Millimeter": 1.609e+6,
-            "Centimeter": 160934,
-            "Meter": 1609.34,
-            "Kilometer": 1.60934,
-            "Inch": 63360,
-            "Feet": 5280,
-            "Yard": 1760
-        }
-    }
-
-    // Data storage conversion values
-    private dataStorageConversionFactors: Types.ConversionFactor = {
-        "Bits": {
-            "Bytes": 0.125,
-            "Kilobytes": 0.000125,
-            "Megabytes": 0.000000125,
-            "Gigabytes": 0.000000000125,
-            "Terabytes": 0.000000000000125,
-            "Petabytes": 0.000000000000000125
-        },
-        "Bytes": {
-            "Bits": 8,
-            "Kilobytes": 0.001,
-            "Megabytes": 0.000001,
-            "Gigabytes": 0.000000001,
-            "Terabytes": 0.000000000001,
-            "Petabytes": 0.000000000000001
-        },
-        "Kilobytes": {
-            "Bits": 8192,
-            "Bytes": 1024,
-            "Megabytes": 0.001,
-            "Gigabytes": 0.000001,
-            "Terabytes": 0.000000001,
-            "Petabytes": 0.000000000001
-        },
-        "Megabytes": {
-            "Bits": 8388608,
-            "Bytes": 1048576,
-            "Kilobytes": 1024,
-            "Gigabytes": 0.001,
-            "Terabytes": 0.000001,
-            "Petabytes": 0.000000001
-        },
-        "Gigabytes": {
-            "Bits": 8589934592,
-            "Bytes": 1073741824,
-            "Kilobytes": 1048576,
-            "Megabytes": 1024,
-            "Terabytes": 0.001,
-            "Petabytes": 0.000001
-        },
-        "Terabytes": {
-            "Bits": 8796093022208,
-            "Bytes": 1099511627776,
-            "Kilobytes": 1073741824,
-            "Megabytes": 1048576,
-            "Gigabytes": 1024,
-            "Petabytes": 0.001
-        },
-        "Petabytes": {
-            "Bits": 9007199254740992,
-            "Bytes": 1125899906842624,
-            "Kilobytes": 1099511627776,
-            "Megabytes": 1073741824,
-            "Gigabytes": 1048576,
-            "Terabytes": 1024
-        }
-    };
-
-    // Speed Converter Factors
-    private speedDataConversionFactors: Types.ConversionFactor = {
-        "MpS": {
-            "MpS": 1,
-            "MpH": 3600,
-            "KMpS": 0.001,
-            "KMpH": 3.6,
-            "MIpS": 0.000621371,
-            "MIpH": 2.23694,
-            "Knots": 1.94384,
-        },
-        "MpH": {
-            "MpS": 0.000277778,
-            "MpH": 1,
-            "KMpS": 0.000000277778,
-            "KMpH": 0.001,
-            "MIpS": 0.000000172603,
-            "MIpH": 0.000621371,
-            "Knots": 0.000539956,
-        },
-        "KMpS": {
-            "MpS": 1000,
-            "MpH": 3600000,
-            "KMpS": 1,
-            "KMpH": 3600,
-            "MIpS": 621.371,
-            "MIpH": 2236.94,
-            "Knots": 1943.84,
-        },
-        "KMpH": {
-            "MpS": 0.277778,
-            "MpH": 1000,
-            "KMpS": 0.000277778,
-            "KMpH": 1,
-            "MIpS": 0.000172603,
-            "MIpH": 0.621371,
-            "Knots": 0.539956,
-        },
-        "MIpS": {
-            "MpS": 1609.34,
-            "MpH": 5793600,
-            "KMpS": 1.60934,
-            "KMpH": 5793.64,
-            "MIpS": 1,
-            "MIpH": 3600,
-            "Knots": 3128.69,
-        },
-        "MIpH": {
-            "MpS": 0.44704,
-            "MpH": 1609.34,
-            "KMpS": 0.00044704,
-            "KMpH": 1.60934,
-            "MIpS": 0.000277778,
-            "MIpH": 1,
-            "Knots": 0.868976,
-        },
-        "Knots": {
-            "MpS": 0.51444,
-            "MpH": 1852,
-            "KMpS": 0.00051444,
-            "KMpH": 1.852,
-            "MIpS": 0.000868976,
-            "MIpH": 1.15078,
-            "Knots": 1,
-        }
-    }
-
-    private timeDataConversionFactors: Types.ConversionFactor = {
-        "Millisecond": {
-            "Second": 0.001,
-            "Minute": 0.0000166667,
-            "Hour": 2.777777777E-7,
-            "Day": 1.157407407E-8,
-            "Week": 1.653439153E-9,
-            "Month": 3.805175038E-10,
-            "Year": 3.168808781E-11,
-            "Decade": 3.168808781E-12,
-            "Century": 3.168808781E-13,
-            "Millenium": 3.168808781E-14
-        },
-        "Second": {
-            "Millisecond": 1000,
-            "Minute": 0.0166666667,
-            "Hour": 0.0002777778,
-            "Day": 0.0000115741,
-            "Week": 0.0000016534,
-            "Month": 3.805175038E-7,
-            "Year": 3.168808781E-8,
-            "Decade": 3.168808781E-9,
-            "Century": 3.168808781E-10,
-            "Millenium": 3.168808781E-11
-        },
-        "Minute": {
-            "Millisecond": 60000,
-            "Second": 60,
-            "Hour": 0.0166666667,
-            "Day": 0.0006944444,
-            "Week": 0.0000992063,
-            "Month": 0.0000228311,
-            "Year": 0.0000019013,
-            "Decade": 1.901285268E-7,
-            "Century": 1.901285268E-8,
-            "Millenium": 1.901285268E-9
-        },
-        "Hour": {
-            "Millisecond": 3600000,
-            "Second": 3600,
-            "Minute": 60,
-            "Day": 0.0416666667,
-            "Week": 0.005952381,
-            "Month": 0.001369863,
-            "Year": 0.0001140771,
-            "Decade": 0.0000114077,
-            "Century": 0.0000011408,
-            "Millenium": 1.140771161E-7
-        },
-        "Day": {
-            "Millisecond": 86400000,
-            "Second": 86400,
-            "Minute": 1440,
-            "Hour": 24,
-            "Week": 0.1428571429,
-            "Month": 0.0328767123,
-            "Year": 0.0027378508,
-            "Decade": 0.0002737851,
-            "Century": 0.0000273785,
-            "Millenium": 0.0000027379
-        },
-        "Week": {
-            "Millisecond": 604800000,
-            "Second": 604800,
-            "Minute": 10080,
-            "Hour": 168,
-            "Day": 7,
-            "Month": 0.2301369863,
-            "Year": 0.0191649555,
-            "Decade": 0.0019164956,
-            "Century": 0.0001916496,
-            "Millenium": 0.000019165
-        },
-        "Month": {
-            "Millisecond": 2628000000,
-            "Second": 2628000,
-            "Minute": 43800,
-            "Hour": 730,
-            "Day": 30,
-            "Week": 4,
-            "Year": 0.0832762948,
-            "Decade": 0.0083276295,
-            "Century": 0.0008327629,
-            "Millenium": 0.0000832763
-        },
-        "Year": {
-            "Millisecond": 31557600000,
-            "Second": 31557600,
-            "Minute": 525960,
-            "Hour": 8766,
-            "Day": 365,
-            "Week": 52,
-            "Month": 12,
-            "Decade": 0.1,
-            "Century": 0.01,
-            "Millenium": 0.001
-        },
-        "Decade": {
-            "Millisecond": 315576000000,
-            "Second": 315576000,
-            "Minute": 5259600,
-            "Hour": 87660,
-            "Day": 3652.5,
-            "Week": 521,
-            "Month": 120,
-            "Year": 10,
-            "Century": 0.1,
-            "Millenium": 0.01
-        },
-        "Century": {
-            "Millisecond": 3155760000000,
-            "Second": 3155760000,
-            "Minute": 52596000,
-            "Hour": 876600,
-            "Day": 36525,
-            "Week": 5217,
-            "Month": 1200,
-            "Year": 100,
-            "Decade": 10,
-            "Millenium": 0.1
-        },
-        "Millenium": {
-            "Millisecond": 31557600000000,
-            "Second": 31557600000,
-            "Minute": 525960000,
-            "Hour": 8766000,
-            "Day": 365250,
-            "Week": 52178,
-            "Month": 12008,
-            "Year": 1000,
-            "Decade": 100,
-            "Century": 10
-        }
-    }
-
-    private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: Types.ConversionFactor): number => {
-        if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
-            throw new Error("Input value must be a number.");
-        }
-
-        if (!conversionFactors[from] || !conversionFactors[from][to]) {
-            throw new Error("Conversion invalid.");
-        }
-
-        // Multiply the input with corresponding "from" > "to" unit with using object keys, values
-        return inputValue * conversionFactors[from][to];
     }
 
     // Data Converter
@@ -553,34 +172,12 @@ export default class Converters extends HTMLElement {
                     <div class="datac-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="datacOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="datac-output-value w-100 form-control fs-3" id="datacOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                            <div>
-                                <button class="btn btn-discovery datac-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="datacConvertBtn">Convert</button>
-                            </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                                <div class="datac-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                                    <h6 class="datac-alert-message mb-0"></h6>
-                                </div>
-                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                                    <h6 class="mb-0">Copied to clipboard.</h6>
-                                </div>
-                            </div>
-                        </div>
+                        ${this.generateAlerts("datacConvertBtn", "datac-alert", "datac-alert-message")}
                     </div>
                 </div>
             </section>
         `;
     }
-
-    private dataConverterOptions: Types.Option[] = [
-        { key: "Bits", value: "Bits" },
-        { key: "Bytes", value: "Bytes" },
-        { key: "Kilobytes", value: "Kilobytes" },
-        { key: "Megabytes", value: "Megabytes" },
-        { key: "Gigabytes", value: "Gigabytes" },
-        { key: "Terabytes", value: "Terabytes" },
-        { key: "Petabytes", value: "Petabytes" },
-    ];
 
     private renderDataConverterOptions(): string {
         return `
@@ -588,13 +185,13 @@ export default class Converters extends HTMLElement {
                 <div class="datac-child uc-one w-100">
                     <label for="datac-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="datac-value-one" id="datacValueOne" title="First Value">
-                        ${this.generateOptions(this.dataConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.dataConverterOptions)}
                     </select>
                 </div>
                 <div class="datac-child uc-two w-100">
                     <label for="datac-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="datac-value-two" id="datacValueTwo" title="Second Value">
-                        ${this.generateOptions(this.dataConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.dataConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -616,34 +213,12 @@ export default class Converters extends HTMLElement {
                     <div class="speed-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="speedOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="speed-output-value w-100 form-control fs-3" id="speedOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                            <div>
-                                <button class="btn btn-discovery speed-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="speedConvertBtn">Convert</button>
-                            </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                                <div class="speed-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                                    <h6 class="speed-alert-message mb-0"></h6>
-                                </div>
-                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                                    <h6 class="mb-0">Copied to clipboard.</h6>
-                                </div>
-                            </div>
-                        </div>
+                        ${this.generateAlerts("speedConvertBtn", "speed-alert", "speed-alert-message")}
                     </div>
                 </div>
             </section>
         `;
     }
-
-    private speedConverterOptions: Types.Option[] = [
-        { key: "MpS", value: "Meters per Second (M/S)" },
-        { key: "MpH", value: "Meters per Hour (M/H)" },
-        { key: "KMpS", value: "Kilometers per Second (KM/S)" },
-        { key: "KMpH", value: "Kilometers per Hour (KM/H)" },
-        { key: "MIpS", value: "Miles per Second (MI/S)" },
-        { key: "MIpH", value: "Miles per Hour (MI/H)" },
-        { key: "Knots", value: "Knots (kn)" },
-    ];
 
     private renderSpeedConverterOptions(): string {
         return `
@@ -651,13 +226,13 @@ export default class Converters extends HTMLElement {
                 <div class="speed-child uc-one w-100">
                     <label for="speed-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="speed-value-one" id="speedValueOne" title="First Value">
-                        ${this.generateOptions(this.speedConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.speedConverterOptions)}
                     </select>
                 </div>
                 <div class="speed-child uc-two w-100">
                     <label for="speed-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="speed-value-two" id="speedValueTwo" title="Second Value">
-                        ${this.generateOptions(this.speedConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.speedConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -679,38 +254,12 @@ export default class Converters extends HTMLElement {
                     <div class="time-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="timeOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="time-output-value w-100 form-control fs-3" id="timeOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                            <div>
-                                <button class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="timeConvertBtn">Convert</button>
-                            </div>
-                            <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                                <div class="time-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                                    <h6 class="time-alert-message mb-0"></h6>
-                                </div>
-                                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                                    <h6 class="mb-0">Copied to clipboard.</h6>
-                                </div>
-                            </div>
-                        </div>
+                        ${this.generateAlerts("timeConvertBtn", "time-alert", "time-alert-message")}
                     </div>
                 </div>
             </section>
         `;
     }
-
-    private timeConverterOptions: Types.Option[] = [
-        { key: "Millisecond", value: "Millisecond" },
-        { key: "Second", value: "Second" },
-        { key: "Minute", value: "Minute" },
-        { key: "Hour", value: "Hour" },
-        { key: "Day", value: "Day" },
-        { key: "Week", value: "Week" },
-        { key: "Month", value: "Month" },
-        { key: "Year", value: "Year" },
-        { key: "Decade", value: "Decade" },
-        { key: "Century", value: "Century" },
-        { key: "Millenium", value: "Millenium" }
-    ]
 
     private renderTimeConverterOptions(): string {
         return `
@@ -718,13 +267,13 @@ export default class Converters extends HTMLElement {
                 <div class="time-child uc-one w-100">
                     <label for="time-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="time-value-one" id="timeValueOne" title="First Value">
-                        ${this.generateOptions(this.timeConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.timeConverterOptions)}
                     </select>
                 </div>
                 <div class="time-child uc-two w-100">
                     <label for="time-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="time-value-two" id="timeValueTwo" title="Second Value">
-                        ${this.generateOptions(this.timeConverterOptions)}
+                        ${this.generateOptions(this.staticConversionValues.timeConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -738,6 +287,20 @@ export default class Converters extends HTMLElement {
             `;
     }
 
+    // Function to do conversions
+    private universalUnitConversionFromConversionFactors = (inputValue: number, from: string, to: string, conversionFactors: Types.ConversionFactor): number => {
+        if (typeof inputValue !== "number" && typeof from !== "string" && typeof to !== "string") {
+            throw new Error("Input value must be a number.");
+        }
+
+        if (!conversionFactors[from] || !conversionFactors[from][to]) {
+            throw new Error("Conversion invalid.");
+        }
+
+        // Multiply the input with corresponding "from" > "to" unit with using object keys, values
+        return inputValue * conversionFactors[from][to];
+    }
+
     // Function to dynamically generate the <option> values
     private generateOptions = (options: Types.Option[]): string => {
         // Create a new option element with iterating over options object as given input
@@ -745,6 +308,25 @@ export default class Converters extends HTMLElement {
             return `<option value="${option.value}">${option.value}</option>`;
         }).join("");
     };
+
+    // Function to generate alert boxes
+    private generateAlerts = (btnId: string, messageDiv: string, messageSubDiv: string): string => {
+        return `
+            <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                <div>
+                    <button class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="${btnId}">Convert</button>
+                </div>
+                <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                    <div class="${messageDiv} alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                        <h6 class="${messageSubDiv} mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
 
     connectedCallback() {
         this.handleNavigation();
@@ -835,7 +417,7 @@ export default class Converters extends HTMLElement {
             const rucValueTwoSelect = document.getElementById("rucValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
-            const convertedValue = this.universalUnitConversionFromConversionFactors(rucIfParsed, rucValueOneSelect.value, rucValueTwoSelect.value, this.unitConversionFactors);
+            const convertedValue = this.universalUnitConversionFromConversionFactors(rucIfParsed, rucValueOneSelect.value, rucValueTwoSelect.value, this.staticUnitFactors.unitConversionFactors);
             const finalResult = rucOutputTextarea.value = convertedValue.toString();
         });
 
@@ -859,7 +441,7 @@ export default class Converters extends HTMLElement {
             const datacValueTwoSelect = document.getElementById("datacValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
-            const convertedValue = this.universalUnitConversionFromConversionFactors(datacIfParsed, datacValueOneSelect.value, datacValueTwoSelect.value, this.dataStorageConversionFactors);
+            const convertedValue = this.universalUnitConversionFromConversionFactors(datacIfParsed, datacValueOneSelect.value, datacValueTwoSelect.value, this.staticUnitFactors.dataStorageConversionFactors);
             const finalResult = datacOutputTextarea.value = convertedValue.toString();
         });
 
@@ -884,7 +466,7 @@ export default class Converters extends HTMLElement {
             const speedValueTwoSelect = document.getElementById("speedValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
-            const convertedValue = this.universalUnitConversionFromConversionFactors(speedItParsed, speedValueOneSelect.value, speedValueTwoSelect.value, this.speedDataConversionFactors);
+            const convertedValue = this.universalUnitConversionFromConversionFactors(speedItParsed, speedValueOneSelect.value, speedValueTwoSelect.value, this.staticUnitFactors.speedDataConversionFactors);
             const finalResult = speedOutputTextarea.value = convertedValue.toString();
         });
 
@@ -909,7 +491,7 @@ export default class Converters extends HTMLElement {
             const timeValueTwoSelect = document.getElementById("timeValueTwo") as HTMLOptionElement;
 
             // Perform the calculation
-            const convertedValue = this.universalUnitConversionFromConversionFactors(timeItParsed, timeValueOneSelect.value, timeValueTwoSelect.value, this.timeDataConversionFactors);
+            const convertedValue = this.universalUnitConversionFromConversionFactors(timeItParsed, timeValueOneSelect.value, timeValueTwoSelect.value, this.staticUnitFactors.timeDataConversionFactors);
             const finalResult = timeOutputTextarea.value = convertedValue.toString();
         });
 
