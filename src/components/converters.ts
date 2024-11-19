@@ -72,7 +72,7 @@ export default class Converters extends HTMLElement {
     // Base Converter
     public renderBaseConverter(): string {
         return `
-            <section id="baseConverter">
+            <section id="baseConverterTemplate">
                 <div class="uc-container px-1">
                     <div class="uc-inputs input-group mb-3">
                         <span class="input-group-text" id="typing-conversion">Input</span>
@@ -97,19 +97,13 @@ export default class Converters extends HTMLElement {
                 <div class="uc-child uc-one w-100">
                     <label for="uc-value-one">From:</label>
                     <select class="form-select" aria-label="First Value Select" name="uc-value-one" id="ucValueOne" title="First Value">
-                        <option value="Binary">Binary</option>
-                        <option value="Decimal">Decimal</option>
-                        <option value="Octal">Octal</option>
-                        <option value="Hexademical">Hexademical</option>
+                        ${this.generateOptions(this.staticConversionValues.baseConverterOptions)}
                     </select>
                 </div>
                 <div class="uc-child uc-two w-100">
                     <label for="uc-value-two">To:</label>
                     <select class="form-select" aria-label="Second Value Select" name="uc-value-two" id="ucValueTwo" title="Second Value">
-                        <option value="Binary">Binary</option>
-                        <option value="Decimal">Decimal</option>
-                        <option value="Octal">Octal</option>
-                        <option value="Hexademical">Hexademical</option>
+                        ${this.generateOptions(this.staticConversionValues.baseConverterOptions)}
                     </select>
                 </div>
             </div>
@@ -119,7 +113,7 @@ export default class Converters extends HTMLElement {
     // Unit Converter
     private renderUnitConverter(): string {
         return `
-            <section id="unitConverter">
+            <section id="unitConverterTemplate">
                 <div class="uc-container px-1">
                     <div class="uc-inputs input-group mb-3">
                         <span class="input-group-text" id="unitConversionInput">Input</span>
@@ -201,7 +195,7 @@ export default class Converters extends HTMLElement {
     // Speed Converter
     private renderSpeedConverterTemplate(): string {
         return `
-            <section id="speedConverter">
+            <section id="speedConverterTemplate">
                 <div class="speed-container px-1">
                     <div class="speed-inputs input-group mb-3">
                         <span class="input-group-text" id="speedConversionInput">Input</span>
@@ -314,7 +308,7 @@ export default class Converters extends HTMLElement {
         return `
             <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
                 <div>
-                    <button class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="${btnId}">Convert</button>
+                    <button type="button" class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="${btnId}">Convert</button>
                 </div>
                 <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
                     <div class="${messageDiv} alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
