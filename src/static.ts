@@ -140,7 +140,7 @@ export class UnitFactors {
 
     // Speed Converter Factors
     public speedDataConversionFactors: Types.ConversionFactor = {
-        "MpS": {
+        "Meters per Second (M/S)": {
             "Meters per Second (M/S)": 1,
             "Meters per Hour (M/H)": 3600,
             "Kilometers per Second (KM/S)": 0.001,
@@ -149,7 +149,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 2.23694,
             "Knots (kn)": 1.94384,
         },
-        "MpH": {
+        "Meters per Hour (M/H)": {
             "Meters per Second (M/S)": 0.000277778,
             "Meters per Hour (M/H)": 1,
             "Kilometers per Second (KM/S)": 0.000000277778,
@@ -158,7 +158,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 0.000621371,
             "Knots (kn)": 0.000539956,
         },
-        "KMpS": {
+        "Kilometers per Second (KM/S)": {
             "Meters per Second (M/S)": 1000,
             "Meters per Hour (M/H)": 3600000,
             "Kilometers per Second (KM/S)": 1,
@@ -167,7 +167,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 2236.94,
             "Knots (kn)": 1943.84,
         },
-        "KMpH": {
+        "Kilometers per Hour (KM/H)": {
             "Meters per Second (M/S)": 0.277778,
             "Meters per Hour (M/H)": 1000,
             "Kilometers per Second (KM/S)": 0.000277778,
@@ -176,7 +176,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 0.621371,
             "Knots (kn)": 0.539956,
         },
-        "MIpS": {
+        "Miles per Second (MI/S)": {
             "Meters per Second (M/S)": 1609.34,
             "Meters per Hour (M/H)": 5793600,
             "Kilometers per Second (KM/S)": 1.60934,
@@ -185,7 +185,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 3600,
             "Knots (kn)": 3128.69,
         },
-        "MIpH": {
+        "Miles per Hour (MI/H)": {
             "Meters per Second (M/S)": 0.44704,
             "Meters per Hour (M/H)": 1609.34,
             "Kilometers per Second (KM/S)": 0.00044704,
@@ -194,7 +194,7 @@ export class UnitFactors {
             "Miles per Hour (MI/H)": 1,
             "Knots (kn)": 0.868976,
         },
-        "Knots": {
+        "Knots (kn)": {
             "Meters per Second (M/S)": 0.51444,
             "Meters per Hour (M/H)": 1852,
             "Kilometers per Second (KM/S)": 0.00051444,
@@ -347,7 +347,7 @@ export class ConversionValues {
         { key: "Decimal", value: "Decimal" },
         { key: "Octal", value: "Octal" },
         { key: "Hexademical", value: "Hexademical" }
-    ]
+    ];
 
     public dataConverterOptions: Types.Option[] = [
         { key: "Bits", value: "Bits" },
