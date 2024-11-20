@@ -80,6 +80,43 @@ export class Overflowing {
     }
 }
 
+export class JSONDataFetching {
+    public async getJson(requestTarget: string): Promise<Types.JSONValue[] | any> {
+        // Add extra security
+        if (!requestTarget.startsWith("https://cdn.jsdelivr.net")) {
+            throw new Error("Untrusted Domain");
+        }
+
+        // User headers to define content type & acceptable content parameters
+        const headers: Headers = new Headers();
+        headers.set("Content-Type", "application/json");
+        headers.set("Accept", "application/json");
+
+        // Create a request object
+        const request: RequestInfo = new Request(requestTarget, {
+            method: "GET",
+            headers: headers
+        });
+
+        try {
+            const response = await fetch(request);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const jsonData: Types.JSONValue[] = await response.json();
+            // Check if returned data is a valid JSON object or not
+            if (!jsonData && typeof jsonData !== "object") {
+                throw new Error("Invalid JSON structure");
+            }
+            return jsonData;
+        } catch (error) {
+            console.error("Could not retrieve JSON: ", error);
+            throw error;
+        }
+    }
+}
+
 export const BASIC_TEMPLATE = {
     classes: {
         ul: "app-calc-ul d-flex flex-row flex-nowrap gap-2 align-items-center justify-content-start position-relative overflow-x-visible",
@@ -191,51 +228,3 @@ export const IMAGE_SOURCES_ALTERNATIVES: {
         ref: ""
     }
 }
-
-// Function to get JSON data to be appended into DOM using REST
-
-/*
-
-export class AppVersion {
-    public async getVersion(): Promise<Types.AppVersionNumber[] | any> {
-        // User headers
-        const headers: Headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        headers.set("Accept", "application/json");
-
-        // Create a request object
-        const request: RequestInfo = new Request("/manifest.json", {
-            method: "GET",
-            headers: headers
-        });
-
-        try {
-            const response = await fetch(request);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const jsonData: Types.AppVersionNumber[] = await response.json();
-            return jsonData;
-        } catch (error) {
-            console.error("Could not retrieve JSON: ", error);
-            throw error;
-        }
-    }
-
-    // Function to fetch the version from getVersion() and update the DOM via async
-    public async fetchVersion(elem: HTMLElement | null) {
-        try {
-            const versionData = await this.getVersion();
-            if (versionData) {
-                const version = JSON.stringify(versionData); // Access the version property ONLY
-                if (elem) {
-                    elem.textContent = version;
-                }
-            }
-        } catch (error) {
-            console.error("Error fetching version:", error);
-        }
-    }
-}
-
-*/
