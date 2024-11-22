@@ -40,7 +40,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 
 Extension will be available upon approval from Chrome, Edge, Firefox & Opera's webstores. However, if you want to use the extension locally, **simply clone the repository** and do;
 
-`npm run dev`
+`npm run build`
 
 ## Why this thing exists?
 
