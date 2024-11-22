@@ -20,3 +20,8 @@ export interface ImageSource {
 export interface JSONValue {
     version: string;
 }
+
+// Currency converter object
+export interface Currency {
+    [key: string]: string
+}
