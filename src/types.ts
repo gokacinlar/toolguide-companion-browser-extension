@@ -17,6 +17,6 @@ export interface ImageSource {
     [key: string]: string;
 }
 
-export interface AppVersionNumber {
+export interface JSONValue {
     version: string;
 }
