@@ -59,6 +59,14 @@ class Aside extends HTMLElement {
         const target = event.currentTarget as HTMLButtonElement;
         const component = target.dataset.component; // Get the component name from the data attribute
 
+        // First remove the "active" state of the buttons
+        const buttons: NodeListOf<HTMLButtonElement> = document.querySelectorAll(".aside-buttons > button");
+        buttons.forEach((elem) => {
+            elem.classList.remove("active");
+        })
+
+        target.classList.add("active");
+
         // Find the existing Main component in the DOM
         const mainElement = document.querySelector("app-main") as Main | null;
         if (mainElement) {
