@@ -14,9 +14,6 @@
             "matches": [
                 "<all_urls>"
             ],
-            "css": [
-                "/assets/css/custom.css"
-            ],
             "js": [
                 "/src/app.js"
             ]
