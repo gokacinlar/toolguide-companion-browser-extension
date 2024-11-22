@@ -1,10 +1,11 @@
-import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, JSONDataFetching, BASIC_TEMPLATE } from "./helper.js";
 import { UnitFactors, ConversionValues } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 import type * as Types from '../types.js';
 
 export default class Converters extends HTMLElement {
     private template: Template;
+    private getJson: JSONDataFetching;
     private staticUnitFactors: UnitFactors;
     private staticConversionValues: ConversionValues;
     private overflowing: Overflowing;
@@ -14,6 +15,7 @@ export default class Converters extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.getJson = new JSONDataFetching();
         this.staticUnitFactors = new UnitFactors();
         this.staticConversionValues = new ConversionValues();
         this.overflowing = new Overflowing();
@@ -280,58 +282,61 @@ export default class Converters extends HTMLElement {
             <section>
                 <div id="currencyBase" class="d-flex flex-row align-items-center justify-content-between">
                     <div>
-                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill">1 US dollar equals to</h4>
+                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-md">1 (one) US dollar equals</h4>
                     </div>
                     <div class="currency-refresh-and-source">
-
+                        <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-md">
+                            <span>Last updated:</span>
+                            <span id="currencyDateUpdated" class="bg-secondary-subtle px-2 py-2 rounded-pill"></span>
+                        </h4>
                     </div>
                 </div>
                 <div id="currencyList" class="">
                     <ul class="list-group d-flex flex-row align-items-center justify-content-between px-0 py-0">
-                        <li class="list-group-item currency-list-item cli-eur d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-eur d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/eu.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Euro">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-eur"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-gbp d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-gbp d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/gb.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="British Pound">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-gbp"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-cad d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-cad d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/ca.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Canadian Dollar">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-cad"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-aud d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-aud d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/au.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Australian Dollar">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-aud"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-chf d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-chf d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/ch.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Swiss Franc">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-chf"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-jpy d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-jpy d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/jp.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Japanese Yen">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-jpy"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-cny d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-cny d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/cn.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Chinese Yuan">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-cny"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-try d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-rub d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/ru.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Russian Ruble">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-rub"></span>
                         </li>
-                        <li class="list-group-item currency-list-item cli-try d-flex flex-column align-items-center justify-content-center">
+                        <li class="list-group-item currency-list-item cli-try d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/tr.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
                             title="Turkish Lira">
-                            <span class="cli-display"></span>
+                            <span class="cli-display-try"></span>
                         </li>
                     </ul>
                 </div>
@@ -379,6 +384,80 @@ export default class Converters extends HTMLElement {
             </div>
         `;
     }
+
+    // Get and append the currencies to be shown in the Currency tab
+    private getCurrencyData = async (data: string): Promise<Record<string, number>> => {
+        const fetchedData = await this.getJson.getJson(data);
+        // API returns EUR-based data, so we convert it to represent a USD-based data
+        // for more universally reliable currency representation
+        const usdBasedCurrencyData = await this.convertEurToUsd(fetchedData.eur);
+
+        return usdBasedCurrencyData;
+    };
+
+    // Get the API date
+    private getCurrencyDataDate = async (data: string): Promise<Object> => {
+        const fetchedData = await this.getJson.getJson(data);
+        return fetchedData.date;
+    }
+
+    // First convert the EUR-based data to be USD-based to be comparable as a more universal currency
+    private convertEurToUsd = async (eurBasedData: Record<string, number>): Promise<Record<string, number>> => {
+        // Extract the EUR to USD conversion rate first
+        const eurToUsdRate: number = eurBasedData.usd;
+        // Create a new object to store USD-based data
+        const usdBasedData: Record<string, number> = {};
+
+        // Iterate through the keys of the EUR-based data and convert to USD
+        Object.keys(eurBasedData).forEach((currency) => {
+            // Exclude EUR itself, as it's the default currency in the first API data
+            if (currency !== "eur") {
+                usdBasedData[currency.toUpperCase()] = eurBasedData[currency] / eurToUsdRate;
+            }
+        });
+
+        // Add USD to the new object with a base value of 1
+        usdBasedData.USD = 1;
+
+        return usdBasedData;
+    };
+
+    // Add the currency values to be represented in the DOM
+    private appendCurrencies = async (data: string): Promise<void> => {
+        const fetchedData: Record<string, number> = await this.getCurrencyData(data); // Proper type
+
+        // Target currency span mappings
+        const currencyMap: Record<string, string> = {
+            eur: "cli-display-eur",
+            gbp: "cli-display-gbp",
+            cad: "cli-display-cad",
+            aud: "cli-display-aud",
+            chf: "cli-display-chf",
+            jpy: "cli-display-jpy",
+            cny: "cli-display-cny",
+            rub: "cli-display-rub",
+            try: "cli-display-try",
+        };
+
+        // Iterate over currencyMap to dynamically append data into our #currencyList
+        Object.keys(currencyMap).forEach((currency) => {
+            const className: string = currencyMap[currency];
+            const targetElement = document.querySelector(`.${className}`) as HTMLUListElement;
+
+            try {
+                const currencyValue = fetchedData[currency.toUpperCase()]; // Uppercase for UI clarity
+
+                // Additional check if we got the data right in the process
+                if (currencyValue !== undefined) {
+                    targetElement.textContent = currencyValue.toFixed(2);
+                } else {
+                    targetElement.textContent = "N/A"; // Show N/A to represent data is missing
+                }
+            } catch (error) {
+                console.error("Error fetching currency data", error);
+            }
+        });
+    };
 
     connectedCallback() {
         this.handleNavigation();
@@ -561,6 +640,17 @@ export default class Converters extends HTMLElement {
         }
 
         // Currency Converter
+        // Represent the most used currency datas first
+        const currencyApiData: string = "https://latest.currency-api.pages.dev/v1/currencies/eur.json";
+        this.appendCurrencies(currencyApiData);
+        // Append the "date" data with .then syntax, otherwise it returns a "Promise" in console
+        this.getCurrencyDataDate(currencyApiData).then((date) => {
+            const currencyDateUpdateElement = document.querySelector("#currencyDateUpdated") as HTMLSpanElement;
+            console.log(date);
+            currencyDateUpdateElement.textContent = date.toString();
+        }).catch((error) => {
+            console.error("Error fetching currency data date:", error);
+        });
     }
 }
 
