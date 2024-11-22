@@ -277,8 +277,66 @@ export default class Converters extends HTMLElement {
     // Currency Converter
     private renderCurrencyConverter(): string {
         return `
-                Coming soon...
-            `;
+            <section>
+                <div id="currencyBase" class="d-flex flex-row align-items-center justify-content-between">
+                    <div>
+                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill">1 US dollar equals to</h4>
+                    </div>
+                    <div class="currency-refresh-and-source">
+
+                    </div>
+                </div>
+                <div id="currencyList" class="">
+                    <ul class="list-group d-flex flex-row align-items-center justify-content-between px-0 py-0">
+                        <li class="list-group-item currency-list-item cli-eur d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/eu.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Euro">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-gbp d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/gb.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="British Pound">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-cad d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/ca.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Canadian Dollar">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-aud d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/au.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Australian Dollar">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-chf d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/ch.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Swiss Franc">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-jpy d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/jp.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Japanese Yen">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-cny d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/cn.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Chinese Yuan">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-try d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/ru.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Russian Ruble">
+                            <span class="cli-display"></span>
+                        </li>
+                        <li class="list-group-item currency-list-item cli-try d-flex flex-column align-items-center justify-content-center">
+                            <img src="/images/icons/flags/tr.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
+                            title="Turkish Lira">
+                            <span class="cli-display"></span>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+        `;
     }
 
     // Function to do conversions
@@ -501,6 +559,8 @@ export default class Converters extends HTMLElement {
                 return false;
             }
         }
+
+        // Currency Converter
     }
 }
 
