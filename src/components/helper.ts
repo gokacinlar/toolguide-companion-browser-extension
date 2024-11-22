@@ -83,7 +83,12 @@ export class Overflowing {
 export class JSONDataFetching {
     public async getJson(requestTarget: string): Promise<Types.JSONValue[] | any> {
         // Add extra security
-        if (!requestTarget.startsWith("https://cdn.jsdelivr.net")) {
+        const webAccessDomains = [
+            "https://latest.currency-api.pages.dev/",
+            "https://cdn.jsdelivr.net"
+        ];
+
+        if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
             throw new Error("Untrusted Domain");
         }
 
