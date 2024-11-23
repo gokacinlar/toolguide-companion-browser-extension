@@ -394,3 +394,21 @@ export class ConversionValues {
         { key: "Millenium", value: "Millenium" }
     ]
 }
+
+export class Currencies {
+    public currencyValues: Array<string> = [
+        "USD - US Dollar",
+        "EUR - Euro",
+        "GBP - British Pound",
+        "CAD - Canadian Dollar",
+        "AUD - Australian Dollar",
+        "NZD - New Zealand Dollar",
+        "CHF - Swiss Franc",
+        "JPY - Japanese Yen",
+        "CNY - Chinese Yuan",
+        "RUB - Russian Ruble",
+        "SEK - Swedish Krona",
+        "TRY - Turkish Lira",
+        "BRL - Brazilian Real",
+    ];
+}
