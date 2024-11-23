@@ -1,5 +1,5 @@
 import { Template, Overflowing, JSONDataFetching, BASIC_TEMPLATE } from "./helper.js";
-import { UnitFactors, ConversionValues } from "../static.js";
+import { UnitFactors, ConversionValues, Currencies } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 import type * as Types from '../types.js';
 
@@ -8,6 +8,7 @@ export default class Converters extends HTMLElement {
     private getJson: JSONDataFetching;
     private staticUnitFactors: UnitFactors;
     private staticConversionValues: ConversionValues;
+    private staticCurrencyValues: Currencies;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -18,6 +19,7 @@ export default class Converters extends HTMLElement {
         this.getJson = new JSONDataFetching();
         this.staticUnitFactors = new UnitFactors();
         this.staticConversionValues = new ConversionValues();
+        this.staticCurrencyValues = new Currencies();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
@@ -282,16 +284,16 @@ export default class Converters extends HTMLElement {
             <section>
                 <div id="currencyBase" class="d-flex flex-row align-items-center justify-content-between">
                     <div>
-                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-md">1 (one) US dollar equals</h4>
+                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-sm">1 (one) US dollar equals</h4>
                     </div>
                     <div class="currency-refresh-and-source">
-                        <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-md">
-                            <span>Last updated:</span>
+                        <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-sm">
+                            <span>Last updated</span>
                             <span id="currencyDateUpdated" class="bg-secondary-subtle px-2 py-2 rounded-pill"></span>
                         </h4>
                     </div>
                 </div>
-                <div id="currencyList" class="">
+                <div id="currencyList" class="shadow-sm border border-1 border-secondary-subtle mt-1 rounded-1 pe-none">
                     <ul class="list-group d-flex flex-row align-items-center justify-content-between px-0 py-0">
                         <li class="list-group-item currency-list-item cli-eur d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/eu.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"
@@ -339,6 +341,21 @@ export default class Converters extends HTMLElement {
                             <span class="cli-display-try"></span>
                         </li>
                     </ul>
+                </div>
+                <div>
+                    <div class="currency-inputs input-group mt-2 mb-2">
+                        <span class="input-group-text" id="currencyConversionInput">Input</span>
+                        <input type="text" class="form-control currency-form-control" placeholder="Type here..." aria-label="Type Input" aria-describedby="currencyConversionInput"/>
+                    </div>
+                </div>
+                <div id="currencySelectionConversion" class="d-flex flex-column align-items-start justify-content-center mt-2">
+                    <label for="cli-select">Please select currencies for conversion:</label>
+                    <div class="currency-select-inputs w-100 d-flex flex-row gap-2 align-items-center justify-content-center" name="cli-select">
+                        <select class="form-select currency-form-select" aria-label="Currency Value One" id="selectCurrencyOne">
+                        </select>
+                        <select class="form-select currency-form-select" aria-label="Currency Value Two" id="selectCurrencyTwo">
+                        </select>
+                    </div>
                 </div>
             </section>
         `;
@@ -391,6 +408,10 @@ export default class Converters extends HTMLElement {
         // API returns EUR-based data, so we convert it to represent a USD-based data
         // for more universally reliable currency representation
         const usdBasedCurrencyData = await this.convertEurToUsd(fetchedData.eur);
+        // Add additional error handling
+        if (!usdBasedCurrencyData || Object.keys(usdBasedCurrencyData).length === 0) {
+            console.error("USD-based currency data is empty or invalid.");
+        }
 
         return usdBasedCurrencyData;
     };
@@ -446,6 +467,9 @@ export default class Converters extends HTMLElement {
 
             try {
                 const currencyValue = fetchedData[currency.toUpperCase()]; // Uppercase for UI clarity
+                if (!currencyValue) {
+                    console.warn(`Currency value for ${currency.toUpperCase()} not found.`);
+                }
 
                 // Additional check if we got the data right in the process
                 if (currencyValue !== undefined) {
@@ -458,6 +482,29 @@ export default class Converters extends HTMLElement {
             }
         });
     };
+
+    // Function to generate currency selections for conversions from array data
+    private generateCurrencyOptionsForConversion(arr: Array<string>, target: NodeListOf<HTMLSelectElement>, currencyData: Record<string, number>): void {
+        // Extract currency codes from the array to be appended to our <option> elements' values accordingly
+        const currencyCodes = arr.map((elem) => elem.split(" - ")[0]); // Split by " - " to get the value after currency code
+        const currencyCodesAlt = arr.map((elem) => elem.split(" - ")[1]);
+        // Create the option elements and append the currency values accordingly
+        currencyCodes.forEach((shortName, longName) => {
+            const currencyFullName = currencyCodesAlt[longName]; // Get the corresponding full name of the currency
+            const currencyValue = currencyData[shortName]; // Get the corresponidng short name of the currency
+            // Format the option text with "CurrencyName (value)" or "N/A"
+            const optionText = currencyValue !== undefined ? `${shortName} (${currencyValue.toFixed(2)})` : `${shortName} (N/A)`;
+
+            // Append the option to all target select elements
+            target.forEach((selectElem) => {
+                const optionElem: HTMLOptionElement = document.createElement("option");
+                optionElem.textContent = optionText;
+                optionElem.setAttribute("value", shortName);
+                optionElem.setAttribute("title", currencyFullName); // Set the title to the full name
+                selectElem.appendChild(optionElem);
+            });
+        });
+    }
 
     connectedCallback() {
         this.handleNavigation();
@@ -642,14 +689,29 @@ export default class Converters extends HTMLElement {
         // Currency Converter
         // Represent the most used currency datas first
         const currencyApiData: string = "https://latest.currency-api.pages.dev/v1/currencies/eur.json";
+
         this.appendCurrencies(currencyApiData);
         // Append the "date" data with .then syntax, otherwise it returns a "Promise" in console
         this.getCurrencyDataDate(currencyApiData).then((date) => {
             const currencyDateUpdateElement = document.querySelector("#currencyDateUpdated") as HTMLSpanElement;
-            console.log(date);
+            // Additional error handling
+            if (!currencyDateUpdateElement || typeof date !== "string") {
+                console.error("Date element or date format is invalid.");
+                return;
+            }
+
             currencyDateUpdateElement.textContent = date.toString();
         }).catch((error) => {
             console.error("Error fetching currency data date:", error);
+        });
+
+        const currencyValuesArray: Array<string> = this.staticCurrencyValues.currencyValues;
+        const selectCurrencyElem = document.querySelectorAll(".currency-select-inputs > select") as NodeListOf<HTMLSelectElement>;
+        // Generate the <option> elements for select input to represent currency data to be later converted
+        this.getCurrencyData(currencyApiData).then((currencyData: Record<string, number>) => {
+            this.generateCurrencyOptionsForConversion(currencyValuesArray, selectCurrencyElem, currencyData);
+        }).catch((error) => {
+            console.error("Error receiving data from API:", error);
         });
     }
 }
