@@ -281,7 +281,7 @@ export default class Converters extends HTMLElement {
     // Currency Converter
     private renderCurrencyConverter(): string {
         return `
-            <section>
+            <section class="overflowing-content">
                 <div id="currencyBase" class="d-flex flex-row align-items-center justify-content-between">
                     <div>
                         <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-sm">1 (one) US dollar equals</h4>
@@ -356,6 +356,11 @@ export default class Converters extends HTMLElement {
                         <select class="form-select currency-form-select" aria-label="Currency Value Two" id="selectCurrencyTwo">
                         </select>
                     </div>
+                </div>
+                <div class="currency-display d-flex flex-column align-items-start justify-content-start mb-3">
+                    <label for="currencyOutputValue" class="form-label">Results will appear below.</label>
+                    <textarea class="currency-output-value w-100 form-control fs-3" id="currencyOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
+                    ${this.generateAlerts("currencyConvertBtn", "currency-alert", "currency-alert-message")}
                 </div>
             </section>
         `;
@@ -712,6 +717,69 @@ export default class Converters extends HTMLElement {
             this.generateCurrencyOptionsForConversion(currencyValuesArray, selectCurrencyElem, currencyData);
         }).catch((error) => {
             console.error("Error receiving data from API:", error);
+        });
+
+        const checkAndResetCurrencyOne = (str: string): number[] => {
+            // Regex to match patterns inside our option elements' currency data
+            // of >> () <<
+            const regex: RegExp = /\(([^()]*)\)/g
+            // Get all currency value patterns inside parentheses defined by regex
+            const matches: Array<string> = Array.from(str.matchAll(regex), m => m[1]);
+
+            if (matches.length === 0 || !matches) {
+                throw new Error(`Faulty string: no matches found in "${str}".`)
+            }
+
+            // Return the content inside parentheses after parsing it as a floating point number
+            // for conversion between select currency elems
+            return matches.map((elem: string) => {
+                const result: number = parseFloat(elem);
+                if (isNaN(result)) {
+                    throw new Error(`Invalid number: "${elem}"`);
+                } else {
+                    return result;
+                }
+            });
+        };
+
+        const currencyConvertBtn = document.querySelector("#currencyConvertBtn") as HTMLButtonElement;
+        currencyConvertBtn.addEventListener("click", () => {
+            const selectCurrencyOne = document.querySelector("#selectCurrencyOne") as HTMLSelectElement;
+            const selectCurrencyTwo = document.querySelector("#selectCurrencyTwo") as HTMLSelectElement;
+
+            // Get selected options from both dropdowns
+            const selectedOptionOne = selectCurrencyOne.options[selectCurrencyOne.selectedIndex];
+            const selectedOptionTwo = selectCurrencyTwo.options[selectCurrencyTwo.selectedIndex];
+
+            try {
+                // Get the user input, output & parse it as a floating point number
+                const userInp = document.querySelector(".currency-inputs > input") as HTMLInputElement;
+                const userInpFormatted: number = parseFloat(userInp.value);
+                const userOutput = document.querySelector(".currency-output-value") as HTMLTextAreaElement;
+
+                if (userInp.value.trim().length === 0) {
+                    this.appCalculation.displayAlert(".currency-alert", ".currency-alert-message", "Please provide a value.");
+                    userOutput.value = "";
+                    return console.error("Please provide a value.");
+                } else if (isNaN(userInpFormatted)) {
+                    this.appCalculation.displayAlert(".currency-alert", ".currency-alert-message", "Value must be a number.");
+                    return console.error("Value must be a number.");
+                } else {
+                    // Extract numeric values for conversion
+                    const valueOne = checkAndResetCurrencyOne(selectedOptionOne.textContent || "");
+                    const valueTwo = checkAndResetCurrencyOne(selectedOptionTwo.textContent || "");
+
+                    // Perform the conversion with first indexes of the selected input
+                    // User Input / Base * Exchange Rate
+                    const conversion: number = userInpFormatted / valueOne[0] * valueTwo[0];
+                    const result: string = `${userInpFormatted} ${selectedOptionOne.title} equals ${conversion.toFixed(2)} ${selectedOptionTwo.title}`
+                    userOutput.textContent = result;
+
+                    return userOutput;
+                }
+            } catch (error) {
+                console.error("Error during currency conversion:", error);
+            }
         });
     }
 }
