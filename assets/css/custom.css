@@ -50,9 +50,6 @@
 
 @layer init {
     body {
-        /*  Do not set width in "width", it breaks the visited pages' layouts 
-            Use "min-width" instead. 
-        */
         min-width: var(--body-width);
         max-width: var(--body-width);
         height: var(--body-height);
@@ -61,6 +58,18 @@
     .disabled-div {
         pointer-events: none;
         opacity: 0.5;
+    }
+
+    /* For overflowing content */
+    .overflowing-content {
+        max-height: 295px !important;
+        overflow: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     /* Welcome message */
