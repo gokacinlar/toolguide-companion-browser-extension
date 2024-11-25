@@ -17,8 +17,8 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- Unit Converter
 	- Storage Data Converter
 	- Speed Measurement Converter
-	- Time Calculator **(in progress)**
-	- Currency Calculator **(in progress)**
+	- Time Conversion Calculator
+	- Currency Information & Calculator
 - Formatters:
 	- JSON Formatter
 	- XML Formatter
