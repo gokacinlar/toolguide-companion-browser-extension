@@ -69,6 +69,16 @@
         opacity: 0.5;
     }
 
+    .help-icon {
+        width: var(--alt-big-icon-size);
+        height: auto;
+    }
+
+    .help-icon-min {
+        width: var(--alt-icon-size);
+        height: auto;
+    }
+
     /* For overflowing content */
     .overflowing-content {
         max-height: 295px !important;
@@ -190,7 +200,8 @@
         -o-border-radius: 50%;
     }
 
-    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"], [name="cc-textarea"], [name="rot13-textarea"]) {
+    textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"],
+        [name="cc-textarea"], [name="rot13-textarea"], [name="rand-json-result"]) {
         resize: none !important;
     }
 
@@ -219,6 +230,11 @@
         height: 60px;
     }
 
+    /* Random JSON Data Generator */
+    textarea[name="rand-json-result"] {
+        height: 175px;
+    }
+
     /* ETC */
 
     .info-box-icon {
@@ -231,11 +247,6 @@
     .currency-flag-icon {
         width: var(--alt-icon-size);
         max-width: var(--semi-big-icon-size);
-        height: auto;
-    }
-
-    .help-icon {
-        width: var(--alt-big-icon-size);
         height: auto;
     }
 }
