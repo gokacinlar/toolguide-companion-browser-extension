@@ -1,14 +1,16 @@
-import { Template, Overflowing, JSONDataFetching, BASIC_TEMPLATE } from "./helper.js";
-import { UnitFactors, ConversionValues, Currencies } from "../static.js";
+import { Template, Overflowing, JSONDataFetching, UIElems } from "./helper.js";
+import { UnitFactors, ConversionValues, Currencies, ElementStyling } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 import type * as Types from '../types.js';
 
 export default class Converters extends HTMLElement {
     private template: Template;
     private getJson: JSONDataFetching;
+    private uiElems: UIElems;
     private staticUnitFactors: UnitFactors;
     private staticConversionValues: ConversionValues;
     private staticCurrencyValues: Currencies;
+    private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -17,9 +19,11 @@ export default class Converters extends HTMLElement {
         super();
         this.template = new Template();
         this.getJson = new JSONDataFetching();
+        this.uiElems = new UIElems();
         this.staticUnitFactors = new UnitFactors();
         this.staticConversionValues = new ConversionValues();
         this.staticCurrencyValues = new Currencies();
+        this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
@@ -39,22 +43,22 @@ export default class Converters extends HTMLElement {
     public unitConverters(): string {
         return `
             <div class="position-relative converters-tab-navigation-buttons">
-                <ul class="${BASIC_TEMPLATE.classes.ul} converters-ulist">
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base Numbers</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.dataStorageConverter}">Data Storage</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.speedConverter}">Speed</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} converters-ulist">
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.baseConverter}">Base Numbers</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.unitConverter}">Unit</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.dataStorageConverter}">Data Storage</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.speedConverter}">Speed</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
                 </ul>
             </div>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderBaseConverter()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="dataStorageConverter" style="display: none;">${this.renderDataConverterTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverterTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeConverter()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="baseConverter" style="display: none;">${this.renderBaseConverter()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="unitConverter" style="display: none;">${this.renderUnitConverter()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="dataStorageConverter" style="display: none;">${this.renderDataConverterTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverterTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeConverter()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
             </div>
         `;
     }
@@ -88,7 +92,7 @@ export default class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="ucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="ucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        ${this.generateAlerts("ucConvertBtn", "uc-alert", "uc-alert-message")}
+                        ${this.uiElems.generateAlerts("ucConvertBtn", "Convert", "uc-alert", "uc-alert-message")}
                     </div>
                 </div>
             </section>
@@ -129,7 +133,7 @@ export default class Converters extends HTMLElement {
                     <div class="uc-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="rucOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="uc-output-value w-100 form-control fs-3" id="rucOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        ${this.generateAlerts("rucConvertBtn", "ruc-alert", "ruc-alert-message")}
+                        ${this.uiElems.generateAlerts("rucConvertBtn", "Convert", "ruc-alert", "ruc-alert-message")}
                     </div>
                 </div>
         </section>
@@ -170,7 +174,7 @@ export default class Converters extends HTMLElement {
                     <div class="datac-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="datacOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="datac-output-value w-100 form-control fs-3" id="datacOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        ${this.generateAlerts("datacConvertBtn", "datac-alert", "datac-alert-message")}
+                        ${this.uiElems.generateAlerts("datacConvertBtn", "Convert", "datac-alert", "datac-alert-message")}
                     </div>
                 </div>
             </section>
@@ -211,7 +215,7 @@ export default class Converters extends HTMLElement {
                     <div class="speed-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="speedOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="speed-output-value w-100 form-control fs-3" id="speedOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        ${this.generateAlerts("speedConvertBtn", "speed-alert", "speed-alert-message")}
+                        ${this.uiElems.generateAlerts("speedConvertBtn", "Convert", "speed-alert", "speed-alert-message")}
                     </div>
                 </div>
             </section>
@@ -252,7 +256,7 @@ export default class Converters extends HTMLElement {
                     <div class="time-display d-flex flex-column align-items-start justify-content-start mb-3">
                         <label for="timeOutputValue" class="form-label">Results will appear below.</label>
                         <textarea class="time-output-value w-100 form-control fs-3" id="timeOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                        ${this.generateAlerts("timeConvertBtn", "time-alert", "time-alert-message")}
+                        ${this.uiElems.generateAlerts("timeConvertBtn", "Convert", "time-alert", "time-alert-message")}
                     </div>
                 </div>
             </section>
@@ -366,7 +370,7 @@ export default class Converters extends HTMLElement {
                 <div class="currency-display d-flex flex-column align-items-start justify-content-start mb-3">
                     <label for="currencyOutputValue" class="form-label">Results will appear below.</label>
                     <textarea class="currency-output-value w-100 form-control fs-3" id="currencyOutputValue" title="Result" placeholder="Result" name="result" readonly></textarea>
-                    ${this.generateAlerts("currencyConvertBtn", "currency-alert", "currency-alert-message")}
+                    ${this.uiElems.generateAlerts("currencyConvertBtn", "Convert", "currency-alert", "currency-alert-message")}
                 </div>
             </section>
         `;
@@ -393,25 +397,6 @@ export default class Converters extends HTMLElement {
             return `<option value="${option.value}">${option.value}</option>`;
         }).join("");
     };
-
-    // Function to generate alert boxes
-    private generateAlerts = (btnId: string, messageDiv: string, messageSubDiv: string): string => {
-        return `
-            <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                <div>
-                    <button type="button" class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="${btnId}">Convert</button>
-                </div>
-                <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
-                    <div class="${messageDiv} alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
-                        <h6 class="${messageSubDiv} mb-0"></h6>
-                    </div>
-                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
-                        <h6 class="mb-0">Copied to clipboard.</h6>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
 
     // Get and append the currencies to be shown in the Currency tab
     private getCurrencyData = async (data: string): Promise<Record<string, number>> => {

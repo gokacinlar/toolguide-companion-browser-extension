@@ -1,8 +1,10 @@
-import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing } from "./helper.js";
+import { ElementStyling } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class WebDev extends HTMLElement {
     private template: Template;
+    private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -10,6 +12,7 @@ export default class WebDev extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
@@ -38,12 +41,12 @@ export default class WebDev extends HTMLElement {
     private webDev(): string {
         return `
             <div class="web-dev-tab-navigation-buttons">
-                <ul class="${BASIC_TEMPLATE.classes.ul} webdev-ulist">
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPicker}">Color Picker</button></li>
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} webdev-ulist">
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPicker}">Color Picker</button></li>
                 </ul>
             </div>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="colorPicker" style="display: none;">${this.renderColorPicker()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="colorPicker" style="display: none;">${this.renderColorPicker()}</div>
             </div>
         `;
     }

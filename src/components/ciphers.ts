@@ -1,8 +1,10 @@
-import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing } from "./helper.js";
+import { ElementStyling } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Ciphers extends HTMLElement {
     private template: Template;
+    private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -10,6 +12,7 @@ export default class Ciphers extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
 
@@ -40,14 +43,14 @@ export default class Ciphers extends HTMLElement {
     private ciphers(): string {
         return `
             <div class="position-relative cipher-tab-navigation-buttons">
-                <ul class="${BASIC_TEMPLATE.classes.ul} ciphers-ulist">
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.rot13}">ROT-13</button></li>
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} ciphers-ulist">
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.caesarsCipher}">Caesar's Cipher</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.rot13}">ROT-13</button></li>
                 </ul>
             </div>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="caesarsCipher" style="display: none;">${this.renderCaesarsCipher()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="rot13" style="display: none;">${this.renderRot13()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="caesarsCipher" style="display: none;">${this.renderCaesarsCipher()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="rot13" style="display: none;">${this.renderRot13()}</div>
             </div>
         `;
     }

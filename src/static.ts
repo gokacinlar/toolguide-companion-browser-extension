@@ -412,3 +412,39 @@ export class Currencies {
         "BRL - Brazilian Real",
     ];
 }
+
+export class LoremContent {
+    public loremSentences: Array<string> = [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
+        "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
+        "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+        "Nunc accumsan sem ut ligula scelerisque sollicitudin.",
+        "Ut at sagittis augue, praesentium voluptate voluptas sit aspernatur.",
+        "Maecenas faucibus mollis interdum, auctor a ornare ut, laoreet in dolor.",
+        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.",
+        "Donec eu libero sit amet quam egestas semper, auctor faucibus, pharetra in, orci.",
+        "Quisque id mi, mattis eget, ultricies ut, pharetra sit amet, diam.",
+        "Suspendisse potenti, in eleifend sapien, sed, vestibulum purus, sit amet, diam.",
+        "Aliquam erat volutpat, sed, vestibulum purus, sit amet, diam.",
+        "Ut venenatis tellus in metus laoreet, sit amet, ultrices semper.",
+        "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
+        "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.",
+        "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
+        "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
+    ];
+}
+
+export class ElementStyling {
+    public BASIC_TEMPLATE = {
+        classes: {
+            ul: "app-calc-ul d-flex flex-row flex-nowrap gap-2 align-items-center justify-content-start position-relative overflow-x-visible",
+            button: "component-tab-nav-button btn btn-discovery w-100 fs-4 shadow-lg rounded-3",
+            componentElement: "component-tab-content-element py-2 my-2",
+            calcButtons: "calc-button btn btn-primary rounded-pill fs-3 w-100 shadow-md px-3 py-3",
+            calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-3 fw-medium w-100 shadow-lg px-3 py-3"
+        }
+    }
+}

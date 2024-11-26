@@ -1,8 +1,10 @@
-import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing } from "./helper.js";
+import { ElementStyling } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Formatters extends HTMLElement {
     private template: Template;
+    private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string }
@@ -10,6 +12,7 @@ export default class Formatters extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
 
@@ -42,28 +45,28 @@ export default class Formatters extends HTMLElement {
     private formattersTemplate(): string {
         return `
             <div class="position-relative formatters-tab-navigation-buttons">
-                <ul class="${BASIC_TEMPLATE.classes.ul} formatters-ulist">
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.jsonFormatter}">JSON</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.xmlFormatter}">XML</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.htmlFormatter}">HTML</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.cssFormatter}">CSS</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.javaScriptFormatter}">JavaScript</button></li>
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} formatters-ulist">
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.jsonFormatter}">JSON</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.xmlFormatter}">XML</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.htmlFormatter}">HTML</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.cssFormatter}">CSS</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.javaScriptFormatter}">JavaScript</button></li>
                 </ul>
             </div>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="jsonFormatter" style="display: none;">
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="jsonFormatter" style="display: none;">
                     ${this.jsonFormatter()}
                 </div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="xmlFormatter" style="display: none;">
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="xmlFormatter" style="display: none;">
                     ${this.xmlFormatter()}
                 </div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="htmlFormatter" style="display: none;">
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="htmlFormatter" style="display: none;">
                     ${this.htmlFormatter()}
                 </div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="cssFormatter" style="display: none;">
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="cssFormatter" style="display: none;">
                     ${this.cssFormatter()}
                 </div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="javaScriptFormatter" style="display: none;">
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="javaScriptFormatter" style="display: none;">
                     ${this.jsFormatter()}
                 </div>
         `;

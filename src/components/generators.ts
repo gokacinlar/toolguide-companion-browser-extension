@@ -1,16 +1,12 @@
-import { Template, Overflowing, BASIC_TEMPLATE } from "./helper.js";
+import { Template, Overflowing, UIElems } from "./helper.js";
+import { LoremContent, ElementStyling } from "../static.js";
 import AppCalculations from "./appCalculations.js";
-
-const STYLES: {
-    [key: string]: { [value: string]: string; };
-} = {
-    converter: {
-        div: "container row mx-0 px-0"
-    }
-}
 
 export default class Generators extends HTMLElement {
     private template: Template;
+    private staticElementStylings: ElementStyling;
+    private lorem: LoremContent;
+    private uiElems: UIElems;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -18,11 +14,15 @@ export default class Generators extends HTMLElement {
     constructor() {
         super();
         this.template = new Template();
+        this.staticElementStylings = new ElementStyling();
+        this.lorem = new LoremContent();
+        this.uiElems = new UIElems();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
-            passwordGenerator: "passwordGenerator"
+            passwordGenerator: "passwordGenerator",
+            randJson: "randJson"
         }
 
         const template = this.template.createTemplate(this.generators());
@@ -47,14 +47,16 @@ export default class Generators extends HTMLElement {
     public generators(): string {
         return `
             <div class="position-relative generators-tab-navigation-buttons">
-                <ul class="${BASIC_TEMPLATE.classes.ul} generators-ulist">
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
-                    <li><button class="${BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} generators-ulist">
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randJson}">Random JSON</button></li>
                 </ul>
             </div>
             <div id="content">
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
-                <div class="${BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randJson" style="display: none;">${this.generateJsonGenerationTemplate()}</div>
             </div>
             `;
     }
@@ -62,7 +64,7 @@ export default class Generators extends HTMLElement {
     // Render the Lorem Ipsum Generator
     private loremIpsumGeneratorTemplate(): string {
         return `
-            <section class="${STYLES.converter.div}">
+            <section class="container row mx-0 px-0">
                 <div class="input-group mb-3 px-1">
                     <input type="number" class="form-control lorem-value" min="1" max="99" placeholder="How many lines of Lorem do you want? (1-99)" aria-label="How many lines of Lorem do you want? (1-99)" aria-describedby="generateLorem">
                     <button class="btn btn-outline-primary fs-5" type="button" id="generateLorem">Generate</button>
@@ -93,28 +95,7 @@ export default class Generators extends HTMLElement {
     // Function to generate Lorem Ipsum with given line numbers in TypeScript
     // thanks to: https://blog.lipsumhub.com/generate-lorem-ipsum-in-js/
     private generateLorem(loremValue: number): string {
-        const loremSentences: Array<string> = [
-            "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
-            "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-            "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-            "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-            "Nunc accumsan sem ut ligula scelerisque sollicitudin.",
-            "Ut at sagittis augue, praesentium voluptate voluptas sit aspernatur.",
-            "Maecenas faucibus mollis interdum, auctor a ornare ut, laoreet in dolor.",
-            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-            "Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante.",
-            "Donec eu libero sit amet quam egestas semper, auctor faucibus, pharetra in, orci.",
-            "Quisque id mi, mattis eget, ultricies ut, pharetra sit amet, diam.",
-            "Suspendisse potenti, in eleifend sapien, sed, vestibulum purus, sit amet, diam.",
-            "Aliquam erat volutpat, sed, vestibulum purus, sit amet, diam.",
-            "Ut venenatis tellus in metus laoreet, sit amet, ultrices semper.",
-            "Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas.",
-            "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae.",
-            "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.",
-            "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident."
-        ];
-
+        const loremSentences: Array<string> = this.lorem.loremSentences;
         let result: string = "";
         for (let i = 0; i < loremValue; i++) {
             const randomIndex = Math.floor(Math.random() * loremSentences.length);
@@ -187,6 +168,28 @@ export default class Generators extends HTMLElement {
                     </div>
                 </div>
             </div>
+        `;
+    }
+
+    private generateJsonGenerationTemplate(): string {
+        return `
+            <section>
+                <div class="d-flex flex-row align-items-center justify-content-center gap-2">
+                    <div class="w-100">
+                        <button id="generateRandJsonBtn" class="btn btn-discovery fs-4 w-100 rounded-pill">Get Randomized JSON Data</button>
+                    </div>
+                    <div>
+                        <a href="https://jsonplaceholder.typicode.com/" target="_blank" title="Randomized JSON API Data">
+                        <img src="/images/icons/question-mark.svg" class="img-fluid help-icon-min"></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="rand-json-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
+                        <textarea class="rand-json-output-value w-100 form-control fs-5" id="randJsonOutput" title="Result" placeholder="Result" name="rand-json-result" readonly></textarea>
+                        ${this.uiElems.generateAlerts("generateRandJsonBtn", "Copy", "rand-json-alert", "rand-json-alert-message")}
+                    </div>
+                </div>
+            </section>
         `;
     }
 
