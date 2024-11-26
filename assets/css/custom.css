@@ -12,6 +12,15 @@
     font-display: auto;
 }
 
+:root {
+    --small-icon-size: 24px;
+    --main-icon-size: 32px;
+    --alt-icon-size: 38px;
+    --alt-big-icon-size: 42px;
+    --semi-big-icon-size: 48px;
+    --big-icon-size: 64px;
+}
+
 @property --bg-color {
     syntax: "<color>";
     inherits: false;
@@ -75,8 +84,8 @@
     /* Welcome message */
 
     .welcome-message-logo {
-        width: 64px;
-        height: 64px;
+        width: var(--big-icon-size);
+        height: auto;
         border-radius: 50%;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
@@ -88,8 +97,8 @@
 
     .header-logo,
     .main-support-icon {
-        width: 32px;
-        height: 32px;
+        width: var(--main-icon-size);
+        height: auto;
         filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
     }
 
@@ -114,7 +123,7 @@
     }
 
     .tab-nav-icon {
-        width: 32px;
+        width: var(--main-icon-size);
         height: auto;
     }
 
@@ -134,8 +143,8 @@
     }
 
     .footer-auxiliary-icon {
-        width: 24px;
-        height: 24px;
+        width: var(--small-icon-size);
+        height: auto;
     }
 
     .switch-button {
@@ -213,15 +222,20 @@
     /* ETC */
 
     .info-box-icon {
-        width: 24px;
+        width: var(--small-icon-size);
         height: auto;
     }
 
     /* Currency Converter */
 
     .currency-flag-icon {
-        width: 38px;
-        max-width: 48px;
+        width: var(--alt-icon-size);
+        max-width: var(--semi-big-icon-size);
+        height: auto;
+    }
+
+    .help-icon {
+        width: var(--alt-big-icon-size);
         height: auto;
     }
 }
