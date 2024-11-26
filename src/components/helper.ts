@@ -85,7 +85,8 @@ export class JSONDataFetching {
         // Add extra security
         const webAccessDomains = [
             "https://latest.currency-api.pages.dev/",
-            "https://cdn.jsdelivr.net"
+            "https://cdn.jsdelivr.net",
+            "https://jsonplaceholder.typicode.com/"
         ];
 
         if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
@@ -122,13 +123,24 @@ export class JSONDataFetching {
     }
 }
 
-export const BASIC_TEMPLATE = {
-    classes: {
-        ul: "app-calc-ul d-flex flex-row flex-nowrap gap-2 align-items-center justify-content-start position-relative overflow-x-visible",
-        button: "component-tab-nav-button btn btn-discovery w-100 fs-4 shadow-lg rounded-3",
-        componentElement: "component-tab-content-element py-2 my-2",
-        calcButtons: "calc-button btn btn-primary rounded-pill fs-3 w-100 shadow-md px-3 py-3",
-        calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-3 fw-medium w-100 shadow-lg px-3 py-3"
+export class UIElems {
+    // Function to generate alert boxes
+    public generateAlerts = (btnId: string, btnName: string, messageDiv: string, messageSubDiv: string): string => {
+        return `
+            <div class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
+                <div>
+                    <button type="button" class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4 mt-3" id="${btnId}">${btnName}</button>
+                </div>
+                <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                    <div class="${messageDiv} alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
+                        <h6 class="${messageSubDiv} mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-3 my-0 py-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
+                </div>
+            </div>
+        `;
     }
 }
 
@@ -156,9 +168,7 @@ export const STYLINGS: {
  * ASIDE
  */
 
-export const BUTTON_TEMPLATE: {
-    [key: string]: { [value: string]: string; };
-} = {
+export const BUTTON_TEMPLATE: Types.AsideButtons = {
     calculation: {
         name: "Calculators",
         imgSrc: "/images/icons/aside/calculators.svg"
@@ -186,6 +196,10 @@ export const BUTTON_TEMPLATE: {
     ciphers: {
         name: "Ciphers",
         imgSrc: "/images/icons/aside/ciphers.svg"
+    },
+    sysinfo: {
+        name: "Information",
+        imgSrc: "/images/icons/question-mark.svg"
     }
 }
 
@@ -193,9 +207,7 @@ export const BUTTON_TEMPLATE: {
  * FOOTER
  */
 
-export const IMAGE_SOURCES: {
-    [key: string]: { [value: string]: string; };
-} = {
+export const IMAGE_SOURCES: Types.AsideButtons = {
     source: {
         src: "/images/icons/website.svg",
         ref: ""
@@ -217,9 +229,7 @@ export const IMAGE_SOURCES: {
     }
 };
 
-export const IMAGE_SOURCES_ALTERNATIVES: {
-    [key: string]: { [value: string]: string; };
-} = {
+export const IMAGE_SOURCES_ALTERNATIVES: Types.AsideButtons = {
     firefox: {
         src: "/images/icons/firefox-webstore.svg",
         ref: "https://dervisoksuzoglu.net"
