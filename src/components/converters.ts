@@ -286,11 +286,17 @@ export default class Converters extends HTMLElement {
                     <div>
                         <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-sm">1 (one) US dollar equals</h4>
                     </div>
-                    <div class="currency-refresh-and-source">
-                        <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-sm">
-                            <span>Last updated</span>
-                            <span id="currencyDateUpdated" class="bg-secondary-subtle px-2 py-2 rounded-pill"></span>
-                        </h4>
+                    <div class="currency-refresh-and-source d-flex flex-row align-content-center justify-content-center gap-1">
+                        <div>
+                            <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-sm">
+                                <span>Last updated</span>
+                                <span id="currencyDateUpdated" class="bg-secondary-subtle px-2 py-2 rounded-pill"></span>
+                            </h4>
+                        </div>
+                        <div>
+                            <span><a href="https://github.com/fawazahmed0/exchange-api#readme" target="_blank" title="Currency API Data">
+                            <img src="/images/icons/question-mark.svg" class="img-fluid help-icon"></a></span>
+                        </div>
                     </div>
                 </div>
                 <div id="currencyList" class="shadow-sm border border-1 border-secondary-subtle mt-1 rounded-1 pe-none">
@@ -763,6 +769,7 @@ export default class Converters extends HTMLElement {
                     return console.error("Please provide a value.");
                 } else if (isNaN(userInpFormatted)) {
                     this.appCalculation.displayAlert(".currency-alert", ".currency-alert-message", "Value must be a number.");
+                    userOutput.value = "";
                     return console.error("Value must be a number.");
                 } else {
                     // Extract numeric values for conversion
@@ -777,7 +784,7 @@ export default class Converters extends HTMLElement {
 
                     return userOutput;
                 }
-            } catch (error) {
+            } catch (error: unknown) {
                 console.error("Error during currency conversion:", error);
             }
         });
