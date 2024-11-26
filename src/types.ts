@@ -1,6 +1,11 @@
 // Export it first to avoid module error
 export * from './types';
 
+// Aside buttons
+export interface AsideButtons {
+    [key: string]: { [value: string]: string; };
+}
+
 // Define conversionFactor interface for conversionFactors arg
 export interface ConversionFactor {
     [unit1: string]: { [unit2: string]: number };
