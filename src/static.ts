@@ -438,7 +438,7 @@ export class LoremContent {
 }
 
 export class ElementStyling {
-    public BASIC_TEMPLATE = {
+    public BASIC_TEMPLATE: Types.AsideButtons = {
         classes: {
             ul: "app-calc-ul d-flex flex-row flex-nowrap gap-2 align-items-center justify-content-start position-relative overflow-x-visible",
             button: "component-tab-nav-button btn btn-discovery w-100 fs-4 shadow-lg rounded-3",
@@ -447,4 +447,29 @@ export class ElementStyling {
             calcButtonsExtra: "calc-keys btn btn-discovery rounded-pill fs-3 fw-medium w-100 shadow-lg px-3 py-3"
         }
     }
+
+    public STYLINGS: Types.AsideButtons = {
+        welcome: {
+            div: "d-flex flex-column align-items-center justify-content-center gap-2 px-4 py-4",
+            imgPath: "/images/icons/robot.svg"
+        },
+        documentStyling: {
+            main: "d-flex flex-column align-content-center justify-content-start",
+            mainPlaceholder: "info-placeholder d-flex flex-column align-items-center justify-content-center gap-2"
+        },
+        ids: {
+            dynamicContent: "dynamicContent"
+        }
+    }
+}
+
+export class JSONData {
+    public jsonDataSrc: Record<string, string> = {
+        users: "https://jsonplaceholder.typicode.com/users",
+        todos: "https://jsonplaceholder.typicode.com/todos",
+        photos: "https://jsonplaceholder.typicode.com/photos",
+        albums: "https://jsonplaceholder.typicode.com/albums",
+        comments: "https://jsonplaceholder.typicode.com/comments",
+        posts: "https://jsonplaceholder.typicode.com/posts"
+    };
 }
