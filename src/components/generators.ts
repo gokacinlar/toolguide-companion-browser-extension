@@ -1,10 +1,12 @@
-import { Template, Overflowing, UIElems } from "./helper.js";
-import { LoremContent, ElementStyling } from "../static.js";
+import { Template, Overflowing, JSONDataFetching, UIElems } from "./helper.js";
+import { LoremContent, ElementStyling, JSONData } from "../static.js";
 import AppCalculations from "./appCalculations.js";
 
 export default class Generators extends HTMLElement {
     private template: Template;
     private staticElementStylings: ElementStyling;
+    private jsonDataSrc: JSONData;
+    private jsonFetching: JSONDataFetching;
     private lorem: LoremContent;
     private uiElems: UIElems;
     private overflowing: Overflowing;
@@ -15,6 +17,8 @@ export default class Generators extends HTMLElement {
         super();
         this.template = new Template();
         this.staticElementStylings = new ElementStyling();
+        this.jsonDataSrc = new JSONData();
+        this.jsonFetching = new JSONDataFetching();
         this.lorem = new LoremContent();
         this.uiElems = new UIElems();
         this.overflowing = new Overflowing();
@@ -174,6 +178,13 @@ export default class Generators extends HTMLElement {
     private generateJsonGenerationTemplate(): string {
         return `
             <section>
+                <div>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="limitRandJson">Limit</span>
+                        <input type="number" min="1" max="99" class="form-control" placeholder="How many random JSON data do you want? (1-99)"
+                        aria-label="How many random JSON data do you want? (1-99)" aria-describedby="limitRandJson"/>
+                    </div>
+                </div>
                 <div class="d-flex flex-row align-items-center justify-content-center gap-2">
                     <div class="w-100">
                         <button id="generateRandJsonBtn" class="btn btn-discovery fs-4 w-100 rounded-pill">Get Randomized JSON Data</button>
@@ -186,15 +197,45 @@ export default class Generators extends HTMLElement {
                 <div>
                     <div class="rand-json-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
                         <textarea class="rand-json-output-value w-100 form-control fs-5" id="randJsonOutput" title="Result" placeholder="Result" name="rand-json-result" readonly></textarea>
-                        ${this.uiElems.generateAlerts("generateRandJsonBtn", "Copy", "rand-json-alert", "rand-json-alert-message")}
+                        <div>
+                            ${this.uiElems.generateAlerts("copyRandJson", "Copy", "rand-json-alert", "rand-json-alert-message")}
+                        </div>
                     </div>
                 </div>
             </section>
         `;
     }
 
+    // Function to fetch Random JSON data, limit its size on desirable length and append it
+    private fetchRandJsonAndModify = async (modifyingRate: number): Promise<any[]> => {
+        const jsonDataSrc = this.jsonDataSrc.jsonDataSrc;
+
+        try {
+            const jsonDataFetch = await Promise.all(Object.values(jsonDataSrc).map((url) => this.jsonFetching.getJson(url)));
+            // Get, randomize and limit our data with our desired input
+            const modifiedData = jsonDataFetch.map((data) => {
+                const result = data.slice(0, modifyingRate);
+                return this.randomizeAndShuffleJsonData(result);
+            });
+            return modifiedData;
+        } catch (error: unknown) {
+            console.error("Error during data fetch:", error);
+            throw error; // For Promise<any[]>
+        }
+    };
+
+    // Function to randomize our array we got with JSON fetching
+    // using Fisher–Yates shuffle algorithm
+    private randomizeAndShuffleJsonData = (arr: Array<string>) => {
+        for (let i = arr.length - 1; i > 0; i--) {
+            let j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
     // Function to generate password
-    private generatePassword() {
+    private generatePassword = (): void => {
         // Define passwordLength
         const passwordLengthInput = document.querySelector(".password-value") as HTMLInputElement;
         let passwordLength: number = parseInt(passwordLengthInput.value);
@@ -342,10 +383,6 @@ export default class Generators extends HTMLElement {
             });
         }
 
-        /**
-         * CLASS ACTIONS ARE CALLED HERE
-         */
-
         // Run the generation of lorem when the extension loads in the connectedCallBack
         const generateLoremBtn = document.querySelector("#generateLorem") as HTMLButtonElement;
         const loremValue = document.querySelector(".lorem-value") as HTMLInputElement;
@@ -408,6 +445,35 @@ export default class Generators extends HTMLElement {
             mainPlaceHolder?.classList.remove("disabled-div");
             sessionStorage.setItem("dismissedWarning", "true");
         });
+
+        // Random JSON data generator
+        const copyRandJsonOutputBtn = document.querySelector("#copyRandJson") as HTMLButtonElement;
+        const randJsonGenerateBtn = document.querySelector("#generateRandJsonBtn") as HTMLButtonElement;
+        const randJsonOutput = document.querySelector("#randJsonOutput") as HTMLTextAreaElement;
+        randJsonGenerateBtn.addEventListener("click", async () => {
+            const randJsonLimit = document.querySelector(`input[aria-describedby="limitRandJson"]`) as HTMLInputElement;
+
+            if (!randJsonLimit.value.length) {
+                this.appCalculation.displayAlert(".rand-json-alert", ".rand-json-alert-message", "Please provide a value.");
+                return;
+            }
+
+            try {
+                const result = await this.fetchRandJsonAndModify(parseInt(randJsonLimit.value));
+                randJsonOutput.value = JSON.stringify(result, null, 1);
+            } catch (error: unknown) {
+                console.error("Error generating random JSON:", error);
+                randJsonOutput.value = "An error occurred. Check console for details.";
+            }
+        });
+
+        copyRandJsonOutputBtn.addEventListener("click", () => {
+            if (randJsonOutput.value === "") {
+                this.appCalculation.displayAlert(".rand-json-alert", ".rand-json-alert-message", "Please provide a value.");
+            } else {
+                this.appCalculation.displaySuccess(randJsonOutput.value);
+            }
+        })
     }
 }
 
