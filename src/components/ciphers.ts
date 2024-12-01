@@ -60,8 +60,8 @@ export default class Ciphers extends HTMLElement {
         return `
             <section>
                 <div class="d-flex flex-column gap-2">
-                    <div class="input-group" id="ccInput">
-                        <span class="input-group-text">Message Input</span>
+                    <div class="input-group container column px-0" id="ccInput">
+                        <span class="input-group-text col-3">Message Input</span>
                         <textarea class="form-control" name="cc-textarea" aria-label="Message Input"></textarea>
                     </div>
                     <div class="d-flex flex-row align-items-center justify-content-center gap-2">
@@ -77,8 +77,8 @@ export default class Ciphers extends HTMLElement {
                             <label for="ccDirectionSelect">Select Shifting Direction</label>
                         </div>
                     </div>
-                    <div class="input-group" id="ccOutput">
-                        <span class="input-group-text">Message Output</span>
+                    <div class="input-group container column px-0" id="ccOutput">
+                        <span class="input-group-text col-3">Message Output</span>
                         <textarea class="form-control" name="cc-textarea" aria-label="Message Output"></textarea>
                     </div>
                     <div>
@@ -170,12 +170,12 @@ export default class Ciphers extends HTMLElement {
                         </div>
                     </div>
                     <div class="d-flex flex-column gap-2">
-                        <div class="input-group" id="rot13Input">
-                            <span class="input-group-text">Message Input</span>
+                        <div class="input-group container column px-0" id="rot13Input">
+                            <span class="input-group-text col-3">Message Input</span>
                             <textarea class="form-control" name="rot13-textarea" aria-label="Message Input"></textarea>
                         </div>
-                        <div class="input-group" id="rot13Output">
-                            <span class="input-group-text">Message Output</span>
+                        <div class="input-group container column px-0" id="rot13Output">
+                            <span class="input-group-text col-3">Message Output</span>
                             <textarea class="form-control" name="rot13-textarea" aria-label="Message Output"></textarea>
                         </div>
                     </div>

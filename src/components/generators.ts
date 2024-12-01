@@ -179,7 +179,7 @@ export default class Generators extends HTMLElement {
         return `
             <section>
                 <div>
-                    <div class="input-group mb-3">
+                    <div class="input-group mb-3 px-1">
                         <span class="input-group-text" id="limitRandJson">Limit</span>
                         <input type="number" min="1" max="99" class="form-control" placeholder="How many random JSON data do you want? (1-99)"
                         aria-label="How many random JSON data do you want? (1-99)" aria-describedby="limitRandJson"/>
