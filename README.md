@@ -28,9 +28,10 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Generators:
 	- Lorem Ipsum Generator
 	- Password Generator
-- Utilities **(planned)**:
+	- Random JSON Generator
+- Utilities:
+	- URL Parser
 	- Screenshot **(planned)**
-	- Video Capture **(planned)**
 - Web Dev **(planned)**:
 - Ciphers:
 	- Caesar's Cipher
