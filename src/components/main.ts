@@ -3,6 +3,7 @@ import { Template } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import Converters from "./converters.js";
 import Generators from "./generators.js";
+import Utilities from "./utils.js";
 import AppCalculations from "./appCalculations.js";
 import Formatters from "./formatters.js";
 import Ciphers from "./ciphers.js";
@@ -15,6 +16,7 @@ export class Main extends HTMLElement {
     private appCalculations: AppCalculations;
     private converters: Converters;
     private generators: Generators;
+    private utils: Utilities;
     private formatters: Formatters;
     private ciphers: Ciphers;
     private webdev: WebDev;
@@ -27,6 +29,7 @@ export class Main extends HTMLElement {
         this.appCalculations = new AppCalculations();
         this.converters = new Converters();
         this.generators = new Generators();
+        this.utils = new Utilities();
         this.formatters = new Formatters();
         this.ciphers = new Ciphers();
         this.webdev = new WebDev();
@@ -77,6 +80,11 @@ export class Main extends HTMLElement {
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";
                     dynamicContent.appendChild(this.generators);
+                    break;
+                case "utilities":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.utils);
                     break;
                 case "formatters":
                     placeHolderContent?.remove();
