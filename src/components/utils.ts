@@ -55,43 +55,47 @@ export default class Utilities extends HTMLElement {
     // URL Parser template
     private urlParserTemplate(): string {
         return `
-        <section>
-            <div>
-                <div class="input-group mb-3 px-0">
-                    <span class="input-group-text" id="parseUrlInput">URL</span>
-                    <input type="text" class="form-control" placeholder="Paste URL here..."
-                    aria-label="Paste URL here..." aria-describedby="parseUrlInput"/>
-                    <button class="btn btn-discovery fs-4" type="button" id="parseUrlBtn">Parse URL</button>
+            <section>
+                <div>
+                    <div class="input-group mb-3 px-0">
+                        <span class="input-group-text" id="parseUrlInput">URL</span>
+                        <input type="text" class="form-control" placeholder="Paste URL here..."
+                        aria-label="Paste URL here..." aria-describedby="parseUrlInput"/>
+                        <button class="btn btn-discovery fs-4" type="button" id="parseUrlBtn">Parse URL</button>
+                    </div>
                 </div>
-            </div>
-            <div class="container column px-0 d-flex flex-column gap-2">
-                ${this.generateUrlParsingOutput("puDomain", "Domain", "puSubdomain", "Subdom.")}
-                ${this.generateUrlParsingOutput("puScheme", "Protocol", "puHost", "Host")}
-                ${this.generateUrlParsingOutput("puPath", "Path", "puQuery", "Query")}
-                ${this.generateUrlParsingOutput("puHash", "Hash", "puTld", "TLD")}
-            </div>
-            <div class="alerts d-flex flex-row align-content-center justify-content-between mt-3">
-                <div class="parse-url-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
-                    <h6 class="parse-url-alert-message mb-0"></h6>
+                <div class="container column px-0 d-flex flex-column gap-2">
+                    ${this.generateUrlParsingOutput("puDomain", "Domain", "Address directing to where your website is located.",
+            "puSubdomain", "Subdom.", "A prefix added to a domain name to separate a section of your website.")}
+                    ${this.generateUrlParsingOutput("puScheme", "Protocol", "HTTPS to ensure secure communications.",
+                "puHost", "Host", "It is the part of the URL that identifies the domain name.")}
+                    ${this.generateUrlParsingOutput("puPath", "Path", "It is a part of the URL that identifies the specific file on the server.",
+                    "puQuery", "Query", "It is the part of the URL that contains data to be passed to the server as part of the request.")}
+                    ${this.generateUrlParsingOutput("puHash", "Hash", "It is the part of the URL that identifies a specific section within a resource.",
+                        "puTld", "TLD", "It is Top-Level Domain. Last part of the domain.")}
                 </div>
-                <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
-                    <h6 class="mb-0">Copied to clipboard.</h6>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between mt-3">
+                    <div class="parse-url-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="parse-url-alert-message mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
                 </div>
-            </div>
-        </section>
-    `;
+            </section>
+        `;
     }
 
     // Generate data display output elements
-    private generateUrlParsingOutput = (id: string, name: string, id2: string, name2: string): string => {
+    private generateUrlParsingOutput = (id: string, name: string, title1: string, id2: string, name2: string, title2: string): string => {
         return `
             <div class="d-flex flex-row align-items-center justify-content-between gap-2">
-                <div class="input-group container column px-0">
-                    <span class="input-group-text col-4" id="${id}">${name}</span>
+                <div class="input-group url-parse-div container column px-0">
+                    <span title="${title1}" class="input-group-text col-4" id="${id}">${name}</span>
                     <input type="text" class="form-control" aria-label="${name}" aria-describedby="${id}" readonly>
                 </div>
-                <div class="input-group container column px-0">
-                    <span class="input-group-text col-4" id="${id2}">${name2}</span>
+                <div class="input-group url-parse-div container column px-0">
+                    <span title="${title2}" class="input-group-text col-4" id="${id2}">${name2}</span>
                     <input type="text" class="form-control" aria-label="${name2}" aria-describedby="${id2}" readonly>
                 </div>
             </div>
@@ -150,6 +154,12 @@ export default class Utilities extends HTMLElement {
         }
     }
 
+    // Check if protocol is HTTPS or not
+    private checkHttpsStatus = (elem: HTMLInputElement): boolean => {
+        const pattern: RegExp = /^https:/; // Match only `https`
+        return pattern.test(elem.value.trim());
+    }
+
     connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("urlParser", document);
@@ -159,12 +169,27 @@ export default class Utilities extends HTMLElement {
         // URL Parsing
         const parseUrlBtn = document.querySelector("#parseUrlBtn") as HTMLButtonElement;
         parseUrlBtn.addEventListener("click", () => {
+            // Trim the input spaces first & clear the console
+            console.clear();
+            const inputElements = document.querySelectorAll("url-parse-div > input") as NodeListOf<HTMLInputElement>;
+            inputElements.forEach((x) => {
+                x.value = "";
+            });
+
             const urlParseInput = document.querySelector(`input[aria-describedby="parseUrlInput"]`) as HTMLInputElement;
             const stringifiedInput = urlParseInput.value.toString();
             if (!stringifiedInput.length) {
                 this.appCalculation.displayAlert(".parse-url-alert", ".parse-url-alert-message", "Please provide a value.");
             } else {
                 this.parseUrl(urlParseInput.value);
+                const urlParsingProtocolInputStatus = document.querySelector(`input[aria-describedby="puScheme"]`) as HTMLInputElement;
+                if (this.checkHttpsStatus(urlParsingProtocolInputStatus) === false) {
+                    urlParsingProtocolInputStatus.setAttribute("title", "This URL has an unencrypted HTTP connection.");
+                    urlParsingProtocolInputStatus.classList.add("border-danger");
+                } else {
+                    urlParsingProtocolInputStatus.removeAttribute("title");
+                    urlParsingProtocolInputStatus.classList.remove("border-danger");
+                }
             }
         });
     }
