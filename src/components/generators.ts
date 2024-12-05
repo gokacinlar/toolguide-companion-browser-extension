@@ -185,7 +185,7 @@ export default class Generators extends HTMLElement {
                         aria-label="How many random JSON data do you want? (1-99)" aria-describedby="limitRandJson"/>
                     </div>
                 </div>
-                <div class="d-flex flex-row align-items-center justify-content-center gap-2">
+                <div class="d-flex flex-row align-items-center justify-content-center gap-2 px-1">
                     <div class="w-100">
                         <button id="generateRandJsonBtn" class="btn btn-discovery fs-4 w-100 rounded-pill">Get Randomized JSON Data</button>
                     </div>
