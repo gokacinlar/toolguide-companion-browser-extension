@@ -103,54 +103,70 @@ export default class Utilities extends HTMLElement {
     }
 
     // Function to parse URLs
-    private parseUrl(url: string) {
-        try {
-            const absoluteUrl: URL = new URL(url);
-            // Define the mapping between URL parts and DOM elements
-            const outputMapping: { [key: string]: keyof URL } = {
-                puDomain: "hostname",
-                puSubdomain: "hostname",
-                puScheme: "protocol",
-                puHost: "host",
-                puPath: "pathname",
-                puQuery: "search",
-                puHash: "hash",
-                puTld: "hostname"
-            };
+    private parseUrl(url: string): void {
+        if (this.isUrlPatternMatching(url) === false) {
+            this.appCalculation.displayAlert(".parse-url-alert", ".parse-url-alert-message", "Invalid URL detected.");
+            console.error("Invalid URL detected.");
+            return;
+        } else {
+            try {
+                const absoluteUrl: URL = new URL(url);
+                // Define the mapping between URL parts and DOM elements
+                const outputMapping: { [key: string]: keyof URL } = {
+                    puDomain: "hostname",
+                    puSubdomain: "hostname",
+                    puScheme: "protocol",
+                    puHost: "host",
+                    puPath: "pathname",
+                    puQuery: "search",
+                    puHash: "hash",
+                    puTld: "hostname"
+                };
 
-            Object.keys(outputMapping).forEach((key) => {
-                const targetElement = document.querySelector(`input[aria-describedby="${key}"]`) as HTMLInputElement;
-                if (targetElement) {
-                    // Define our manageable value variable to be manipulated
-                    let value: string;
+                Object.keys(outputMapping).forEach((key) => {
+                    const targetElement = document.querySelector(`input[aria-describedby="${key}"]`) as HTMLInputElement;
+                    if (targetElement) {
+                        // Define our manageable value variable to be manipulated
+                        let value: string;
 
-                    // If subdomain is detected, split the URL with including sd as first value
-                    if (key === "puSubdomain") {
-                        // Split the URL first
-                        const parts = absoluteUrl.hostname.split(".");
-                        // Extract the subdomain
-                        value = parts.length > 2 ? parts.slice(0, -2).join(".") : "N/A";
-                    } else if (key === "puTld") {
-                        // Extract TLD, same logic
-                        const parts = absoluteUrl.hostname.split(".");
-                        value = parts.length > 1 ? parts[parts.length - 1] : "N/A";
+                        // If subdomain is detected, split the URL with including sd as first value
+                        if (key === "puSubdomain") {
+                            // Split the URL first
+                            const parts = absoluteUrl.hostname.split(".");
+                            // Extract the subdomain
+                            value = parts.length > 2 ? parts.slice(0, -2).join(".") : "N/A";
+                        } else if (key === "puTld") {
+                            // Extract TLD, same logic
+                            const parts = absoluteUrl.hostname.split(".");
+                            value = parts.length > 1 ? parts[parts.length - 1] : "N/A";
+                        } else {
+                            const urlPart = absoluteUrl[outputMapping[key] as keyof URL];
+                            value = typeof urlPart === "string" ? urlPart : urlPart ? urlPart.toString() : "N/A";
+                        }
+                        targetElement.value = value;
+
+                        if (!targetElement.value.length) {
+                            targetElement.value = "-"
+                        }
                     } else {
-                        const urlPart = absoluteUrl[outputMapping[key] as keyof URL];
-                        value = typeof urlPart === "string" ? urlPart : urlPart ? urlPart.toString() : "N/A";
+                        console.warn(`DOM element with class "${key}" not found.`);
                     }
+                });
+            } catch (error: unknown) {
+                console.error("Error parsing URL:", error);
+            }
+        }
+    }
 
-                    console.log(value);
-                    targetElement.value = value;
-
-                    if (!targetElement.value.length) {
-                        targetElement.value = "-"
-                    }
-                } else {
-                    console.warn(`DOM element with class "${key}" not found.`);
-                }
-            });
-        } catch (error: unknown) {
-            console.error("Error parsing URL:", error);
+    // Check if our URL contains literally URL patterns with simply
+    // taking protocol as our base checking point
+    private isUrlPatternMatching(elem: string): boolean {
+        const URL_PROTOCOLS: Array<string> = ["http://", "https://"];
+        // Validate input URL & search of literal URL pattern with our protocol as base
+        if (elem.startsWith(URL_PROTOCOLS[0]) || elem.startsWith(URL_PROTOCOLS[1])) {
+            return true;
+        } else {
+            return false;
         }
     }
 
