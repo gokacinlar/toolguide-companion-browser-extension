@@ -1,6 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 
 export default class WebDev extends HTMLElement {
     private template: Template;
@@ -16,7 +16,8 @@ export default class WebDev extends HTMLElement {
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
-            colorPicker: "colorPicker"
+            colorPicker: "colorPicker",
+            colorPGenerator: "colorPGenerator"
         }
 
         const template = this.template.createTemplate(this.webDev());
@@ -31,7 +32,7 @@ export default class WebDev extends HTMLElement {
             navButtons.forEach((button) => {
                 button.addEventListener("click", () => {
                     const pageName = button.getAttribute("data-page");
-                    this.appCalculation.openPage(pageName, document); // Use the optional chaining operator to ensure shadowRoot is not null
+                    this.appCalculation.openPage(pageName, document);
                 });
             });
         }
@@ -43,16 +44,25 @@ export default class WebDev extends HTMLElement {
             <div class="web-dev-tab-navigation-buttons">
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} webdev-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPicker}">Color Picker</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.colorPGenerator}">Color Palette Generator</button></li>
                 </ul>
             </div>
             <div id="content">
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="colorPicker" style="display: none;">${this.renderColorPicker()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="colorPGenerator" style="display: none;">${this.colorPaletteGenerator()}</div>
             </div>
         `;
     }
 
     // Color Picker
     private renderColorPicker(): string {
+        return `
+            Coming soon...
+        `;
+    }
+
+    // Color Palette Generator
+    private colorPaletteGenerator(): string {
         return `
             Coming soon...
         `;
