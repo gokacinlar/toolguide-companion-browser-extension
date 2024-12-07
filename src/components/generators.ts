@@ -1,6 +1,6 @@
 import { Template, Overflowing, JSONDataFetching, UIElems } from "./helper.js";
 import { LoremContent, ElementStyling, JSONData } from "../static.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 
 export default class Generators extends HTMLElement {
     private template: Template;

@@ -1,6 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 import { parse } from "../../node_modules/mathjs/types/index.js";
 
 export default class Utilities extends HTMLElement {
@@ -41,7 +41,7 @@ export default class Utilities extends HTMLElement {
     private utilsTemplate(): string {
         return `
             <div class="position-relative formatters-tab-navigation-buttons">
-                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} formatters-ulist">
+                <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} utils-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.urlParser}">URL Parser</button></li>
                 </ul>
             </div>
@@ -180,7 +180,7 @@ export default class Utilities extends HTMLElement {
         this.handleNavigation();
         this.appCalculation.openPage("urlParser", document);
         const tabMenu = document.querySelector(".formatters-tab-navigation-buttons") as HTMLDivElement;
-        this.overflowing.handleTabOverFlowing(tabMenu, ".formatters-ulist");
+        this.overflowing.handleTabOverFlowing(tabMenu, ".utils-ulist");
 
         // URL Parsing
         const parseUrlBtn = document.querySelector("#parseUrlBtn") as HTMLButtonElement;

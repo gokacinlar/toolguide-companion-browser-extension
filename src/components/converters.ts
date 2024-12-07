@@ -1,6 +1,6 @@
 import { Template, Overflowing, JSONDataFetching, UIElems } from "./helper.js";
 import { UnitFactors, ConversionValues, Currencies, ElementStyling } from "../static.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 import type * as Types from '../types.js';
 
 export default class Converters extends HTMLElement {
@@ -288,14 +288,14 @@ export default class Converters extends HTMLElement {
             <section class="overflowing-content">
                 <div id="currencyBase" class="d-flex flex-row align-items-center justify-content-between">
                     <div>
-                        <h4 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-sm">1 (one) US dollar equals</h4>
+                        <h5 class="bg-discovery-subtle px-2 py-2 rounded-pill shadow-sm">1 (one) US dollar equals to</h5>
                     </div>
                     <div class="currency-refresh-and-source d-flex flex-row align-content-center justify-content-center gap-1">
                         <div>
-                            <h4 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-sm">
+                            <h5 class="bg-discovery-subtle px-0 py-0 ps-2 rounded-pill d-flex flex-row align-items-center justify-content-center gap-1 shadow-sm">
                                 <span>Last updated</span>
                                 <span id="currencyDateUpdated" class="bg-secondary-subtle px-2 py-2 rounded-pill"></span>
-                            </h4>
+                            </h5>
                         </div>
                         <div>
                             <span><a href="https://github.com/fawazahmed0/exchange-api#readme" target="_blank" title="Currency API Data">
@@ -303,7 +303,7 @@ export default class Converters extends HTMLElement {
                         </div>
                     </div>
                 </div>
-                <div id="currencyList" class="shadow-sm border border-1 border-secondary-subtle mt-1 rounded-1 pe-none">
+                <div id="currencyList" class="shadow-sm border border-1 border-secondary-subtle mt-1 rounded-1">
                     <ul class="list-group d-flex flex-row align-items-center justify-content-between px-0 py-0">
                         <li class="list-group-item currency-list-item cli-eur d-flex flex-column align-items-center justify-content-between gap-2">
                             <img src="/images/icons/flags/eu.svg" class="img-fluid currency-flag-icon border border-1 border-secondary-subtle"

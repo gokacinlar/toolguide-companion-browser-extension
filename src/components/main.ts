@@ -4,7 +4,7 @@ import { ElementStyling } from "../static.js";
 import Converters from "./converters.js";
 import Generators from "./generators.js";
 import Utilities from "./utils.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 import Formatters from "./formatters.js";
 import Ciphers from "./ciphers.js";
 import WebDev from "./webdev.js";
@@ -48,8 +48,9 @@ export class Main extends HTMLElement {
                 <h1>Toolguide Companion</h1>
                 <p>Your browser companion to accomplish many handy stuff!</p>
                 <div class="main-support-section">
-                    <a href="https://buymeacoffee.com/gokacinlar" class="btn btn-success d-flex flex-row gap-2 align-items-center justify-content-center rounded-pill fs-3 px-2 py-2 shadow-md" role="button" title="Redirect to Support Page" target="_blank">
-                        <img src="/images/icons/support.svg" class="img-fluid main-support-icon" alt="Support this project!"><span>Support this project!</span>
+                    <a href="https://buymeacoffee.com/gokacinlar" class="btn btn-success d-flex flex-row gap-2 align-items-center justify-content-center rounded-pill fs-3 px-2 py-2 shadow-md" 
+                    role="button" title="Redirect to Support Page (BuyMeACoffee)" target="_blank">
+                        <img src="/images/icons/support.svg" class="img-fluid main-support-icon" alt="Sponsor this project!"><span>Sponsor this project!</span>
                     </a>
                 </div>
             </div>

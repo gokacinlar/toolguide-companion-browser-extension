@@ -1,6 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
-import AppCalculations from "./appCalculations.js";
+import AppCalculations from "./app_calculations.js";
 
 export default class Formatters extends HTMLElement {
     private template: Template;
