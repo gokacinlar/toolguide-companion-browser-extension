@@ -22,26 +22,37 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Formatters:
 	- JSON Formatter
 	- XML Formatter
-	- HTML Formatter **(in progress)**
-	- CSS Formatter **(in progress)**
-	- JavaScript Formatter  **(in progress)**
+	- HTML Formatter **(planned)**
+	- CSS Formatter **(planned)**
+	- JavaScript Formatter  **(planned)**
 - Generators:
 	- Lorem Ipsum Generator
 	- Password Generator
 	- Random JSON Generator
 - Utilities:
 	- URL Parser
-	- Screenshot **(planned)**
+	- Screenshot Taker **(planned)**
 - Web Dev **(planned)**:
+    - Color Picker **(planned)**
+    - Color Palette Generator **(planned)**
 - Ciphers:
 	- Caesar's Cipher
 	- ROT-13
+- Information
+    - System Information
 
 ## Usage & Installation
 
 Extension will be available upon approval from Chrome, Edge, Firefox & Opera's webstores. However, if you want to use the extension locally, **simply clone the repository** and do;
 
 `npm run build`
+
+## Manifest.json Permissions
+
+- system.cpu,
+- system.memory
+- system.display
+- system.storage
 
 ## Why this thing exists?
 
