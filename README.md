@@ -4,7 +4,7 @@
 
 Your toolbox companion to accomplish many handy stuff, without leaving the browser.
 
-> This extension empowers developers to use countless tools such as base, unit, currency converters; color code, finanical calculators; JSON, XML formatters; lorem, password generators and many more **without requiring them to leave their browser.**
+> This extension empowers both users & developers to use countless tools such as base, unit, currency converters; color code, finanical calculators; JSON, XML formatters; lorem, password generators and many more **without requiring them to leave their browser.**
 
 ## Current Tools
 
@@ -38,7 +38,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Ciphers:
 	- Caesar's Cipher
 	- ROT-13
-- Information
+- Information:
     - System Information
 
 ## Usage & Installation
