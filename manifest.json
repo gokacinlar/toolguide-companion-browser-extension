@@ -19,7 +19,12 @@
             ]
         }
     ],
-    "permissions": [],
+    "permissions": [
+        "system.cpu",
+        "system.memory",
+        "system.display",
+        "system.storage"
+    ],
     "action": {
         "default_popup": "popup/popup.html",
         "default_title": "Toolguide Companion",
