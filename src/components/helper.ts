@@ -87,7 +87,7 @@ export class JSONDataFetching {
             "https://latest.currency-api.pages.dev/",
             "https://cdn.jsdelivr.net",
             "https://jsonplaceholder.typicode.com/",
-            "https://api.quotable.io/"
+            "https://random-quotes-freeapi.vercel.app/"
         ];
 
         if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
@@ -191,15 +191,15 @@ export const BUTTON_TEMPLATE: Types.AsideButtons = {
 export const IMAGE_SOURCES: Types.AsideButtons = {
     source: {
         src: "/images/icons/website.svg",
-        ref: ""
+        ref: "https://github.com/gokacinlar/toolguide-companion-browser-extension"
     },
     github: {
         src: "/images/icons/github.svg",
-        ref: "https://github.com/gokacinlar/dev-toolguide"
+        ref: "https://github.com/gokacinlar/toolguide-companion-browser-extension"
     },
     webstore: {
         src: "/images/icons/chrome-webstore.svg",
-        ref: ""
+        ref: "https://www.dervisoksuzoglu.net/projects"
     },
     support: {
         src: "/images/icons/support.svg",
