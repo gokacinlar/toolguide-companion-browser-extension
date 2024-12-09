@@ -86,7 +86,8 @@ export class JSONDataFetching {
         const webAccessDomains = [
             "https://latest.currency-api.pages.dev/",
             "https://cdn.jsdelivr.net",
-            "https://jsonplaceholder.typicode.com/"
+            "https://jsonplaceholder.typicode.com/",
+            "https://api.quotable.io/"
         ];
 
         if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
