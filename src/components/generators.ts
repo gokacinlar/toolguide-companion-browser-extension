@@ -354,21 +354,27 @@ export default class Generators extends HTMLElement {
     // Generate Random Quote template
     private generateRandomQuoteTemplate(): string {
         return `
-            <section>
+            <section class="overflowing-content">
                 <div class="d-flex flex-row align-items-center justify-content-center gap-2 px-1">
                     <div class="w-100">
                         <button id="generateRandQuoteBtn" class="btn btn-discovery fs-4 w-100 rounded-pill">Get A Random Quote</button>
                     </div>
                     <div>
-                        <a href="https://jsonplaceholder.typicode.com/" target="_blank" title="Random Quote Data">
+                        <a href="https://random-quotes-freeapi.vercel.app/" target="_blank" title="Random Quote Data">
                         <img src="/images/icons/question-mark.svg" class="img-fluid help-icon-min"></a>
                     </div>
                 </div>
                 <div>
                     <div class="rand-quote-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
-                        <textarea class="rand-json-output-value w-100 form-control fs-5" id="randJsonOutput" title="Result" placeholder="Result" name="rand-json-result" readonly></textarea>
+                        <textarea class="rand-json-output-value w-100 form-control fs-5" id="randQuoteOutput" title="Quote" placeholder="Result" name="rand-json-result" readonly></textarea>
+                        <div class="mt-1 w-100">
+                            <label for="quoteAuthor" class="form-label fs-6">Quote by:</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="quoteAuthor" aria-describedby="quoteAuthor" readonly/>
+                            </div>
+                        </div>
                         <div>
-                            ${this.uiElems.generateAlerts("copyRandJson", "Copy", "rand-quote-alert", "rand-quote-alert-message")}
+                            ${this.uiElems.generateAlerts("copyRandQuote", "Copy", "rand-quote-alert", "rand-quote-alert-message")}
                         </div>
                     </div>
                 </div>
@@ -376,26 +382,36 @@ export default class Generators extends HTMLElement {
         `;
     }
 
-        // Function to fetch random quote and append it to the Random Quote Template
-        private fetchRandomQuote = async (url: string): Promise<any[]> => {
-            try {
-                const jsonDataFetch = await this.jsonFetching.getJson(url);
-                console.log(jsonDataFetch);
+    // Function to fetch random quote and append it to the Random Quote Template
+    private fetchRandomQuote = async (): Promise<any[]> => {
+        try {
+            const apiUrl: string = "https://random-quotes-freeapi.vercel.app/api/random";
+            const jsonDataFetch = await this.jsonFetching.getJson(apiUrl);
+            const randQuoteSection = document.querySelector("#randQuoteOutput") as HTMLTextAreaElement;
+            const randQuoteAuthor = document.querySelector("#quoteAuthor") as HTMLInputElement;
+
+            if (jsonDataFetch) {
+                randQuoteSection.value = jsonDataFetch.quote;
+                randQuoteAuthor.value = jsonDataFetch.author;
                 return jsonDataFetch;
-            } catch (error: unknown) {
-                console.error("Error during data fetch:", error);
-                throw error; // For Promise<any[]>
+            } else {
+                randQuoteSection.value = "An error occured. Please see console.";
+                randQuoteAuthor.value = "An error occured. Please see console.";
+                console.error("Error retrieving JSON data.");
+                return jsonDataFetch;
             }
+        } catch (error: unknown) {
+            console.error("Error during data fetch:", error);
+            throw error; // For Promise<any[]>
         }
-    
-    async connectedCallback(): Promise<void> {
+    }
+
+    connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("loremIpsumGenerator", document);
         // Handle tab overflowing & navigation buttons
         const tabMenu = document.querySelector(".generators-tab-navigation-buttons") as HTMLDivElement;
         this.overflowing.handleTabOverFlowing(tabMenu, ".generators-ulist");
-        const apiUrl: string = "https://api.quotable.io/random";
-        await this.fetchRandomQuote(apiUrl);
 
         /**
          * HELPER FUNCTIONS
@@ -410,7 +426,7 @@ export default class Generators extends HTMLElement {
         const copyContentFromTextArea = (target: HTMLElement, data: HTMLTextAreaElement, element: string): void => {
             target.addEventListener("click", () => {
                 const targetDataValue = data.value;
-                if (targetDataValue.length >= 1) {
+                if (targetDataValue.length) {
                     navigator.clipboard.writeText(targetDataValue).then(() => {
                         const displaySuccess = document.querySelector(element) as HTMLElement;
                         displaySuccess.style.opacity = "1";
@@ -516,6 +532,24 @@ export default class Generators extends HTMLElement {
                 this.appCalculation.displaySuccess(randJsonOutput.value);
             }
         })
+
+        // Random Quote
+        const generateRandQuoteBtn = document.querySelector("#generateRandQuoteBtn") as HTMLButtonElement;
+        generateRandQuoteBtn.addEventListener("click", () => {
+            this.fetchRandomQuote();
+        });
+
+        const copyRandQuoteBtn = document.querySelector("#copyRandQuote") as HTMLButtonElement;
+        const randQuoteSection = document.querySelector("#randQuoteOutput") as HTMLTextAreaElement;
+        const randQuoteAuthor = document.querySelector("#quoteAuthor") as HTMLInputElement;
+        copyRandQuoteBtn.addEventListener("click", () => {
+            if (!randQuoteSection.value.length || !randQuoteAuthor.value.length) {
+                this.appCalculation.displayAlert(".rand-quote-alert", ".rand-quote-alert-message", "Please provide a value.");
+            } else {
+                const quoteWithAuthor: string = `${randQuoteSection.value} - ${randQuoteAuthor.value}`
+                this.appCalculation.displaySuccess(quoteWithAuthor);
+            }
+        });
     }
 }
 
