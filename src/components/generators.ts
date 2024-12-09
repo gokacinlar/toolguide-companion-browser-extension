@@ -26,7 +26,8 @@ export default class Generators extends HTMLElement {
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
             passwordGenerator: "passwordGenerator",
-            randJson: "randJson"
+            randJson: "randJson",
+            randQuote: "randQuote"
         }
 
         const template = this.template.createTemplate(this.generators());
@@ -55,12 +56,14 @@ export default class Generators extends HTMLElement {
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.loremIpsumGenerator}">Lorem</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randJson}">Random JSON</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randQuote}">Random Quote</button></li>
                 </ul>
             </div>
             <div id="content">
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="loremIpsumGenerator" style="display: none;">${this.loremIpsumGeneratorTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randJson" style="display: none;">${this.generateJsonGenerationTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randQuote" style="display: none;">${this.generateRandomQuoteTemplate()}</div>
             </div>
             `;
     }
@@ -348,12 +351,51 @@ export default class Generators extends HTMLElement {
         };
     }
 
-    connectedCallback(): void {
+    // Generate Random Quote template
+    private generateRandomQuoteTemplate(): string {
+        return `
+            <section>
+                <div class="d-flex flex-row align-items-center justify-content-center gap-2 px-1">
+                    <div class="w-100">
+                        <button id="generateRandQuoteBtn" class="btn btn-discovery fs-4 w-100 rounded-pill">Get A Random Quote</button>
+                    </div>
+                    <div>
+                        <a href="https://jsonplaceholder.typicode.com/" target="_blank" title="Random Quote Data">
+                        <img src="/images/icons/question-mark.svg" class="img-fluid help-icon-min"></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="rand-quote-textarea d-flex flex-column align-items-start justify-content-start mb-3 mt-3 px-1">
+                        <textarea class="rand-json-output-value w-100 form-control fs-5" id="randJsonOutput" title="Result" placeholder="Result" name="rand-json-result" readonly></textarea>
+                        <div>
+                            ${this.uiElems.generateAlerts("copyRandJson", "Copy", "rand-quote-alert", "rand-quote-alert-message")}
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+        // Function to fetch random quote and append it to the Random Quote Template
+        private fetchRandomQuote = async (url: string): Promise<any[]> => {
+            try {
+                const jsonDataFetch = await this.jsonFetching.getJson(url);
+                console.log(jsonDataFetch);
+                return jsonDataFetch;
+            } catch (error: unknown) {
+                console.error("Error during data fetch:", error);
+                throw error; // For Promise<any[]>
+            }
+        }
+    
+    async connectedCallback(): Promise<void> {
         this.handleNavigation();
         this.appCalculation.openPage("loremIpsumGenerator", document);
         // Handle tab overflowing & navigation buttons
         const tabMenu = document.querySelector(".generators-tab-navigation-buttons") as HTMLDivElement;
         this.overflowing.handleTabOverFlowing(tabMenu, ".generators-ulist");
+        const apiUrl: string = "https://api.quotable.io/random";
+        await this.fetchRandomQuote(apiUrl);
 
         /**
          * HELPER FUNCTIONS

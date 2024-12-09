@@ -472,4 +472,8 @@ export class JSONData {
         comments: "https://jsonplaceholder.typicode.com/comments",
         posts: "https://jsonplaceholder.typicode.com/posts"
     };
+
+    public randQuoteDataSrc: Record<string, string> = {
+        randQuote: "https://api.quotable.io/random"
+    }
 }
