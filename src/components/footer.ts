@@ -82,7 +82,7 @@ class Footer extends HTMLElement {
 
     // Function to render images in Footer"s Right Side
     private renderImageLink(image: Types.ImageSource, title: string): string {
-        // Add "text-decoration: none", "color: transparent" to <a> element because it will try to display a dot in 
+        // Add "text-decoration: none", "color: transparent" to <a> element because it will try to display a dot in
         // its content since we do not use any text in it. Browser will try to populate it
         // https://stackoverflow.com/a/52566572
         return `
