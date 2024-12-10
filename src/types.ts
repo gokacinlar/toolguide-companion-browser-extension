@@ -30,3 +30,16 @@ export interface JSONValue {
 export interface Currency {
     [key: string]: string
 }
+
+// For NetworkInformation non-standard API
+export interface NavigatorExtended extends Navigator {
+    online: boolean,
+
+    connection?: {
+        effectiveType: string;
+        downlink: number;
+        rtt: number;
+        saveData: boolean;
+        type: string;
+    };
+}
