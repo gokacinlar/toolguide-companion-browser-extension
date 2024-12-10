@@ -1,6 +1,7 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import AppCalculations from "./app_calculations.js";
+import type * as Types from '../types.js';
 
 export default class SystemInformation extends HTMLElement {
     private template: Template;
@@ -10,6 +11,7 @@ export default class SystemInformation extends HTMLElement {
     private Ids: { [key: string]: string };
 
     private sysInf = new SysInfo();
+    private netInf = new NetInfo();
 
     constructor() {
         super();
@@ -19,6 +21,7 @@ export default class SystemInformation extends HTMLElement {
         this.appCalculation = new AppCalculations();
         this.Ids = {
             systemInfo: "systemInfo",
+            netInfo: "netInfo"
         }
 
         const template = this.template.createTemplate(this.sysInfo());
@@ -45,10 +48,12 @@ export default class SystemInformation extends HTMLElement {
             <div class="web-dev-tab-navigation-buttons">
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} sysinformation-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.systemInfo}">System Information</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.netInfo}">Network Information</button></li>
                 </ul>
             </div>
             <div id="content">
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="systemInfo" style="display: none;">${this.sysInf.systemInformation()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="netInfo" style="display: none;">${this.netInf.networkInformation()}</div>
             </div>
         `;
     }
@@ -66,9 +71,36 @@ export default class SystemInformation extends HTMLElement {
         this.sysInf.getRamInfo();
         this.sysInf.getDisplayInfo();
         this.sysInf.getStorageInfo();
+
+        // Call Network Information elements
+        // NetworkInformation API only works in Chrome for now
+        // https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/type#browser_compatibility
+        // thus add a fallback: https://stackoverflow.com/a/54038434/26540420
+        if (navigator.userAgent.indexOf("Chrome") != -1) {
+            // Add online and offline event listeners globally
+            const alertDiv = document.querySelector("#alertDiv") as HTMLDivElement;
+            const isConnectedMessage = document.querySelector("#isConnected") as HTMLHeadingElement;
+
+            // Attach online and offline event listeners
+            window.addEventListener("offline", () => {
+                console.log("Offline event triggered");
+                this.netInf.updateAlertStatus(alertDiv, false);
+                isConnectedMessage.textContent = "Computer is NOT connected to network.";
+            });
+
+            window.addEventListener("online", () => {
+                console.log("Online event triggered");
+                isConnectedMessage.textContent = "Computer is connected to network.";
+                this.netInf.updateNetworkStatus(); // Refresh network status
+            });
+
+            // Initial network status update
+            this.netInf.updateNetworkStatus();
+        }
     }
 }
 
+// System Information Class
 class SysInfo {
     systemInformation(): string {
         return `
@@ -115,7 +147,7 @@ class SysInfo {
     }
 
     // Function to get CPU Information
-    getCpuInfo = (): void => {
+    public getCpuInfo = (): void => {
         if (chrome && chrome.system && chrome.system.cpu) {
             chrome.system.cpu.getInfo(cpuInfo => {
                 if (!cpuInfo) {
@@ -133,7 +165,7 @@ class SysInfo {
     };
 
     // Function to get GPU info using WebGL
-    getGpuInfo = (): Object | null => {
+    public getGpuInfo = (): Object | null => {
         // WebGL Context Setup
         const canvas: HTMLCanvasElement = document.createElement("canvas");
         const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
@@ -234,6 +266,102 @@ class SysInfo {
     private convertBytesToGb(bytes: number) {
         return (bytes / (1024 ** 3)).toFixed(2);
     }
+}
+
+// System Netwrok Class
+class NetInfo {
+    networkInformation(): string {
+        return `
+            <section class="overflowing-content container column px-1">
+                <div>
+                    <div id="alertDiv" class="alert mb-0" role="alert">
+                        <div class="d-flex flex-row align-items-center justify-content-start gap-4 my-0 py-0 fs-5">
+                            <div>
+                                <span>
+                                    <img class="img-fluid help-icon-min" src="/images/icons/etc/check-circle.svg">
+                                </span>
+                            </div>
+                            <div>
+                                <h4 id="isConnected" class="mb-0"></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column mt-3">
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-3" id="netQuality">Network Quality</span>
+                            <input type="text" class="form-control" placeholder="(e.g., 4g, 3g, 2g etc.)" aria-label="Network Quality" aria-describedby="netQuality" readonly/>
+                            <span class="input-group-text">
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/effectiveType" class="link-info" target="_blank">?</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-3" id="downSpeed">Download Speed</span>
+                            <input type="text" class="form-control" placeholder="Effective bandwith in mbps" aria-label="Download Speed" aria-describedby="downSpeed" readonly/>
+                            <span class="input-group-text">
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/downlink" class="link-info" target="_blank">?</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-3" id="rtt">Round-trip Time</span>
+                            <input type="text" class="form-control" placeholder="approximate MS" aria-label="Round-trip Time" aria-describedby="rtt" readonly/>
+                            <span class="input-group-text">
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/rtt" class="link-info" target="_blank">?</a>
+                            </span>
+                        </div>
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-3" id="dataSaver">Data Saver Mode</span>
+                            <input type="text" class="form-control" placeholder="enabled or disabled" aria-label="Data Saver Mode" aria-describedby="dataSaver" readonly/>
+                            <span class="input-group-text">
+                                <a href="https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/saveData" class="link-info" target="_blank">?</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    // Update network status and append data
+    public updateNetworkStatus = (): void => {
+        try {
+            const navigatorWithConnection = navigator as Types.NavigatorExtended;
+
+            // Check if Network Information API is supported
+            const connection = navigatorWithConnection.connection;
+            if (!connection) {
+                console.error("Network Information API is not supported in this browser.");
+                return;
+            }
+
+            // Retrieve connection properties
+            const { effectiveType = "unknown", downlink = 0, rtt = 0, saveData = false } = connection;
+
+            // Populate input fields
+            const netQuality = document.querySelector(`input[aria-describedby="netQuality"]`) as HTMLInputElement;
+            const downSpeed = document.querySelector(`input[aria-describedby="downSpeed"]`) as HTMLInputElement;
+            const rttValue = document.querySelector(`input[aria-describedby="rtt"]`) as HTMLInputElement;
+            const dataSaver = document.querySelector(`input[aria-describedby="dataSaver"]`) as HTMLInputElement;
+
+            netQuality.value = effectiveType;
+            downSpeed.value = `${downlink} Mbps`;
+            rttValue.value = `${rtt} ms`;
+            dataSaver.value = saveData ? "Enabled" : "Disabled";
+        } catch (error: unknown) {
+            console.error("Error during measuring internet connection:", error instanceof Error ? error.message : error);
+        }
+    };
+
+    // Manipulate alert div if network is connected or disconnected
+    public updateAlertStatus = (element: HTMLDivElement, isConnected: boolean): void => {
+        console.log(`Updating alert status. Connected: ${isConnected}`);
+        if (isConnected) {
+            element.classList.remove("alert-warning");
+            element.classList.add("alert-success");
+        } else {
+            element.classList.remove("alert-success");
+            element.classList.add("alert-warning");
+        }
+    };
 }
 
 customElements.define("app-sysinfo", SystemInformation);
