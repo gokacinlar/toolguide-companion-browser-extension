@@ -539,16 +539,17 @@ export default class Generators extends HTMLElement {
             this.fetchRandomQuote();
         });
 
-        const copyRandQuoteBtn = document.querySelector("#copyRandQuote") as HTMLButtonElement;
         const randQuoteSection = document.querySelector("#randQuoteOutput") as HTMLTextAreaElement;
         const randQuoteAuthor = document.querySelector("#quoteAuthor") as HTMLInputElement;
+        const copyRandQuoteBtn = document.querySelector("#copyRandQuote") as HTMLButtonElement;
         copyRandQuoteBtn.addEventListener("click", () => {
             if (!randQuoteSection.value.length || !randQuoteAuthor.value.length) {
                 this.appCalculation.displayAlert(".rand-quote-alert", ".rand-quote-alert-message", "Please provide a value.");
-            } else {
-                const quoteWithAuthor: string = `${randQuoteSection.value} - ${randQuoteAuthor.value}`
-                this.appCalculation.displaySuccess(quoteWithAuthor);
+                return;
             }
+
+            const quoteWithAuthor: string = `${randQuoteSection.value} - ${randQuoteAuthor.value}`
+            this.appCalculation.displaySuccess(quoteWithAuthor);
         });
     }
 }
