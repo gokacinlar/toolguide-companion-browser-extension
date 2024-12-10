@@ -128,11 +128,11 @@ export class UIElems {
     // Function to generate alert boxes
     public generateAlerts = (btnId: string, btnName: string, messageDiv: string, messageSubDiv: string): string => {
         return `
-            <section class="alerts d-flex flex-row align-content-center justify-content-between gap-2">
-                <div class="mt-3">
+            <section class="alerts d-flex flex-row align-content-center justify-content-between gap-2 mt-3">
+                <div>
                     <button type="button" class="btn btn-discovery time-convert-btn rounded-pill shadow-lg fs-4" id="${btnId}">${btnName}</button>
                 </div>
-                <div class="d-flex flex-row align-content-center justify-content-center w-100 mt-3">
+                <div class="d-flex flex-row align-content-center justify-content-center gap-2">
                     <div class="${messageDiv} alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2 mb-0" role="alert" style="opacity: 0;">
                         <h6 class="${messageSubDiv} mb-0"></h6>
                     </div>
