@@ -20,19 +20,18 @@ export class Overflowing {
         }
         return false;
     }
-
     // Add the movement menu
     public handleTabOverFlowing(elem: HTMLDivElement, target: string): HTMLElement {
         const tabSwitchingBtnDiv = `
-            <div class="tab-switching-buttons-container">
-                <div class="position-absolute top-0 start-0 d-flex flex-row align-items-center justify-content-between">
-                    <button type="button" id="leftBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Back" style="visibility: hidden;"><img src="/images/icons/nav/left-arrow.svg" class="img-fluid tab-nav-icon"></button>
-                </div>
-                <div class="position-absolute top-0 end-0 d-flex flex-row align-items-center justify-content-between">
-                    <button type="button" id="rightBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Forward"><img src="/images/icons/nav/right-arrow.svg" class="img-fluid tab-nav-icon"></button>
-                </div>
+        <div class="tab-switching-buttons-container">
+            <div class="position-absolute top-0 start-0 d-flex flex-row align-items-center justify-content-between">
+                <button type="button" id="leftBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Back" style="visibility: hidden;"><img src="/images/icons/nav/left-arrow.svg" class="img-fluid tab-nav-icon"></button>
             </div>
-    `;
+            <div class="position-absolute top-0 end-0 d-flex flex-row align-items-center justify-content-between">
+                <button type="button" id="rightBtn" class="btn btn-default rounded-pill px-1 py-1 z-1" title="Forward"><img src="/images/icons/nav/right-arrow.svg" class="img-fluid tab-nav-icon"></button>
+            </div>
+        </div>
+`;
         const domifiedDiv: Document = new DOMParser().parseFromString(tabSwitchingBtnDiv, "text/html");
         const navMenu = document.querySelector(target) as HTMLUListElement;
 
@@ -44,8 +43,8 @@ export class Overflowing {
 
                 // Add listeners for right & left button for content movement
                 // and for button appearence
-                const leftBtn = document.querySelector("#leftBtn") as HTMLButtonElement;
-                const rightBtn = document.querySelector("#rightBtn") as HTMLButtonElement;
+                const leftBtn = childNode.querySelector("#leftBtn") as HTMLButtonElement;
+                const rightBtn = childNode.querySelector("#rightBtn") as HTMLButtonElement;
 
                 // If we use Math.ceil or Math.floor to handle already existing floating-point errors
                 // measured in the px format in our element, it doesn't work very good.
