@@ -1,7 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import AppCalculations from "./app_calculations.js";
-import { parse } from "../../node_modules/mathjs/types/index.js";
 
 export default class Utilities extends HTMLElement {
     private template: Template;
@@ -160,7 +159,7 @@ export default class Utilities extends HTMLElement {
 
     // Check if our URL contains literally URL patterns with simply
     // taking protocol as our base checking point
-    private isUrlPatternMatching(elem: string): boolean {
+    public isUrlPatternMatching(elem: string): boolean {
         const URL_PROTOCOLS: Array<string> = ["http://", "https://"];
         // Validate input URL & search of literal URL pattern with our protocol as base
         if (elem.startsWith(URL_PROTOCOLS[0]) || elem.startsWith(URL_PROTOCOLS[1])) {
