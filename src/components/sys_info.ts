@@ -373,6 +373,7 @@ class NetInfo {
             dataSaver: document.querySelector(`input[aria-describedby="dataSaver"]`) as HTMLInputElement
         }
 
+        // Additional clarification for effectiveType data
         const additionalClarificationMessage = (elem: string) => {
             if (elem.includes("4g")) {
                 return elem += " (100Mbps+)";
@@ -403,9 +404,6 @@ class NetInfo {
                 const { effectiveType = "unknown", downlink = 0, rtt = 0, saveData = false } = connection;
 
                 domElements.netQuality.value = additionalClarificationMessage(effectiveType);
-
-                // Additional clarification for effectiveType data
-
                 domElements.downSpeed.value = `${downlink} Mbps`;
                 domElements.rttValue.value = `${rtt} ms`;
                 domElements.dataSaver.value = saveData ? "Enabled" : "Disabled";
