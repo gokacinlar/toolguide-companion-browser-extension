@@ -1,5 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
+import Utilities from "./utils.js";
 import AppCalculations from "./app_calculations.js";
 import type * as Types from '../types.js';
 
@@ -47,8 +48,8 @@ export default class SystemInformation extends HTMLElement {
         return `
             <div class="web-dev-tab-navigation-buttons">
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} sysinformation-ulist">
-                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.systemInfo}">System Information</button></li>
-                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.netInfo}">Network Information</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.systemInfo}">System</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.netInfo}">Network</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -72,37 +73,15 @@ export default class SystemInformation extends HTMLElement {
         this.sysInf.getDisplayInfo();
         this.sysInf.getStorageInfo();
 
-        // Call Network Information elements
-        // NetworkInformation API only works in Chrome for now
-        // https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation/type#browser_compatibility
-        // thus add a fallback: https://stackoverflow.com/a/54038434/26540420
-        if (navigator.userAgent.indexOf("Chrome") != -1) {
-            // Add online and offline event listeners globally
-            const alertDiv = document.querySelector("#alertDiv") as HTMLDivElement;
-            const isConnectedMessage = document.querySelector("#isConnected") as HTMLHeadingElement;
-
-            // Attach online and offline event listeners
-            window.addEventListener("offline", () => {
-                console.log("Offline event triggered");
-                this.netInf.updateAlertStatus(alertDiv, false);
-                isConnectedMessage.textContent = "Computer is NOT connected to network.";
-            });
-
-            window.addEventListener("online", () => {
-                console.log("Online event triggered");
-                isConnectedMessage.textContent = "Computer is connected to network.";
-                this.netInf.updateNetworkStatus(); // Refresh network status
-            });
-
-            // Initial network status update
-            this.netInf.updateNetworkStatus();
-        }
+        // Call the Network Information elements
+        this.netInf.networkInformation();
+        this.netInf.connectedCallback();
     }
 }
 
 // System Information Class
 class SysInfo {
-    systemInformation(): string {
+    public systemInformation(): string {
         return `
             <section class="overflowing-content">
                 <div class="container column px-1 d-flex flex-column gap-2">
@@ -270,20 +249,22 @@ class SysInfo {
 
 // System Netwrok Class
 class NetInfo {
-    networkInformation(): string {
+    private utils: Utilities;
+
+    constructor() {
+        this.utils = new Utilities();
+    }
+
+    public networkInformation(): string {
         return `
             <section class="overflowing-content container column px-1">
                 <div>
                     <div id="alertDiv" class="alert mb-0" role="alert">
                         <div class="d-flex flex-row align-items-center justify-content-start gap-4 my-0 py-0 fs-5">
                             <div>
-                                <span>
-                                    <img class="img-fluid help-icon-min" src="/images/icons/etc/check-circle.svg">
-                                </span>
+                                <span><img id="isConnectedImg" class="img-fluid help-icon-min" src=""></span>
                             </div>
-                            <div>
-                                <h4 id="isConnected" class="mb-0"></h4>
-                            </div>
+                            <div><h4 id="isConnected" class="mb-0"></h4></div>
                         </div>
                     </div>
                     <div class="d-flex flex-column mt-3">
@@ -321,47 +302,131 @@ class NetInfo {
         `;
     }
 
-    // Update network status and append data
-    public updateNetworkStatus = (): void => {
+    // Function to detect if computer is connected to a network or not by simply using fetch api
+    // another solution is navigator.onLine but it work horrendously and not a viable solution. See:
+    // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine
+    private async isDeviceOnline(): Promise<boolean> {
         try {
-            const navigatorWithConnection = navigator as Types.NavigatorExtended;
+            const testUrl: string = "https://www.google.com"
 
-            // Check if Network Information API is supported
-            const connection = navigatorWithConnection.connection;
-            if (!connection) {
-                console.error("Network Information API is not supported in this browser.");
-                return;
+            const response = await fetch(testUrl, { method: "HEAD" });
+            if (response) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error: unknown) {
+            console.error("Unknown error occured", error);
+            return false;
+        }
+    }
+
+    // Set up listeners for real-time connectivity status changes
+    // that doesn't require reloading the extension
+    private async setupConnectivityListeners(): Promise<void> {
+        window.addEventListener("online", () => {
+            console.log("Network connection has been restored.");
+            this.updateConnectivityStatus(true);
+        });
+
+        window.addEventListener("offline", () => {
+            console.log("Computer has lost the network connection.");
+            this.updateConnectivityStatus(false);
+        });
+
+        // Initialize the current status on page load
+        const isOnline = await this.isDeviceOnline();
+        this.updateConnectivityStatus(isOnline);
+    }
+
+    // Update the connectivity status in the DOM
+    private updateConnectivityStatus(isOnline: boolean): void {
+        const isConnectedDivStyle = document.getElementById("alertDiv") as HTMLDivElement;
+        const isConnectedMessage = document.getElementById("isConnected") as HTMLHeadingElement;
+        const isConnectedImage = document.getElementById("isConnectedImg") as HTMLImageElement;
+
+        this.setAlert(isConnectedDivStyle, isConnectedMessage, isConnectedImage, isOnline);
+    }
+
+    // Function to adjust the alert status in the DOM
+    private setAlert(div: HTMLDivElement, text: HTMLHeadingElement, img: HTMLImageElement, isOnline: boolean): void {
+        // Reset alert classes first
+        div.classList.remove("alert-success", "alert-danger");
+
+        if (isOnline) {
+            div.classList.add("alert-success");
+            img.setAttribute("src", "/images/icons/etc/check-circle.svg");
+            text.textContent = "Computer is connected to network.";
+        } else {
+            div.classList.add("alert-danger");
+            img.setAttribute("src", "/images/icons/etc/x-circle-fill.svg");
+            text.textContent = "Computer is NOT connected to network.";
+        }
+    }
+
+    // Function to display all our network information
+    private async displayNetworkOutput(): Promise<void> {
+        const domElements = {
+            netQuality: document.querySelector(`input[aria-describedby="netQuality"]`) as HTMLInputElement,
+            downSpeed: document.querySelector(`input[aria-describedby="downSpeed"]`) as HTMLInputElement,
+            rttValue: document.querySelector(`input[aria-describedby="rtt"]`) as HTMLInputElement,
+            dataSaver: document.querySelector(`input[aria-describedby="dataSaver"]`) as HTMLInputElement
+        }
+
+        const additionalClarificationMessage = (elem: string) => {
+            if (elem.includes("4g")) {
+                return elem += " (100Mbps+)";
+            } else if (elem.includes("3g")) {
+                return elem += " (1Mbps)"
+            } else if (elem.includes("2g")) {
+                return elem += " (Max. 128kbps)"
+            } else if (elem.includes("slow-2g")) {
+                return elem += " (Below 128kbps)"
             }
 
-            // Retrieve connection properties
-            const { effectiveType = "unknown", downlink = 0, rtt = 0, saveData = false } = connection;
-
-            // Populate input fields
-            const netQuality = document.querySelector(`input[aria-describedby="netQuality"]`) as HTMLInputElement;
-            const downSpeed = document.querySelector(`input[aria-describedby="downSpeed"]`) as HTMLInputElement;
-            const rttValue = document.querySelector(`input[aria-describedby="rtt"]`) as HTMLInputElement;
-            const dataSaver = document.querySelector(`input[aria-describedby="dataSaver"]`) as HTMLInputElement;
-
-            netQuality.value = effectiveType;
-            downSpeed.value = `${downlink} Mbps`;
-            rttValue.value = `${rtt} ms`;
-            dataSaver.value = saveData ? "Enabled" : "Disabled";
-        } catch (error: unknown) {
-            console.error("Error during measuring internet connection:", error instanceof Error ? error.message : error);
+            return elem;
         }
-    };
 
-    // Manipulate alert div if network is connected or disconnected
-    public updateAlertStatus = (element: HTMLDivElement, isConnected: boolean): void => {
-        console.log(`Updating alert status. Connected: ${isConnected}`);
-        if (isConnected) {
-            element.classList.remove("alert-warning");
-            element.classList.add("alert-success");
+        const isOnline = await this.isDeviceOnline();
+        if (isOnline) {
+            try {
+                const navigatorWithConnection = navigator as Types.NavigatorExtended;
+
+                // Check if Network Information API is supported
+                const connection = navigatorWithConnection.connection;
+                if (!connection) {
+                    console.error("Network Information API is not supported in this browser.");
+                    return;
+                }
+
+                // Retrieve connection properties
+                const { effectiveType = "unknown", downlink = 0, rtt = 0, saveData = false } = connection;
+
+                domElements.netQuality.value = additionalClarificationMessage(effectiveType);
+
+                // Additional clarification for effectiveType data
+
+                domElements.downSpeed.value = `${downlink} Mbps`;
+                domElements.rttValue.value = `${rtt} ms`;
+                domElements.dataSaver.value = saveData ? "Enabled" : "Disabled";
+            } catch (error: unknown) {
+                console.error("Error during measuring internet connection:", error instanceof Error ? error.message : error);
+            }
         } else {
-            element.classList.remove("alert-success");
-            element.classList.add("alert-warning");
+            Object.values(domElements).forEach((element) => {
+                if (element instanceof HTMLInputElement) {
+                    element.value = "No network.";
+                }
+            });
+
+            console.error("Error: No network.");
         }
-    };
+    }
+
+    connectedCallback(): void {
+        this.setupConnectivityListeners();
+        this.displayNetworkOutput();
+    }
 }
 
 customElements.define("app-sysinfo", SystemInformation);
