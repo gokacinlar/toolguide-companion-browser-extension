@@ -17,6 +17,7 @@ export default class Utilities extends HTMLElement {
         this.appCalculation = new AppCalculations();
         this.Ids = {
             urlParser: "urlParser",
+            regexTester: "regexTester"
         }
 
         const template = this.template.createTemplate(this.utilsTemplate());
@@ -42,11 +43,15 @@ export default class Utilities extends HTMLElement {
             <div class="position-relative formatters-tab-navigation-buttons">
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} utils-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.urlParser}">URL Parser</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.regexTester}">Regex Tester</button></li>
                 </ul>
             </div>
             <div id="content">
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="urlParser" style="display: none;">
                     ${this.urlParserTemplate()}
+                </div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="regexTester" style="display: none;">
+                    ${this.regexTesterTemplate()}
                 </div>
         `;
     }
@@ -173,6 +178,31 @@ export default class Utilities extends HTMLElement {
     private checkHttpsStatus = (elem: HTMLInputElement): boolean => {
         const pattern: RegExp = /^https:/; // Match only `https`
         return pattern.test(elem.value.trim());
+    }
+
+    // Regex Tester Template
+    private regexTesterTemplate(): string {
+        return `
+            <section>
+                <div class="d-flex flex-column">
+                    <div>
+                        <label for="textToBeTested" class="form-label fs-6">Please paste your target text below:</label>
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-2" id="regExpTestString">Text</span>
+                            <input type="text" class="form-control" id="textToBeTested" aria-describedby="regExpTestString"/>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="regexPattern" class="form-label fs-6">Please paste your <span class="text-decoration-underline decoration-1">
+                        Regex Pattern</span> below:</label>
+                        <div class="input-group mb-3 container column px-0">
+                            <span class="input-group-text col-2" id="regExpPattern">Regex</span>
+                            <input type="text" class="form-control" id="regexPattern" aria-describedby="regExpPattern"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
     }
 
     connectedCallback(): void {
