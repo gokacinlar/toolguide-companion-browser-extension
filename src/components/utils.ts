@@ -219,16 +219,49 @@ export default class Utilities extends HTMLElement {
 
     connectedCallback(): void {
         this.handleNavigation();
-        this.appCalculation.openPage("regexTester", document);
+        this.appCalculation.openPage("urlParser", document);
         const tabMenu = document.querySelector(".formatters-tab-navigation-buttons") as HTMLDivElement;
         this.overflowing.handleTabOverFlowing(tabMenu, ".utils-ulist");
 
+        // URL Parsing
+        this.initUrlParsing();
+
         // Regex Tester
+        this.initRegexTester();
+    }
+
+    initUrlParsing(): void {
+        const parseUrlBtn = document.querySelector("#parseUrlBtn") as HTMLButtonElement;
+        parseUrlBtn.addEventListener("click", () => {
+            // Trim the input spaces first & clear the console
+            console.clear();
+            const inputElements = document.querySelectorAll("url-parse-div > input") as NodeListOf<HTMLInputElement>;
+            inputElements.forEach((x) => {
+                x.value = "";
+            });
+            const urlParseInput = document.querySelector(`input[aria-describedby="parseUrlInput"]`) as HTMLInputElement;
+            const stringifiedInput = urlParseInput.value.toString();
+            if (!stringifiedInput.length) {
+                this.appCalculation.displayAlert(".parse-url-alert", ".parse-url-alert-message", "Please provide a value.");
+            } else {
+                this.parseUrl(urlParseInput.value);
+                const urlParsingProtocolInputStatus = document.querySelector(`input[aria-describedby="puScheme"]`) as HTMLInputElement;
+                if (this.checkHttpsStatus(urlParsingProtocolInputStatus) === false) {
+                    urlParsingProtocolInputStatus.setAttribute("title", "This URL has an unencrypted HTTP connection.");
+                    urlParsingProtocolInputStatus.classList.add("border-danger");
+                } else {
+                    urlParsingProtocolInputStatus.removeAttribute("title");
+                    urlParsingProtocolInputStatus.classList.remove("border-danger");
+                }
+            }
+        });
+    }
+
+    initRegexTester(): void {
         const testRegexBtn = document.querySelector("#testRegexBtn") as HTMLButtonElement;
         testRegexBtn.addEventListener("click", () => {
             const textToBeTestedInput = document.querySelector(`input[aria-describedby="regExpTestString"]`) as HTMLInputElement;
             const regexPatternInput = document.querySelector(`input[aria-describedby="regExpPattern"]`) as HTMLInputElement;
-
             // Convert the inputs to strings first
             const textToBeTested = textToBeTestedInput.value.toString();
             const regexPattern = regexPatternInput.value.toString();
