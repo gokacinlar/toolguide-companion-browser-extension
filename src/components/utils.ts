@@ -183,7 +183,7 @@ export default class Utilities extends HTMLElement {
     // Regex Tester Template
     private regexTesterTemplate(): string {
         return `
-            <section>
+            <section class="overflowing-content">
                 <div class="d-flex flex-column">
                     <div>
                         <label for="textToBeTested" class="form-label fs-6">Please paste your target text below:</label>
@@ -200,6 +200,18 @@ export default class Utilities extends HTMLElement {
                             <input type="text" class="form-control" id="regexPattern" aria-describedby="regExpPattern"/>
                         </div>
                     </div>
+                    <div class="regex-test-btn-div">
+                        <button id="testRegexBtn" class="btn btn-discovery rounded-pill fs-4 shadow-lg w-100">Test Regex</button>
+                        <div id="regexTestResult" class="mt-3 w-100 fs-5"></div>
+                    </div>
+                    <div class="alerts d-flex flex-row align-content-center justify-content-between mt-3">
+                        <div class="regex-tester-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="regex-tester-alert-message mb-0"></h6>
+                        </div>
+                        <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 px-2 py-2 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="mb-0">Copied to clipboard.</h6>
+                        </div>
+                    </div>
                 </div>
             </section>
         `;
@@ -207,33 +219,35 @@ export default class Utilities extends HTMLElement {
 
     connectedCallback(): void {
         this.handleNavigation();
-        this.appCalculation.openPage("urlParser", document);
+        this.appCalculation.openPage("regexTester", document);
         const tabMenu = document.querySelector(".formatters-tab-navigation-buttons") as HTMLDivElement;
         this.overflowing.handleTabOverFlowing(tabMenu, ".utils-ulist");
 
-        // URL Parsing
-        const parseUrlBtn = document.querySelector("#parseUrlBtn") as HTMLButtonElement;
-        parseUrlBtn.addEventListener("click", () => {
-            // Trim the input spaces first & clear the console
-            console.clear();
-            const inputElements = document.querySelectorAll("url-parse-div > input") as NodeListOf<HTMLInputElement>;
-            inputElements.forEach((x) => {
-                x.value = "";
-            });
+        // Regex Tester
+        const testRegexBtn = document.querySelector("#testRegexBtn") as HTMLButtonElement;
+        testRegexBtn.addEventListener("click", () => {
+            const textToBeTestedInput = document.querySelector(`input[aria-describedby="regExpTestString"]`) as HTMLInputElement;
+            const regexPatternInput = document.querySelector(`input[aria-describedby="regExpPattern"]`) as HTMLInputElement;
 
-            const urlParseInput = document.querySelector(`input[aria-describedby="parseUrlInput"]`) as HTMLInputElement;
-            const stringifiedInput = urlParseInput.value.toString();
-            if (!stringifiedInput.length) {
-                this.appCalculation.displayAlert(".parse-url-alert", ".parse-url-alert-message", "Please provide a value.");
+            // Convert the inputs to strings first
+            const textToBeTested = textToBeTestedInput.value.toString();
+            const regexPattern = regexPatternInput.value.toString();
+
+            if (!textToBeTested.length || !regexPattern.length) {
+                this.appCalculation.displayAlert(".regex-tester-alert", ".regex-tester-alert-message", "Please provide both text and regex pattern.");
             } else {
-                this.parseUrl(urlParseInput.value);
-                const urlParsingProtocolInputStatus = document.querySelector(`input[aria-describedby="puScheme"]`) as HTMLInputElement;
-                if (this.checkHttpsStatus(urlParsingProtocolInputStatus) === false) {
-                    urlParsingProtocolInputStatus.setAttribute("title", "This URL has an unencrypted HTTP connection.");
-                    urlParsingProtocolInputStatus.classList.add("border-danger");
-                } else {
-                    urlParsingProtocolInputStatus.removeAttribute("title");
-                    urlParsingProtocolInputStatus.classList.remove("border-danger");
+                try {
+                    const regex: RegExp = new RegExp(regexPattern, "g");
+                    const testResult = regex.test(textToBeTested);
+                    // Use a Div because input doesn't recognize styled fonts
+                    const regexTestResultDiv = document.querySelector("#regexTestResult") as HTMLDivElement;
+                    // Highlight the matching string with bold font
+                    const highlightedText = textToBeTested.replace(regex, (match) => `<u><b>${match}</b></u>`);
+                    regexTestResultDiv.innerHTML = `Regex Test Result: ${highlightedText}`;
+                } catch (error: unknown) {
+                    // Catch if any error occurs
+                    const regexTestResultDiv = document.querySelector("#regexTestResult") as HTMLDivElement;
+                    regexTestResultDiv.innerHTML = `Error: ${error}`;
                 }
             }
         });
