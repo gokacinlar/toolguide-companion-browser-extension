@@ -405,7 +405,7 @@ class NetInfo {
 
                 domElements.netQuality.value = additionalClarificationMessage(effectiveType);
                 domElements.downSpeed.value = `${downlink} Mbps`;
-                domElements.rttValue.value = `${rtt} ms`;
+                domElements.rttValue.value = `${rtt} ms (estimated)`;
                 domElements.dataSaver.value = saveData ? "Enabled" : "Disabled";
             } catch (error: unknown) {
                 console.error("Error during measuring internet connection:", error instanceof Error ? error.message : error);

@@ -77,7 +77,7 @@ export default class Formatters extends HTMLElement {
             <section class="container row mx-0 px-0 d-flex align-content-center justify-content-around position-relative">
                 <div id="jsonInput" class="col-5 mx-0 px-0">
                     <div id="jiBtns" class="mb-3">
-                        <div class="btn-group d-flex flex-row align-content-center justify-content-start gap-2" role="group" aria-label="JavaScript Formatting Options">
+                        <div class="btn-group d-flex flex-row align-content-center justify-content-between gap-2" role="group" aria-label="JavaScript Formatting Options">
                             <div>
                                 <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off"/>
                                 <label class="btn btn-default fs-4 rounded-pill shadow-md" for="btnradio1">Minify</label>
