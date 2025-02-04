@@ -18,10 +18,7 @@ export default class Formatters extends HTMLElement {
 
         this.Ids = {
             jsonFormatter: "jsonFormatter",
-            xmlFormatter: "xmlFormatter",
-            htmlFormatter: "htmlFormatter",
-            cssFormatter: "cssFormatter",
-            javaScriptFormatter: "javaScriptFormatter"
+            xmlFormatter: "xmlFormatter"
         }
 
         const template = this.template.createTemplate(this.formattersTemplate());
@@ -48,9 +45,6 @@ export default class Formatters extends HTMLElement {
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} formatters-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.jsonFormatter}">JSON</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.xmlFormatter}">XML</button></li>
-                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.htmlFormatter}">HTML</button></li>
-                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.cssFormatter}">CSS</button></li>
-                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.javaScriptFormatter}">JavaScript</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -59,15 +53,6 @@ export default class Formatters extends HTMLElement {
                 </div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="xmlFormatter" style="display: none;">
                     ${this.xmlFormatter()}
-                </div>
-                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="htmlFormatter" style="display: none;">
-                    ${this.htmlFormatter()}
-                </div>
-                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="cssFormatter" style="display: none;">
-                    ${this.cssFormatter()}
-                </div>
-                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="javaScriptFormatter" style="display: none;">
-                    ${this.jsFormatter()}
                 </div>
         `;
     }
@@ -160,18 +145,6 @@ export default class Formatters extends HTMLElement {
         `;
     }
 
-    private htmlFormatter(): string {
-        return `Coming soon...`;
-    }
-
-    private cssFormatter(): string {
-        return `Coming soon...`;
-    }
-
-    private jsFormatter(): string {
-        return `Coming soon...`;
-    }
-
     /**
      * HELPER FUNCTIONS
      */
@@ -182,7 +155,7 @@ export default class Formatters extends HTMLElement {
             // Use JSON.parse to detect JSON patterns
             JSON.parse(elem);
             return true;
-        } catch (error) {
+        } catch (error: unknown) {
             console.error("Input is not a valid JSON.", error);
             return false;
         }

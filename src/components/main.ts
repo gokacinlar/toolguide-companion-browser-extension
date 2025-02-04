@@ -7,7 +7,6 @@ import Utilities from "./utils.js";
 import AppCalculations from "./app_calculations.js";
 import Formatters from "./formatters.js";
 import Ciphers from "./ciphers.js";
-import WebDev from "./webdev.js";
 import SystemInformation from "./sys_info.js";
 
 export class Main extends HTMLElement {
@@ -19,7 +18,6 @@ export class Main extends HTMLElement {
     private utils: Utilities;
     private formatters: Formatters;
     private ciphers: Ciphers;
-    private webdev: WebDev;
     private sysinfo: SystemInformation;
 
     constructor() {
@@ -32,7 +30,6 @@ export class Main extends HTMLElement {
         this.utils = new Utilities();
         this.formatters = new Formatters();
         this.ciphers = new Ciphers();
-        this.webdev = new WebDev();
         this.sysinfo = new SystemInformation();
 
         const template = this.templateHelper.createTemplate(this.renderContent());
@@ -96,11 +93,6 @@ export class Main extends HTMLElement {
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";
                     dynamicContent.appendChild(this.ciphers);
-                    break;
-                case "webdev":
-                    placeHolderContent?.remove();
-                    dynamicContent.innerHTML = "";
-                    dynamicContent.appendChild(this.webdev);
                     break;
                 case "sysinfo":
                     placeHolderContent?.remove();

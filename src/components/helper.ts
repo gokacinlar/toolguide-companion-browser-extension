@@ -169,10 +169,6 @@ export const BUTTON_TEMPLATE: Types.AsideButtons = {
         name: "Utilities",
         imgSrc: "/images/icons/aside/utilities.svg"
     },
-    webdev: {
-        name: "Web Dev.",
-        imgSrc: "/images/icons/aside/webdev.svg"
-    },
     ciphers: {
         name: "Ciphers",
         imgSrc: "/images/icons/aside/ciphers.svg"
