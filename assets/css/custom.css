@@ -245,7 +245,7 @@
     }
 
     /* SHA-256 Generator */
-    textarea[name="sha-256-textarea"] {
+    textarea:is([name="sha-256-textarea"], [name="sha-512-textarea"]) {
         height: 80px;
     }
 

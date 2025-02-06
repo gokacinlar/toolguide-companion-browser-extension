@@ -11,7 +11,8 @@ export default class Generators extends HTMLElement {
     private uiElems: UIElems;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
-    private sha256: sha256Generator;
+    private sha256: Sha256Generator;
+    private sha512: Sha512Generator;
     private Ids: { [key: string]: string };
 
     constructor() {
@@ -23,14 +24,16 @@ export default class Generators extends HTMLElement {
         this.lorem = new LoremContent();
         this.uiElems = new UIElems();
         this.overflowing = new Overflowing();
-        this.sha256 = new sha256Generator();
+        this.sha256 = new Sha256Generator();
+        this.sha512 = new Sha512Generator();
         this.appCalculation = new AppCalculations();
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
             passwordGenerator: "passwordGenerator",
             randJson: "randJson",
             randQuote: "randQuote",
-            sha256Generator: "sha256Generator"
+            sha256Generator: "sha256Generator",
+            sha512Generator: "sha512Generator"
         }
 
         const template = this.template.createTemplate(this.generators());
@@ -61,6 +64,7 @@ export default class Generators extends HTMLElement {
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randJson}">Random JSON</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randQuote}">Random Quote</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.sha256Generator}">SHA-256</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.sha512Generator}">SHA-512</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -69,6 +73,7 @@ export default class Generators extends HTMLElement {
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randJson" style="display: none;">${this.generateJsonGenerationTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randQuote" style="display: none;">${this.generateRandomQuoteTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="sha256Generator" style="display: none;">${this.sha256.sha256Template()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="sha512Generator" style="display: none;">${this.sha512.sha512Template()}</div>
             </div>
             `;
     }
@@ -561,10 +566,14 @@ export default class Generators extends HTMLElement {
         // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto
         this.sha256.sha256Template();
         this.sha256.connectedCallback();
+
+        // SHA-512 Generator
+        this.sha512.sha512Template();
+        this.sha512.connectedCallback();
     }
 }
 
-class sha256Generator {
+class Sha256Generator {
     private appCalculation: AppCalculations;
 
     constructor() {
@@ -638,6 +647,87 @@ class sha256Generator {
         copyHashBtn.addEventListener("click", () => {
             if (!stringToBeHashed.value.length) {
                 this.appCalculation.displayAlert(".sha-256-alert", ".sha-256-alert-message", "Please provide a text.");
+            } else {
+                this.appCalculation.displaySuccess(hashOutput.value);
+            }
+        });
+    }
+}
+
+class Sha512Generator {
+    private appCalculation: AppCalculations;
+
+    constructor() {
+        this.appCalculation = new AppCalculations;
+    }
+
+    public sha512Template(): string {
+        return `
+            <section>
+                <div>
+                    <label for="sha-512-string-input" class="form-label fs-6">Please enter text here...</label>
+                    <div class="input-group mb-3 container px-0">
+                        <span class="input-group-text col-2" id="sha512StringInp">Text</span>
+                        <textarea name="sha-512-textarea" id="sha-512-string-input" class="form-control" aria-label="SHA-512 String Input Area"
+                        aria-describedby="sha512StringInp"></textarea>
+                    </div>
+                </div>
+                <div>
+                    <label for="sha-512-string-output" class="form-label fs-6">SHA-512 Output...</label>
+                    <div class="input-group mb-3 container px-0">
+                        <span class="input-group-text col-2" id="sha512StringOutp">SHA-512</span>
+                        <input type="text" class="form-control" id="sha-512-string-output" aria-describedby="sha512StringOutp" readonly>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="btn-group d-flex flex-row gap-2" role="group" aria-label="cc-button-group">
+                        <button id="hashTheStringSha512" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Hash</button>
+                        <button id="copySha512" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Copy Hash</button>
+                    </div>
+                </div>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                    <div class="sha-512-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="sha-512-alert-message mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    // Function to hash string based on SHA-512 algorithm
+    public async hashString(string: string) {
+        const uInt8Message = new TextEncoder().encode(string);
+        // This is the part where hashing happens
+        const hashBuffer = await window.crypto.subtle.digest("SHA-512", uInt8Message);
+        // Convert buffer to byte array
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray
+            .map((b) => b.toString(16).padStart(2, "0"))
+            .join("") // Convert bytes to hex string
+        return hashHex;
+    }
+
+    connectedCallback(): void {
+        const hashBtn = document.getElementById("hashTheStringSha512") as HTMLButtonElement;
+        const stringToBeHashed = document.getElementById("sha-512-string-input") as HTMLTextAreaElement;
+        const hashOutput = document.getElementById("sha-512-string-output") as HTMLInputElement;
+
+        hashBtn.addEventListener("click", async () => {
+            if (!stringToBeHashed.value.length) {
+                this.appCalculation.displayAlert(".sha-512-alert", ".sha-512-alert-message", "Unable to hash (no text).");
+            } else {
+                hashOutput.value = await this.hashString(stringToBeHashed.value);
+            }
+
+        })
+
+        const copyHashBtn = document.getElementById("copySha512") as HTMLButtonElement;
+        copyHashBtn.addEventListener("click", () => {
+            if (!stringToBeHashed.value.length) {
+                this.appCalculation.displayAlert(".sha-512-alert", ".sha-512-alert-message", "Please provide a text.");
             } else {
                 this.appCalculation.displaySuccess(hashOutput.value);
             }
