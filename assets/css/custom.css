@@ -210,7 +210,7 @@
     }
 
     textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"],
-        [name="cc-textarea"], [name="rot13-textarea"], [name="rand-json-result"]) {
+        [name="cc-textarea"], [name="rot13-textarea"], [name="rand-json-result"], [name="sha-256-textarea"]) {
         resize: none !important;
     }
 
@@ -242,6 +242,11 @@
     /* Random JSON Data Generator */
     textarea[name="rand-json-result"] {
         height: 140px;
+    }
+
+    /* SHA-256 Generator */
+    textarea[name="sha-256-textarea"] {
+        height: 80px;
     }
 
     /* ETC */
