@@ -27,6 +27,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- Password Generator
 	- Random JSON Generator
 	- SHA-256 Generator *from string*
+	- SHA-512 Generator *from string*
 - Utilities:
 	- URL Parser
 - Ciphers:
