@@ -26,6 +26,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- Lorem Ipsum Generator
 	- Password Generator
 	- Random JSON Generator
+	- SHA-256 Generator *from string*
 - Utilities:
 	- URL Parser
 - Ciphers:
