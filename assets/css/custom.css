@@ -210,7 +210,7 @@
     }
 
     textarea:is([name="result"], [name="lorem-result"], [name="password-result"], [aria-describedby="textarea-value"],
-        [name="cc-textarea"], [name="rot13-textarea"], [name="rand-json-result"], [name="sha-256-textarea"]) {
+        [name="cc-textarea"], [name="rot13-textarea"], [name="rand-json-result"], [name="sha-256-textarea"], [name="base64-input"], [name="base64-output"]) {
         resize: none !important;
     }
 
@@ -246,7 +246,12 @@
 
     /* SHA-256 Generator */
     textarea:is([name="sha-256-textarea"], [name="sha-512-textarea"]) {
-        height: 80px;
+        height: 80px !important;
+    }
+
+    /* Base64 Encode - Decode */
+    textarea:is([name="base64-input"], [name="base64-output"]) {
+        height: 100px !important;
     }
 
     /* ETC */
