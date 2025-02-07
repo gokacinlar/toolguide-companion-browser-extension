@@ -698,7 +698,7 @@ class Sha512Generator {
     }
 
     // Function to hash string based on SHA-512 algorithm
-    public async hashString(string: string) {
+    public async hashString(string: string): Promise<string> {
         const uInt8Message = new TextEncoder().encode(string);
         // This is the part where hashing happens
         const hashBuffer = await window.crypto.subtle.digest("SHA-512", uInt8Message);
