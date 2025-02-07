@@ -1,12 +1,15 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import AppCalculations from "./app_calculations.js";
+import { encode } from "punycode";
+import { clear } from "console";
 
 export default class Utilities extends HTMLElement {
     private template: Template;
     private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
+    private base64: Base64EncodeDecode;
     private Ids: { [key: string]: string }
 
     constructor() {
@@ -15,9 +18,11 @@ export default class Utilities extends HTMLElement {
         this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
+        this.base64 = new Base64EncodeDecode();
         this.Ids = {
             urlParser: "urlParser",
-            regexTester: "regexTester"
+            regexTester: "regexTester",
+            base64encodedecode: "base64encodedecode"
         }
 
         const template = this.template.createTemplate(this.utilsTemplate());
@@ -44,6 +49,7 @@ export default class Utilities extends HTMLElement {
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} utils-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.urlParser}">URL Parser</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.regexTester}">Regex Tester</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.base64encodedecode}">Base64 Encode/Decode</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -52,6 +58,9 @@ export default class Utilities extends HTMLElement {
                 </div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="regexTester" style="display: none;">
                     ${this.regexTesterTemplate()}
+                </div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="base64encodedecode" style="display: none;">
+                    ${this.base64.base64template()}
                 </div>
         `;
     }
@@ -283,6 +292,107 @@ export default class Utilities extends HTMLElement {
                     regexTestResultDiv.innerHTML = `Error: ${error}`;
                 }
             }
+        });
+
+        // Base64 Encoding/Decoding
+        this.base64.base64template();
+        this.base64.connectedCallback();
+    }
+}
+
+class Base64EncodeDecode {
+    private appCalculation: AppCalculations;
+
+    constructor() {
+        this.appCalculation = new AppCalculations;
+    }
+
+    public base64template(): string {
+        return `
+            <section class="overflowing-content">
+                <div class="d-flex flex-column align-content-center justify-content-center gap-2">
+                    <div class="input-group container px-0">
+                        <span class="input-group-text col-3">Base64 Input</span>
+                        <textarea id="base64Input" name="base64-input" class="form-control" aria-label="Base64 Input"></textarea>
+                    </div>
+                    <div class="input-group container px-0">
+                        <span class="input-group-text col-3">Base64 Output</span>
+                        <textarea id="base64Output" name="base64-output" class="form-control" aria-label="Base64 Output" readonly></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <div class="btn-group d-flex flex-row gap-2" role="group" aria-label="cc-button-group">
+                            <button id="encodeBase64" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Encode</button>
+                            <button id="decodeBase64" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Decode</button>
+                            <button id="copyBase64Output" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Copy Output</button>
+                            <button id="clearBothTextArea" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Clear</button>
+                        </div>
+                    </div>
+                    <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                        <div class="base64-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="base64-alert-message mb-0"></h6>
+                        </div>
+                        <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="mb-0">Copied to clipboard.</h6>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    public encodeBase64(string: string): string {
+        // Uri Encode to make the string safe for characters like "– ”"
+        const encodedString = window.btoa(encodeURIComponent(string));
+        return encodedString;
+    }
+
+    public decodeBase64(string: string) {
+        try {
+            const decodedString = decodeURIComponent(escape(window.atob(string)));
+            return decodedString;
+        } catch (error: unknown) {
+            throw new Error(`Failed to decode Base64 input: ${error}`);
+        }
+    }
+
+    connectedCallback(): void {
+        const encodeBase64Input = document.querySelector("#base64Input") as HTMLTextAreaElement;
+        const encodeBase64Output = document.querySelector("#base64Output") as HTMLTextAreaElement;
+
+        // Encoding
+        const encodeBase64Btn = document.getElementById("encodeBase64") as HTMLButtonElement;
+        encodeBase64Btn.addEventListener("click", () => {
+            if (!encodeBase64Input.value.length) {
+                this.appCalculation.displayAlert(".base64-alert", ".base64-alert-message", "Please provide a text.");
+            } else {
+                encodeBase64Output.value = this.encodeBase64(encodeBase64Input.value);
+            }
+        });
+
+        // Decoding
+        const decodeBase64Btn = document.getElementById("decodeBase64") as HTMLButtonElement;
+        decodeBase64Btn.addEventListener("click", () => {
+            if (!encodeBase64Input.value.length) {
+                this.appCalculation.displayAlert(".base64-alert", ".base64-alert-message", "Please provide a text.");
+            } else {
+                encodeBase64Output.value = this.decodeBase64(encodeBase64Input.value);
+            }
+        });
+
+        // Etc.
+        const copyOutputBtn = document.getElementById("copyBase64Output") as HTMLButtonElement;
+        copyOutputBtn.addEventListener("click", () => {
+            if (!encodeBase64Output.value.length) {
+                this.appCalculation.displayAlert(".base64-alert", ".base64-alert-message", "Nothing to copy.");
+            } else {
+                this.appCalculation.displaySuccess(encodeBase64Output.value);
+            }
+        });
+
+        const clearBase64Btn = document.getElementById("clearBothTextArea") as HTMLButtonElement;
+        clearBase64Btn.addEventListener("click", () => {
+            encodeBase64Input.value = "";
+            encodeBase64Output.value = "";
         });
     }
 }
