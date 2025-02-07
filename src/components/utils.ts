@@ -1,8 +1,6 @@
 import { Template, Overflowing } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import AppCalculations from "./app_calculations.js";
-import { encode } from "punycode";
-import { clear } from "console";
 
 export default class Utilities extends HTMLElement {
     private template: Template;
