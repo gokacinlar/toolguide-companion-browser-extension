@@ -30,6 +30,8 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- SHA-512 Generator *from string*
 - Utilities:
 	- URL Parser
+	- Regex Tester
+	- Base64 Encoder/Decoder
 - Ciphers:
 	- Caesar's Cipher
 	- ROT-13
