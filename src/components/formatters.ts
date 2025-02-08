@@ -86,7 +86,7 @@ export default class Formatters extends HTMLElement {
                         <button id="jsonClearBtn" type="button" class="btn btn-outline-discovery fs-4 rounded-pill shadow-lg">Clear</button>
                     </div>
                     <div>
-                        <div class="">
+                        <div>
                             <textarea name="jsonOutput" class="form-control shadow-md" id="jsonTextAreaOutput" aria-label="json-data" rows="7" placeholder="Output" aria-describedby="textarea-value" readonly></textarea>
                         </div>
                     </div>
