@@ -13,6 +13,7 @@ export default class Generators extends HTMLElement {
     private appCalculation: AppCalculations;
     private sha256: Sha256Generator;
     private sha512: Sha512Generator;
+    private randNum: RandomNumberGenerator;
     private Ids: { [key: string]: string };
 
     constructor() {
@@ -26,6 +27,7 @@ export default class Generators extends HTMLElement {
         this.overflowing = new Overflowing();
         this.sha256 = new Sha256Generator();
         this.sha512 = new Sha512Generator();
+        this.randNum = new RandomNumberGenerator();
         this.appCalculation = new AppCalculations();
         this.Ids = {
             loremIpsumGenerator: "loremIpsumGenerator",
@@ -33,7 +35,8 @@ export default class Generators extends HTMLElement {
             randJson: "randJson",
             randQuote: "randQuote",
             sha256Generator: "sha256Generator",
-            sha512Generator: "sha512Generator"
+            sha512Generator: "sha512Generator",
+            randomNumberGenerator: "randomNumberGenerator"
         }
 
         const template = this.template.createTemplate(this.generators());
@@ -63,6 +66,7 @@ export default class Generators extends HTMLElement {
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.passwordGenerator}">Password</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randJson}">Random JSON</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randQuote}">Random Quote</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.randomNumberGenerator}">Random Number</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.sha256Generator}">SHA-256</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.sha512Generator}">SHA-512</button></li>
                 </ul>
@@ -72,6 +76,7 @@ export default class Generators extends HTMLElement {
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="passwordGenerator" style="display: none;">${this.generatePasswordTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randJson" style="display: none;">${this.generateJsonGenerationTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randQuote" style="display: none;">${this.generateRandomQuoteTemplate()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="randomNumberGenerator" style="display: none;">${this.randNum.randNumberGeneratorTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="sha256Generator" style="display: none;">${this.sha256.sha256Template()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="sha512Generator" style="display: none;">${this.sha512.sha512Template()}</div>
             </div>
@@ -130,19 +135,19 @@ export default class Generators extends HTMLElement {
                         <div class="btn-group container column mx-0 px-1 d-flex flex-row align-content-center justify-content-between">
                             <div class="shadow-lg">
                                 <input type="checkbox" class="btn-check" id="btn-check" autocomplete="off" checked/>
-                                <label class="btn btn-primary fw-medium fs-5" for="btn-check">Lowercase</label>
+                                <label class="btn btn-secondary fs-5 rounded-pill" for="btn-check">Lowercase</label>
                             </div>
                             <div class="shadow-lg">
                                 <input type="checkbox" class="btn-check" id="btn-check2" autocomplete="off"/>
-                                <label class="btn btn-primary fw-medium fs-5" for="btn-check2">Uppercase</label>
+                                <label class="btn btn-secondary fs-5 rounded-pill" for="btn-check2">Uppercase</label>
                             </div>
                             <div class="shadow-lg">
                                 <input type="checkbox" class="btn-check" id="btn-check3" autocomplete="off"/>
-                                <label class="btn btn-primary fw-medium fs-5" for="btn-check3">Digits</label>
+                                <label class="btn btn-secondary fs-5 rounded-pill" for="btn-check3">Digits</label>
                             </div>
                             <div class="shadow-lg">
                                 <input type="checkbox" class="btn-check" id="btn-check4" autocomplete="off"/>
-                                <label class="btn btn-primary fw-medium fs-5" for="btn-check4">Special Characters</label>
+                                <label class="btn btn-secondary fs-5 rounded-pill" for="btn-check4">Special Characters</label>
                             </div>
                         </div£>
                     </div>
@@ -562,6 +567,10 @@ export default class Generators extends HTMLElement {
             this.appCalculation.displaySuccess(quoteWithAuthor);
         });
 
+        // Random Number Generator
+        this.randNum.randNumberGeneratorTemplate();
+        this.randNum.connectedCallback();
+
         // SHA-256 Generator by using WebCrypto API
         // https://developer.mozilla.org/en-US/docs/Web/API/SubtleCrypto
         this.sha256.sha256Template();
@@ -730,6 +739,96 @@ class Sha512Generator {
                 this.appCalculation.displayAlert(".sha-512-alert", ".sha-512-alert-message", "Please provide a text.");
             } else {
                 this.appCalculation.displaySuccess(hashOutput.value);
+            }
+        });
+    }
+}
+
+class RandomNumberGenerator {
+    private appCalculation: AppCalculations;
+
+    constructor() {
+        this.appCalculation = new AppCalculations;
+    }
+
+    public randNumberGeneratorTemplate(): string {
+        return `
+            <section>
+                <div class="d-flex flex-row align-content-center justify-content-center gap-2">
+                    <div class="w-100">
+                        <label for="randNumberMinValue" class="form-label fs-6">Minimum Value</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="rand-num-min-value">Min.</span>
+                            <input type="number" class="form-control" id="randNumberMinValue" aria-describedby="rand-num-min-value"/>
+                        </div>
+                    </div>
+                    <div class="w-100">
+                        <label for="randNumberMaxValue" class="form-label fs-6">Maximum Value</label>
+                        <div class="input-group mb-3">
+                            <span class="input-group-text" id="rand-num-max-value">Max.</span>
+                            <input type="number" class="form-control" id="randNumberMaxValue" aria-describedby="rand-num-max-value"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-100">
+                    <label for="randNumberOutputValue" class="form-label fs-6">Output</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="rand-num-output-value">Output</span>
+                        <input type="number" class="form-control" id="randNumberOutputValue" aria-describedby="rand-num-output-value" readonly/>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <div class="btn-group d-flex flex-row gap-2" role="group" aria-label="cc-button-group">
+                        <button id="generateRandNum" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Generate Random Number</button>
+                        <button id="copyRandNum" type="button" class="btn btn-discovery rounded-pill fs-4 shadow-lg">Copy</button>
+                    </div>
+                </div>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between">
+                    <div class="rand-num-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="rand-num-alert-message mb-0"></h6>
+                    </div>
+                    <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                        <h6 class="mb-0">Copied to clipboard.</h6>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    // Function to generate random numbers
+    public generateRandNumber(min: number, max: number): number {
+        try {
+            if (min > max) {
+                throw new Error("Minimum value must be less than or equal to maximum value");
+            }
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        } catch (error: unknown) {
+            throw new Error(`Unknown error occured: ${error}`);
+        }
+    }
+
+    connectedCallback(): void {
+        const randNumberMinValue = document.getElementById("randNumberMinValue") as HTMLInputElement;
+        const randNumberMaxValue = document.getElementById("randNumberMaxValue") as HTMLInputElement;
+        const randNumberOutputValue = document.getElementById("randNumberOutputValue") as HTMLInputElement;
+
+        const generateRandNumBtn = document.getElementById("generateRandNum") as HTMLButtonElement;
+        generateRandNumBtn.addEventListener("click", () => {
+            if (!randNumberMinValue.value.length && !randNumberMaxValue.value.length) {
+                this.appCalculation.displayAlert(".rand-num-alert", ".rand-num-alert-message", "Please fill both min and max fields.");
+            } else {
+                let parsedOutput = parseInt(randNumberOutputValue.value)
+                parsedOutput = this.generateRandNumber(parseInt(randNumberMinValue.value), parseInt(randNumberMaxValue.value));
+                randNumberOutputValue.value = parsedOutput.toString();
+            }
+        });
+
+        const copyRandNumBtn = document.getElementById("copyRandNum") as HTMLButtonElement;
+        copyRandNumBtn.addEventListener("click", () => {
+            if (!randNumberOutputValue.value.length) {
+                this.appCalculation.displayAlert(".rand-num-alert", ".rand-num-alert-message", "Nothing to copy.");
+            } else {
+                this.appCalculation.displaySuccess(randNumberOutputValue.value);
             }
         });
     }
