@@ -1,4 +1,4 @@
-import { Template, Overflowing } from "./helper.js";
+import { Template, Overflowing, JSONDataFetching } from "./helper.js";
 import { ElementStyling } from "../static.js";
 import Utilities from "./utils.js";
 import AppCalculations from "./app_calculations.js";
@@ -9,8 +9,8 @@ export default class SystemInformation extends HTMLElement {
     private staticElementStylings: ElementStyling;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
+    private ipInformation: IpInformation;
     private Ids: { [key: string]: string };
-
     private sysInf = new SysInfo();
     private netInf = new NetInfo();
 
@@ -20,9 +20,11 @@ export default class SystemInformation extends HTMLElement {
         this.staticElementStylings = new ElementStyling();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
+        this.ipInformation = new IpInformation();
         this.Ids = {
             systemInfo: "systemInfo",
-            netInfo: "netInfo"
+            netInfo: "netInfo",
+            ipInfo: "ipInfo"
         }
 
         const template = this.template.createTemplate(this.sysInfo());
@@ -50,11 +52,13 @@ export default class SystemInformation extends HTMLElement {
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} sysinformation-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.systemInfo}">System</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.netInfo}">Network</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.ipInfo}">IP Address</button></li>
                 </ul>
             </div>
             <div id="content">
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="systemInfo" style="display: none;">${this.sysInf.systemInformation()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="netInfo" style="display: none;">${this.netInf.networkInformation()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="ipInfo" style="display: none;">${this.ipInformation.ipInformationTemplate()}</div>
             </div>
         `;
     }
@@ -76,6 +80,9 @@ export default class SystemInformation extends HTMLElement {
         // Call the Network Information elements
         this.netInf.networkInformation();
         this.netInf.connectedCallback();
+
+        // Ip Information
+        this.ipInformation.connectedCallback();
     }
 }
 
@@ -425,6 +432,82 @@ class NetInfo {
         this.setupConnectivityListeners();
         this.displayNetworkOutput();
     }
+}
+
+class IpInformation {
+    private getJson: JSONDataFetching;
+    private appCalculation: AppCalculations;
+
+    constructor() {
+        this.getJson = new JSONDataFetching();
+        this.appCalculation = new AppCalculations;
+    }
+
+    public ipInformationTemplate(): string {
+        return `
+            <section>
+                <div>
+                    <label for="ipVisible" class="form-label fs-6">Your IP Address will be visible below</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text" id="ip-area">Your IP</span>
+                        <input type="text" class="form-control" id="ipVisible" aria-describedby="ip-area" readonly/>
+                    </div>
+                </div>
+                <div class="btn-group d-flex flex-row gap-2" role="group" aria-label="cc-button-group">
+                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="getIp">Get IP Address</button>
+                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="copyIp">Copy IP Address</button>
+                </div>
+                <div class="alerts d-flex flex-row align-content-center justify-content-between mt-3">
+                        <div class="ip-address-alert alert alert-danger transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="ip-address-alert-message mb-0"></h6>
+                        </div>
+                        <div class="color-code-success alert alert-success transition ease-in-out duration-300 mt-0 mb-0 rounded-pill" role="alert" style="opacity: 0;">
+                            <h6 class="mb-0">Copied to clipboard.</h6>
+                        </div>
+                    </div>
+            </section>
+        `;
+    }
+
+    public async getIpAddress(): Promise<string> {
+        try {
+            const apiSource: string = "https://api.ipify.org/?format=json";
+            const result = await this.getJson.getJson(apiSource);
+            const output = result.ip.toString();
+
+            return output;
+        } catch (error: unknown) {
+            throw new Error(`Unable to detect IP Address at the moment. ${error}`);
+        }
+    }
+
+    connectedCallback(): void {
+        const ipOutput = document.getElementById("ipVisible") as HTMLInputElement;
+        const getIpBtn = document.getElementById("getIp") as HTMLButtonElement;
+        getIpBtn.addEventListener("click", async () => {
+            try {
+                const ipAddress = await this.getIpAddress();
+                if (ipAddress) {
+                    console.log(`Your IP Address is ${ipAddress}`);
+                    ipOutput.value = ipAddress;
+                } else {
+                    this.appCalculation.displayAlert(".ip-address-alert", ".ip-address-alert-message", "Unable to detect IP Address.");
+                }
+            } catch (error: unknown) {
+                throw new Error(`Unable to detect IP Address. ${error}`);
+            }
+        });
+
+        const copyIpBtn = document.getElementById("copyIp") as HTMLButtonElement;
+        copyIpBtn.addEventListener("click", () => {
+            if (!ipOutput.value.length) {
+                this.appCalculation.displayAlert(".ip-address-alert", ".ip-address-alert-message", "Please provide an IP Address.");
+            } else {
+                this.appCalculation.displaySuccess(ipOutput.value);
+            }
+        });
+    }
+
 }
 
 customElements.define("app-sysinfo", SystemInformation);
