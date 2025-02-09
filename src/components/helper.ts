@@ -81,12 +81,13 @@ export class Overflowing {
 
 export class JSONDataFetching {
     public async getJson(requestTarget: string): Promise<Types.JSONValue[] | any> {
-        // Add extra security
+        // Add extra security for third-party APIs
         const webAccessDomains = [
             "https://latest.currency-api.pages.dev/",
             "https://cdn.jsdelivr.net",
             "https://jsonplaceholder.typicode.com/",
-            "https://random-quotes-freeapi.vercel.app/"
+            "https://random-quotes-freeapi.vercel.app/",
+            "https://api.ipify.org/"
         ];
 
         if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
