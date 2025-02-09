@@ -40,6 +40,8 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
     - Network Information [*(Non-standard NetworkInformation API)*](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation "Non-standard NetworkInformation API")
     - IP Address Information
 
+...with many more to **come!**
+
 ## Usage & Installation
 
 Extension will be available upon approval from Chrome, Edge, Firefox & Opera's webstores. However, if you want to use the extension locally, **simply download latest build** and do;
