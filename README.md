@@ -38,6 +38,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 - Information:
     - System Information
     - Network Information [*(Non-standard NetworkInformation API)*](https://developer.mozilla.org/en-US/docs/Web/API/NetworkInformation "Non-standard NetworkInformation API")
+    - IP Address Information
 
 ## Usage & Installation
 
