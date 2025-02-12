@@ -6,6 +6,10 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 
 > This extension empowers both users & developers to use countless tools such as base, unit, currency converters; color code, finanical calculators; JSON, XML formatters; lorem, password generators and many more **without requiring them to leave their browser.**
 
+## Get it now!
+
+[![A mushroom-head robot drinking bubble tea](https://developer.chrome.com/static/docs/webstore/branding/image/UV4C4ybeBTsZt43U4xis.png 'Available on Chrome Web Store')]([https://codecademy.com](https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi))
+
 ## Current Tools
 
  - Calculators:
