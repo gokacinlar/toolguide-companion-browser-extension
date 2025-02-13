@@ -10,8 +10,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 
 | Chrome    |
 | --------- |
-| [![A mushroom-head robot drinking bubble tea](https://developer.chrome.com/static/docs/webstore/branding/image/UV4C4ybeBTsZt43U4xis.png 'Available on Chrome Web Store')]([https://codecademy.com](https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi)) |
-
+| <a href="https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi" rel="Available on Chrome Web Store">![Available on Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/UV4C4ybeBTsZt43U4xis.png)</a> |
 
 ## Current Tools
 
