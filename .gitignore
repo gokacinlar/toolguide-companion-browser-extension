@@ -1,6 +1,7 @@
 # My .gitignore
 src/lib/css/
 dist/
+.idea
 
 # Logs
 logs
