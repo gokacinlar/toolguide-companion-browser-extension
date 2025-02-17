@@ -8,9 +8,9 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 
 ## Get it now!
 
-| Chrome    |
-| --------- |
-| <a href="https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi" rel="Available on Chrome Web Store">![Available on Chrome Web Store](https://developer.chrome.com/static/docs/webstore/branding/image/UV4C4ybeBTsZt43U4xis.png)</a> |
+| Chrome | Edge |
+| ------ | ---- |
+|<a href="https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi" rel="Available on Chrome Web Store">![Available on Chrome Web Store](images/icons/store_brandings/chrome.png)</a>|<a href="https://microsoftedge.microsoft.com/addons/detail/toolguide-companion/fpcikeppbedpnmfnolodcgppcfllleca" rel="Get it from Microsoft">![Get it from Microsoft](images/icons/store_brandings/edge.png)</a>|
 
 ## Current Tools
 
