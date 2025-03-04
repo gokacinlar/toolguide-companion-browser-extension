@@ -434,7 +434,7 @@ class NetInfo {
     }
 }
 
-class IpInformation {
+export class IpInformation {
     private getJson: JSONDataFetching;
     private appCalculation: AppCalculations;
 
@@ -472,7 +472,7 @@ class IpInformation {
     public async getIpAddress(): Promise<string> {
         try {
             const apiSource: string = "https://api.ipify.org/?format=json";
-            const result = await this.getJson.getJson(apiSource);
+            const result = await this.getJson.getJson(apiSource, "application/json");
             const output = result.ip.toString();
 
             return output;

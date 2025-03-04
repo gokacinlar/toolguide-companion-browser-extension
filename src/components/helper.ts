@@ -80,14 +80,15 @@ export class Overflowing {
 }
 
 export class JSONDataFetching {
-    public async getJson(requestTarget: string): Promise<Types.JSONValue[] | any> {
+    public async getJson(requestTarget: string, acceptHeader: string = "applicaton/json"): Promise<Types.JSONValue[] | any> {
         // Add extra security for third-party APIs
         const webAccessDomains = [
             "https://latest.currency-api.pages.dev/",
             "https://cdn.jsdelivr.net",
             "https://jsonplaceholder.typicode.com/",
             "https://random-quotes-freeapi.vercel.app/",
-            "https://api.ipify.org/"
+            "https://api.ipify.org/",
+            "https://ipapi.co/"
         ];
 
         if (!webAccessDomains.some((allowedDomain) => requestTarget.startsWith(allowedDomain))) {
@@ -97,7 +98,7 @@ export class JSONDataFetching {
         // User headers to define content type & acceptable content parameters
         const headers: Headers = new Headers();
         headers.set("Content-Type", "application/json");
-        headers.set("Accept", "application/json");
+        headers.set("Accept", acceptHeader);
 
         // Create a request object
         const request: RequestInfo = new Request(requestTarget, {

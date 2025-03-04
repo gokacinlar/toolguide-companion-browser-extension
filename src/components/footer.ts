@@ -5,7 +5,7 @@ const STYLES = {
     footerStyling: "footer-content py-2 px-2 my-1 mx-1 mb-2 d-flex flex-row align-content-center align-items-center justify-content-between rounded-3 shadow-lg"
 };
 
-class Footer extends HTMLElement {
+export class Footer extends HTMLElement {
     private templateHelper: Template;
     private version: { [key: string]: string };
 
@@ -93,7 +93,7 @@ class Footer extends HTMLElement {
     }
 
     // Function to display time in H + M + S in the Footer
-    private clockTime(elem: HTMLHeadElement): void {
+    public clockTime(elem: HTMLHeadElement): void {
         const clock = new Date();
         let h = clock.getHours();
         let m = clock.getMinutes();
@@ -112,7 +112,7 @@ class Footer extends HTMLElement {
     }
 
     // Add zeroes if the number is less than 10 for UI clarity
-    private checkTime(i: number | any): number {
+    public checkTime(i: number | any): number {
         if (i < 10) {
             i = "0" + i;
         }
