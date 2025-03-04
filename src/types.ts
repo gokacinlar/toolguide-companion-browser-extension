@@ -1,6 +1,12 @@
 // Export it first to avoid module error
 export * from './types';
 
+// Ids
+
+export interface Ids {
+    [key: string]: string;
+}
+
 // Aside buttons
 export interface AsideButtons {
     [key: string]: { [value: string]: string; };

@@ -37,7 +37,8 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "/images/logo/final-icon-without-text-minified.png"
+                "/images/logo/final-icon-without-text-minified.png",
+                "/src/lib/js/chatgpt.js"
             ],
             "matches": [
                 "<all_urls>"

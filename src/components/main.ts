@@ -1,6 +1,8 @@
 // main.ts
 import { Template } from "./helper.js";
 import { ElementStyling } from "../static.js";
+import HomePage from "./homepage.js";
+import AiChat from "./ai_chat.js";
 import Converters from "./converters.js";
 import Generators from "./generators.js";
 import Utilities from "./utils.js";
@@ -12,6 +14,8 @@ import SystemInformation from "./sys_info.js";
 export class Main extends HTMLElement {
     private templateHelper: Template;
     private staticElementStylings: ElementStyling;
+    private homePage: HomePage;
+    private aiChat: AiChat;
     private appCalculations: AppCalculations;
     private converters: Converters;
     private generators: Generators;
@@ -24,6 +28,8 @@ export class Main extends HTMLElement {
         super();
         this.templateHelper = new Template();
         this.staticElementStylings = new ElementStyling();
+        this.homePage = new HomePage();
+        this.aiChat = new AiChat();
         this.appCalculations = new AppCalculations();
         this.converters = new Converters();
         this.generators = new Generators();
@@ -64,6 +70,16 @@ export class Main extends HTMLElement {
 
         if (dynamicContent) {
             switch (component) {
+                case "homePage":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.homePage);
+                    break;
+                case "aiChat":
+                    placeHolderContent?.remove();
+                    dynamicContent.innerHTML = "";
+                    dynamicContent.appendChild(this.aiChat);
+                    break;
                 case "calculation":
                     placeHolderContent?.remove();
                     dynamicContent.innerHTML = "";

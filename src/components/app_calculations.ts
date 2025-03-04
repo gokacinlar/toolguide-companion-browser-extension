@@ -101,72 +101,78 @@ export default class AppCalculations extends HTMLElement {
     // Calculator itself
     private basicCalculator(): string {
         return `
-            <section class="calculator-itself container d-flex flex-column gap-3 px-1" tabindex="0">
-                <div class="row justify-content-start">
-                    <div class="col-6">
-                    <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-opacity-25 shadow-lg fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
+            <section class="calculator-itself container d-flex flex-column gap-3 px-1 overflowing-content" tabindex="0">
+                <div>
+                    <div class="row justify-content-start mb-3">
+                        <div class="col-6">
+                            <input type="text" class="calc-output-result w-100 h-100 rounded-2 border-opacity-25 shadow-lg fs-4 fw-medium px-1" aria-label="Calculation Results" disabled="true">
+                        </div>
+                        <div class="col-2">
+                            <button type="button" data-value="AC" data-action="clear" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Clear">AC</button>
+                        </div>
                     </div>
-                    <div class="col-2">
-                        <button type="button" data-value="AC" data-action="clear" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Clear">AC</button>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <button type="button" data-value="7" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">7</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="8" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">8</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="9" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">9</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="/" data-action="divide" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Divide">/</button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <button type="button" data-value="4" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">4</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="5" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">5</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="6" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">6</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="*" data-action="multiply" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Multiply">*</button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <button type="button" data-value="1" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">1</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="2" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">2</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="3" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">3</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="-" data-action="subtract" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Subtract">-</button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-start">
+                            <div class="col-2">
+                                <button type="button" data-value="0" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">0</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="." class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">.</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="=" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}">=</button>
+                            </div>
+                            <div class="col-2">
+                                <button type="button" data-value="+" data-action="add" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Add">+</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="d-flex flex-column gap-3">
-                    <div class="row justify-content-start">
-                        <div class="col-2">
-                            <button type="button" data-value="7" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">7</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="8" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">8</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="9" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">9</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="/" data-action="divide" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Divide">/</button>
-                        </div>
-                    </div>
-                    <div class="row justify-content-start">
-                        <div class="col-2">
-                            <button type="button" data-value="4" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">4</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="5" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">5</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="6" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">6</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="*" data-action="multiply" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Multiply">*</button>
-                        </div>
-                    </div>
-                    <div class="row justify-content-start">
-                        <div class="col-2">
-                            <button type="button" data-value="1" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">1</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="2" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">2</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="3" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">3</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="-" data-action="subtract" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Subtract">-</button>
-                        </div>
-                    </div>
-                    <div class="row justify-content-start">
-                        <div class="col-2">
-                            <button type="button" data-value="0" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">0</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="." class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtons}">.</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="=" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}">=</button>
-                        </div>
-                        <div class="col-2">
-                            <button type="button" data-value="+" data-action="add" class="${this.staticElementStylings.BASIC_TEMPLATE.classes.calcButtonsExtra}" title="Add">+</button>
-                        </div>
-                    </div>
+                <div class="calculation-alert alert alert-danger transition ease-in-out duration-300 mt-3 rounded-pill"
+                style="width: fit-content" role="alert" style="opacity: 0;">
+                    <h6 class="calculation-alert-message mb-0"></h6>
                 </div>
             </section>
         `;
@@ -385,13 +391,18 @@ export default class AppCalculations extends HTMLElement {
 
     // Function to detect keypress events and do things
     private keyPressDetection(): void {
-        const calculatorDiv = document.querySelector(".calculator-itself") as HTMLElement;
-        calculatorDiv.addEventListener("keydown", (e) => {
+        document.addEventListener("keydown", (e) => {
+
             const keyPressed: Event | string = e.key;
             const validKeys: string = "1234567890/*-+.";
             const calcOutput = document.querySelector(".calc-output-result") as HTMLInputElement;
 
             if (calcOutput) {
+                calcOutput.classList.add("border", "border-subtle-info", "border-1");
+                if (!calcOutput.value.length) {
+                    calcOutput.classList.remove("border", "border-subtle-info", "border-1");
+                }
+
                 if (keyPressed === "Enter") {
                     const result = this.calculate(calcOutput.value);
                     calcOutput.value = result !== null ? result.toString() : "Error";
@@ -409,21 +420,24 @@ export default class AppCalculations extends HTMLElement {
     }
 
     // Function to do the actual math calculation
-    private calculate(expression: string): number | null {
+    public calculate(expression: string): number | null {
         const numbers: number[] = [];
         const operators: string[] = [];
         let currentNum: string = "";
 
-        // Perform the operation locally instead of using mathjs
-        const applyOperator = (a: number, b: number, operator: string) => {
+        // Use an arrow function to maintain 'this' context
+        const applyOperator = (a: number, b: number, operator: string): number | null => {
             switch (operator) {
                 case "+": return a + b;
                 case "-": return a - b;
                 case "*": return a * b;
                 case "/":
-                    if (b !== 0) return a / b;
-                    alert("Division by zero.");
-                    return null;
+                    if (b !== 0) {
+                        return a / b;
+                    } else {
+                        this.displayAlert(".calculation-alert", ".calculation-alert-message", "Division by zero.");
+                        return null;
+                    }
                 default: return null;
             }
         };
@@ -454,7 +468,7 @@ export default class AppCalculations extends HTMLElement {
 
             result = applyOperator(result, nextNum, operator);
             if (result === null) {
-                return null; // Handle the division by zero
+                return null;
             }
         }
 

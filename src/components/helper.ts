@@ -150,6 +150,14 @@ export class UIElems {
  */
 
 export const BUTTON_TEMPLATE: Types.AsideButtons = {
+    homePage: {
+        name: "Home",
+        imgSrc: "/images/icons/aside/homepage.svg"
+    },
+    aiChat: {
+        name: "AI Chat",
+        imgSrc: "/images/icons/aside/aichat.svg",
+    },
     calculation: {
         name: "Calculators",
         imgSrc: "/images/icons/aside/calculators.svg"

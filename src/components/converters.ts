@@ -474,7 +474,7 @@ export default class Converters extends HTMLElement {
                     targetElement.textContent = "N/A"; // Show N/A to represent data is missing
                 }
             } catch (error) {
-                console.error("Error fetching currency data", error);
+                throw new Error(`Error fetching currency data: ${error}`);
             }
         });
     };
@@ -487,7 +487,7 @@ export default class Converters extends HTMLElement {
         // Create the option elements and append the currency values accordingly
         currencyCodes.forEach((shortName, longName) => {
             const currencyFullName = currencyCodesAlt[longName]; // Get the corresponding full name of the currency
-            const currencyValue = currencyData[shortName]; // Get the corresponidng short name of the currency
+            const currencyValue = currencyData[shortName]; // Get the corresponding short name of the currency
             // Format the option text with "CurrencyName (value)" or "N/A"
             const optionText = currencyValue !== undefined ? `${shortName} (${currencyValue.toFixed(2)})` : `${shortName} (N/A)`;
 
@@ -502,7 +502,7 @@ export default class Converters extends HTMLElement {
         });
     }
 
-    connectedCallback() {
+    connectedCallback(): void {
         this.handleNavigation();
         this.appCalculation.openPage("baseConverter", document);
         // Handle tab overflowing & navigation buttons
@@ -774,6 +774,14 @@ export default class Converters extends HTMLElement {
             }
         });
     }
+}
+
+class TemperatureConverter {
+
+}
+
+class FrequencyConverter {
+
 }
 
 customElements.define("app-converters", Converters);

@@ -200,8 +200,8 @@
     }
 
     .aside-button-icons {
-        min-height: 26px;
-        min-width: 26px;
+        min-height: 26px !important;
+        min-width: 26px !important;
         border-radius: 50%;
         -webkit-border-radius: 50%;
         -moz-border-radius: 50%;
@@ -268,6 +268,33 @@
         width: var(--alt-icon-size);
         max-width: var(--semi-big-icon-size);
         height: auto;
+    }
+
+    /* ChatGPT */
+
+    #chatGptOutputArea {
+        min-height: 224px;
+        max-height: 224px;
+        overflow: scroll;
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .chatgpt-input-area {
+        resize: none !important;
+        overflow: scroll;
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
     }
 }
 
