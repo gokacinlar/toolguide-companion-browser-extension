@@ -324,6 +324,41 @@
             transform: rotate(360deg);
         }
     }
+
+    .hp-bg {
+        background: var(--bg-color);
+    }
+
+    #hp-body-container,
+    #hp-body-content {
+        min-height: 288px;
+        max-height: 288px;
+    }
+
+    #hp-aside-content {
+        min-height: 288px;
+        max-height: 288px;
+        overflow: scroll;
+        overflow-y: scroll;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(2, 1fr);
+        grid-column-gap: 4px;
+        grid-row-gap: 4px;
+    }
+
+    .pb-bar-parent {
+        height: 32px !important;
+    }
 }
 
 /* App Calculations */
