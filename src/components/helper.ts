@@ -146,6 +146,13 @@ export class UIElems {
     }
 }
 
+export class HomePageElems {
+    // Function to convert byte data to gb
+    public convertBytesToGb(bytes: number): string {
+        return (bytes / (1024 ** 3)).toFixed(2);
+    }
+}
+
 /**
  * ASIDE
  */
