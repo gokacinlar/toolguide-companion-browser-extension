@@ -11,6 +11,7 @@ export default class Converters extends HTMLElement {
     private staticConversionValues: ConversionValues;
     private staticCurrencyValues: Currencies;
     private staticElementStylings: ElementStyling;
+    private domaintoip: DomainToIpConverter;
     private overflowing: Overflowing;
     private appCalculation: AppCalculations;
     private Ids: { [key: string]: string };
@@ -24,6 +25,7 @@ export default class Converters extends HTMLElement {
         this.staticConversionValues = new ConversionValues();
         this.staticCurrencyValues = new Currencies();
         this.staticElementStylings = new ElementStyling();
+        this.domaintoip = new DomainToIpConverter();
         this.overflowing = new Overflowing();
         this.appCalculation = new AppCalculations();
         this.Ids = {
@@ -33,6 +35,7 @@ export default class Converters extends HTMLElement {
             speedConverter: "speedConverter",
             currencyConverter: "currencyConverter",
             timeZoneConverter: "timeZoneConverter",
+            domainToIpConverter: "domainToIpConverter"
         }
 
         const template = this.template.createTemplate(this.unitConverters());
@@ -50,6 +53,7 @@ export default class Converters extends HTMLElement {
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.speedConverter}">Speed</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.timeZoneConverter}">Time</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.currencyConverter}">Currency</button></li>
+                    <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.domainToIpConverter}">Domain to IP</button></li>
                 </ul>
             </div>
             <div id="content">
@@ -59,6 +63,7 @@ export default class Converters extends HTMLElement {
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="speedConverter" style="display: none;">${this.renderSpeedConverterTemplate()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="timeZoneConverter" style="display: none;">${this.renderTimeConverter()}</div>
                 <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="currencyConverter" style="display: none;">${this.renderCurrencyConverter()}</div>
+                <div class="${this.staticElementStylings.BASIC_TEMPLATE.classes.componentElement}" id="domainToIpConverter" style="display: none;">${this.domaintoip.domainToIpConverterTemplate()}</div>
             </div>
         `;
     }
@@ -773,6 +778,114 @@ export default class Converters extends HTMLElement {
                 console.error("Error during currency conversion:", error);
             }
         });
+
+        // Domain to IP Converter
+        this.domaintoip.convertDomainToIp("dervisoksuzoglu.net");
+        this.domaintoip.connectedCallback();
+    }
+}
+
+class DomainToIpConverter {
+    private appCalculation: AppCalculations;
+    constructor() {
+        this.appCalculation = new AppCalculations();
+    }
+
+    public domainToIpConverterTemplate(): string {
+        return `
+            <section class="overflowing-content">
+                <div class="d-flex flex-column gap-2">
+                    <div class="my-0">
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading">This tool uses Google Public DNS infrastructure.</h6>
+                            <hr>
+                            <p class="mb-0"><a href="https://dns.google/" target="_blank">Google Public DNS</a> is a free tool to
+                            recursively translate human-friendly domain names into machine-readable IP addresses.</p>
+                        </div>
+                    </div>
+                    <div class="form-floating">
+                        <input type="text" class="form-control" id="targetDomain" placeholder="example.com">
+                        <label for="targetDomain">Target Domain</label>
+                    </div>
+                    <div>
+                        <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="convertToIpButton">Convert to IP</button>
+                    </div>
+                    <div>
+                        <h4 id="dticResult" class="lh-md"></h4>
+                    </div>
+                    <div class="d-flex flex-row align-content-center justify-content-between">
+                        <div class="dtic-alert alert alert-danger transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                            <h6 class="dtic-alert-message mb-0"></h6>
+                        </div>
+                        <div class="dtic-alert alert alert-success transition ease-in-out duration-300 rounded-pill px-2 py-2" role="alert" style="opacity: 0;">
+                            <div>
+                                <h6 class="dtic-message mb-0">Copied to clipboard.</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        `;
+    }
+
+    public handleActions() {
+        const convertToIpBtn = document.querySelector("#convertToIpButton") as HTMLButtonElement;
+        const ditcInput = document.querySelector(`input[id="targetDomain"]`) as HTMLInputElement;
+        const resultText = document.querySelector("#dticResult") as HTMLHeadingElement;
+
+        convertToIpBtn.addEventListener("click", async () => {
+            if (!ditcInput.value.length) {
+                this.appCalculation.displayAlert(".dtic-alert", ".dtic-alert-message", "Please provide a value.");
+                return;
+            }
+
+            // Remove the https:// header for better resolving
+            const substringToBeRemoved: string = "https://";
+            const adjustedInput: string = ditcInput.value.replace(new RegExp(substringToBeRemoved, "g"), "");
+
+            try {
+                const result = await this.convertDomainToIp(adjustedInput);
+                console.log(result);
+
+                resultText.innerHTML = `
+                    IP address for <span class="bg-success bg-gradient text-white p-1 rounded-1">${ditcInput.value}</span> is
+                    <span class="bg-info bg-gradient text-white p-1 rounded-1">${result}</span>
+                `;
+            } catch (error) {
+                this.appCalculation.displayAlert(".dtic-alert", ".dtic-alert-message", "Error resolving domain.");
+                console.error(error);
+            }
+        });
+    }
+
+    public async convertDomainToIp(domain: string): Promise<any> {
+        // This code uses Google DNS to resolve the domain name for IP conversion
+        const baseUrl: string = `https://dns.google/resolve?name=${domain}`;
+
+        try {
+            const response = await fetch(baseUrl);
+            if (!response.ok) {
+                this.appCalculation.displayAlert(".dtic-alert", ".dtic-alert-message", "DNS resolver not responding.");
+            } else {
+                const data = await response.json();
+                if (data.Answer) {
+                    // Extract the IP addresses from the response
+                    const result: string = data.Answer.map((answer: any) => answer.data);
+                    console.log(`IP addresses for ${domain}:`, result.toString());
+                    return result;
+                } else {
+                    throw new Error(`No IP addresses found for ${domain}`);
+                    return null;
+                }
+            }
+        } catch (error: unknown) {
+            throw new Error(`Error while resolving domain name, see terminal: ${error}`)
+        }
+    }
+
+    connectedCallback(): void {
+        this.handleActions();
+        this.convertDomainToIp("https://dervisoksuzoglu.net");
     }
 }
 
