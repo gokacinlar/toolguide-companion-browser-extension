@@ -6,7 +6,7 @@
     "incognito": "not_allowed",
     "description": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
     "background": {
-        "service_worker": "/src/background/service_worker.js",
+        "service_worker": "/src/background.js",
         "type": "module"
     },
     "content_scripts": [
