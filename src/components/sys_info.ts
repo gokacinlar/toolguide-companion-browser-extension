@@ -445,8 +445,17 @@ export class IpInformation {
 
     public ipInformationTemplate(): string {
         return `
-            <section>
+            <section class="overflowing-content">
                 <div>
+                    <div class="my-0">
+                        <div class="alert alert-info" role="alert">
+                            <h6 class="alert-heading">Before you go...</h6>
+                            <hr>
+                            <p class="mb-0">Your <a href="https://en.wikipedia.org/wiki/Virtual_private_network" target="_blank">DNS</a>
+                            could change and may not reflect the exact DNS since the use of a <span class="fw-semibold">VPN, proxy, or
+                            custom DNS resolver</span> can alter the way domain names are resolved.</p>
+                        </div>
+                    </div>
                     <label for="ipVisible" class="form-label fs-6">Your IP Address will be visible below</label>
                     <div class="input-group mb-3">
                         <span class="input-group-text" id="ip-area">Your IP</span>
