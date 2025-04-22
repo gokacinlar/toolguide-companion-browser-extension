@@ -273,8 +273,8 @@
     /* ChatGPT */
 
     #chatGptOutputArea {
-        min-height: 224px;
-        max-height: 224px;
+        min-height: 295px;
+        max-height: 295px;
         overflow: scroll;
         overflow-y: scroll;
         -ms-overflow-style: none;
