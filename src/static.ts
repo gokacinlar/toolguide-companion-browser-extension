@@ -1,6 +1,13 @@
 import type * as Types from './types.js';
 export * from './static.js';
 
+export class WebstoreLinks {
+    public links: Types.Ids = {
+        chrome: "https://chromewebstore.google.com/detail/toolguide-companion/jgneofggiaeliocifinjncdodelkmapi?pli=1",
+        edge: "https://microsoftedge.microsoft.com/addons/detail/toolguide-companion/fpcikeppbedpnmfnolodcgppcfllleca",
+    }
+}
+
 export class UnitFactors {
     // Define a general object to hold the unitConversion values
     public unitConversionFactors: Types.ConversionFactor = {
