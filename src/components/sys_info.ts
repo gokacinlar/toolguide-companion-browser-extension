@@ -48,7 +48,7 @@ export default class SystemInformation extends HTMLElement {
     // Render the main template
     private sysInfo(): string {
         return `
-            <div class="web-dev-tab-navigation-buttons">
+            <div class="sys-inf-navigation-buttons">
                 <ul class="${this.staticElementStylings.BASIC_TEMPLATE.classes.ul} sysinformation-ulist">
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.systemInfo}">System</button></li>
                     <li><button class="${this.staticElementStylings.BASIC_TEMPLATE.classes.button}" data-page="${this.Ids.netInfo}">Network</button></li>
@@ -67,7 +67,7 @@ export default class SystemInformation extends HTMLElement {
         this.handleNavigation();
         this.appCalculation.openPage("systemInfo", document);
         // Handle tab overflowing & navigation buttons
-        const tabMenu = document.querySelector(".web-dev-tab-navigation-buttons") as HTMLDivElement;
+        const tabMenu = document.querySelector(".sys-inf-navigation-buttons") as HTMLDivElement;
         this.overflowing.handleTabOverFlowing(tabMenu, ".sysinformation-ulist");
 
         // Call System Information elements
