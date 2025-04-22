@@ -5,6 +5,12 @@
     "manifest_version": 3,
     "incognito": "not_allowed",
     "description": "Your toolbox companion to accomplish many handy stuff, without leaving the browser.",
+    "icons": {
+        "16": "images/logo/icon_16x16.png",
+        "32": "images/logo/icon_32x32.png",
+        "48": "images/logo/icon_48x48.png",
+        "128": "images/logo/icon_128x128.png"
+    },
     "background": {
         "service_worker": "/src/background.js",
         "type": "module"
@@ -37,8 +43,7 @@
     "web_accessible_resources": [
         {
             "resources": [
-                "/images/logo/final-icon-without-text-minified.png",
-                "/src/lib/js/chatgpt.js"
+                "/images/logo/final-icon-without-text-minified.png"
             ],
             "matches": [
                 "<all_urls>"
