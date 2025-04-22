@@ -1,4 +1,5 @@
 import type * as Types from "../types.js";
+import { WebstoreLinks } from "../static.js";
 
 // Create a template content to be appended to every Light DOM
 export class Template {
@@ -162,10 +163,6 @@ export const BUTTON_TEMPLATE: Types.AsideButtons = {
         name: "Home",
         imgSrc: "/images/icons/aside/homepage.svg"
     },
-    aiChat: {
-        name: "AI Chat",
-        imgSrc: "/images/icons/aside/aichat.svg",
-    },
     calculation: {
         name: "Calculators",
         imgSrc: "/images/icons/aside/calculators.svg"
@@ -200,18 +197,16 @@ export const BUTTON_TEMPLATE: Types.AsideButtons = {
  * FOOTER
  */
 
+const webstoreLinksInstance = new WebstoreLinks();
+
 export const IMAGE_SOURCES: Types.AsideButtons = {
-    source: {
-        src: "/images/icons/website.svg",
-        ref: "https://github.com/gokacinlar/toolguide-companion-browser-extension"
-    },
     github: {
         src: "/images/icons/github.svg",
         ref: "https://github.com/gokacinlar/toolguide-companion-browser-extension"
     },
     webstore: {
-        src: "/images/icons/chrome-webstore.svg",
-        ref: "https://www.dervisoksuzoglu.net/projects"
+        src: "",
+        ref: ""
     },
     support: {
         src: "/images/icons/support.svg",
@@ -225,7 +220,7 @@ export const IMAGE_SOURCES: Types.AsideButtons = {
 export const IMAGE_SOURCES_ALTERNATIVES: Types.AsideButtons = {
     firefox: {
         src: "/images/icons/firefox-webstore.svg",
-        ref: "https://dervisoksuzoglu.net"
+        ref: ""
     },
     opera: {
         src: "/images/icons/opera-webstore.svg",
@@ -233,6 +228,10 @@ export const IMAGE_SOURCES_ALTERNATIVES: Types.AsideButtons = {
     },
     edge: {
         src: "/images/icons/edge-webstore.svg",
-        ref: ""
+        ref: webstoreLinksInstance.links.edge
+    },
+    chrome: {
+        src: "/images/icons/chrome-webstore.svg",
+        ref: webstoreLinksInstance.links.chrome
     }
 }
