@@ -51,34 +51,53 @@ export class Footer extends HTMLElement {
     }
 
     private renderFooterLeft(): string {
-        // Get the users' browser name data
+        // Get the user's browser name data & corresponding images
         const userAgent = navigator.userAgent;
-
-        // Define the array of browser specific icons in this scope to be later used
         const webstoreSources = {
             Edge: IMAGE_SOURCES_ALTERNATIVES.edge,
             Opera: IMAGE_SOURCES_ALTERNATIVES.opera,
             Firefox: IMAGE_SOURCES_ALTERNATIVES.firefox,
+            Chrome: IMAGE_SOURCES_ALTERNATIVES.chrome,
+        } as const;
+
+        // Type guard to check if a key exists in the webstoreSources object
+        function isValidBrowserKey(key: string): key is keyof typeof webstoreSources {
+            return key in webstoreSources;
+        }
+
+        // We detect the browser name by using userAgent and getting exact name string
+        // by removing the "/" symbol end of it
+        const detectBrowser = (userAgent: string): string | null => {
+            if (userAgent.indexOf("Edg/") > -1) {
+                return "Edge";
+            } else if (userAgent.indexOf("OPR/") > -1 || userAgent.indexOf("Opera/") > -1) {
+                return "Opera";
+            } else if (userAgent.indexOf("Firefox/") > -1) {
+                return "Firefox";
+            } else if (userAgent.indexOf("Chrome/") > -1 && userAgent.indexOf("Edg/") === -1) {
+                return "Chrome";
+            }
+            return null;
         };
 
-        // Find the matching browser key in the user agent string
-        const matchingKey = Object.keys(webstoreSources).find(key => userAgent.indexOf(key) > -1);
-
-        // Get the corresponding browser specific icon source, if not, set default to the generic webstore icon
+        // Init the function
+        const browser = detectBrowser(userAgent);
+        // Get the corresponding browser-specific icon source, if not, set default to the generic webstore icon
         let webstoreSource = IMAGE_SOURCES.webstore;
-        if (matchingKey) {
-            webstoreSource = (webstoreSources as { [key: string]: Types.ImageSource })[matchingKey];
+        if (browser && isValidBrowserKey(browser)) {
+            webstoreSource = webstoreSources[browser];
         }
 
         return `
             <div>
                 ${this.renderImageLink(IMAGE_SOURCES.support, "Support")}
-                ${this.renderImageLink(IMAGE_SOURCES.source, "Website")}
                 ${this.renderImageLink(webstoreSource, "Webstore")}
                 ${this.renderImageLink(IMAGE_SOURCES.github, "GitHub")}
             </div>
         `;
     }
+
+
 
     // Function to render images in Footer"s Right Side
     private renderImageLink(image: Types.ImageSource, title: string): string {
