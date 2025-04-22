@@ -25,6 +25,7 @@ Your toolbox companion to accomplish many handy stuff, without leaving the brows
 	- Speed Measurement Converter
 	- Time Conversion Calculator
 	- Currency Information & Calculator
+  - Domain to IP Converter
 - Formatters:
 	- JSON Formatter
 	- XML Formatter
