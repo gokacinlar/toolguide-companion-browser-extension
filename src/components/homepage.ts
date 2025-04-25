@@ -30,6 +30,7 @@ export default class HomePage extends HTMLElement {
         this.homePageHeader.connectedCallback();
 
         // HomePageBody
+        this.homePageBody.connectedCallback();
         this.homePageBody.startCpuMonitoring();
         this.homePageBody.calculateRamUsage();
     }
@@ -141,8 +142,9 @@ class HomePageBody {
     public hpbBodyTemplate(): string {
         return `
             <section>
-                <div id="hp-body-content" class="hp-bg hpb-widgets grid-container rounded-3 p-1">
+                <div id="hp-body-content" class="hp-bg hpb-widgets grid-container rounded-3 p-1 position-relative">
                     <article class="border rounded-2 p-1">
+                        ${this.homepagePinWebsites()}
                     </article>
                     <article class="border rounded-2 p-1">
 
@@ -263,14 +265,195 @@ class HomePageBody {
 
         setInterval(refreshRamUsage, 500);
     }
+
+    public homepagePinWebsites(): string {
+        return `
+            <section class="container h-100 d-flex flex-column gap-2 align-items-center justify-content-around px-0">
+                <div class="row w-100 d-flex flex-row justify-content-around">
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                </div>
+                <div class="row w-100 d-flex flex-row justify-content-around">
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                </div>
+                <div class="row w-100 d-flex flex-row justify-content-around">
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                    <div class="col-3 px-0 d-flex align-items-center justify-content-center">${this.generatePinBtnTemplate()}</div>
+                </div>
+            </section>
+        `;
+    }
+
+    private generatePinBtnTemplate(): string {
+        return `
+            <button id="pinBtn" class="w-100 btn btn-sm btn-subtle border border-dashed border-2 border-primary text-white"
+                title="Pin Website">
+                <img class="pw-icon" src="/images/icons/etc/pin-angle.svg" class="img-fluid" alt="Pin Website">
+            </button>
+        `;
+    }
+    private restoreSavedLinks(): void {
+        const savedLinkData = localStorage.getItem("savedLinks");
+        if (!savedLinkData) return;
+
+        const savedLinks: { href: string; faviconUrl: string }[] = JSON.parse(savedLinkData);
+
+        // Limit the pins to maximum of 9 items
+        const pinButtons = document.querySelectorAll("#pinBtn");
+        const maxPins = Math.min(savedLinks.length, 9, pinButtons.length);
+
+        for (let i = 0; i < maxPins; i++) {
+            const { href, faviconUrl } = savedLinks[i];
+
+            const img = document.createElement("img");
+            img.src = faviconUrl;
+            img.alt = new URL(href).hostname;
+            img.style.width = "36px";
+            img.style.height = "36px";
+
+            const link = document.createElement("a");
+            link.href = href;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.title = new URL(href).hostname;
+            link.appendChild(img);
+
+            // Replace the i-th pin button
+            const pinBtn = pinButtons[i];
+            pinBtn.replaceWith(link);
+        }
+    }
+
+    private hasClickedPinBtn = false;
+    private pinWebsites(): void {
+        const homePageMenu = document.getElementById("hp-body-content") as HTMLDivElement;
+        const pinButtons = document.querySelectorAll("#pinBtn") as NodeListOf<HTMLButtonElement>;
+
+        pinButtons.forEach((pinBtn) => {
+            pinBtn.addEventListener("click", () => {
+                // Check for DOM shitting
+                if (this.hasClickedPinBtn) {
+                    return;
+                }
+                this.hasClickedPinBtn = true;
+
+                const pinMenu = this.createPinMenu(pinBtn);
+                homePageMenu.appendChild(pinMenu);
+            });
+        });
+
+        // Restore saved links from localStorage
+        this.restoreSavedLinks();
+    }
+
+    private createPinMenu(pinBtn: HTMLButtonElement): HTMLDivElement {
+        const pinMenu = document.createElement("div");
+        pinMenu.innerHTML = this.pinMenuHTML();
+
+        const closeBtn = pinMenu.querySelector("#pinMenuClose") as HTMLButtonElement;
+        const submitBtn = pinMenu.querySelector("#pinWebsiteBtn") as HTMLButtonElement;
+        const input = pinMenu.querySelector("#pw-Url") as HTMLInputElement;
+
+        // Close handler
+        closeBtn?.addEventListener("click", () => {
+            pinMenu.remove();
+            this.hasClickedPinBtn = false;
+        });// Pin handler
+        submitBtn?.addEventListener("click", () => {
+            const url = input.value.trim();
+            const httpsCheck = "https://";
+
+            try {
+                let parsedUrl = url;
+                if (!url.startsWith(httpsCheck)) {
+                    parsedUrl = httpsCheck + url;
+                }
+
+                const parsed = new URL(parsedUrl);
+                const gApi: string = "https://www.google.com/s2/favicons?sz=128&domain=";
+                const faviconUrl = gApi + parsed.origin;
+
+                const img = document.createElement("img");
+                img.src = faviconUrl;
+                img.alt = parsed.hostname;
+                img.style.width = "36px";
+                img.style.height = "36px";
+
+                const link = document.createElement("a");
+                link.href = parsed.href;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                link.title = parsed.hostname;
+                link.appendChild(img);
+
+                pinBtn.replaceWith(link);
+                pinMenu.remove();
+                this.hasClickedPinBtn = false;
+
+                // Get existing links from localStorage or initialize an empty array
+                // for handling case of multiple pinned websites
+                const existing = localStorage.getItem("savedLinks");
+                const savedLinks = existing ? JSON.parse(existing) : [];
+
+                // Add the new pinned link by push() method
+                savedLinks.push({
+                    href: parsed.href,
+                    faviconUrl: faviconUrl
+                });
+
+                // Save back to localStorage
+                localStorage.setItem("savedLinks", JSON.stringify(savedLinks));
+            } catch (error: unknown) {
+                alert("Please enter a valid URL.");
+                throw new Error(`Invalid URL: ${error}`);
+            }
+        });
+        return pinMenu;
+    }
+
+    private pinMenuHTML(): string {
+        return `
+        <div id="pinMenu" class="position-absolute top-50 start-50 translate-middle z-1">
+            <div class="bg-primary-subtle border border-1 border-doubleborder-opacity-75 border-secondary-subtle
+                shadow-md p-2 rounded-4 w-100 d-flex flex-column gap-1">
+                <div class="d-flex flex-row justify-content-between align-items-center">
+                    <label for="pw-Url" class="form-label">Please provide the website URL</label>
+                    <button id="pinMenuClose" type="button" class="btn-close" aria-label="Close"
+                        style="--bs-btn-close-width:32px;
+                        --bs-btn-close-height:32px" title="Exit"></button>
+                </div>
+                <div class="input-group mb-2">
+                    <span class="input-group-text" id="pwWebsiteInput">URL</span>
+                    <input type="text" class="form-control" id="pw-Url" aria-describedby="pwWebsiteInput"/>
+                </div>
+                <div>
+                    <button class="btn btn-discovery fs-5 rounded-pill" type="button" id="pinWebsiteBtn">Pin Website</button>
+                </div>
+            </div>
+        </div>
+    `;
+    }
+
+    public connectedCallback(): void {
+        this.pinWebsites();
+    }
 }
 
 class HomePageAside {
     public hpbAsideTemplate(): string {
         return `
             <section>
-                <div id="hp-aside-content" class="hp-bg rounded-3">
+                <div id="hp-aside-content" class="hp-bg rounded-3 d-flex flex-column align-content-start justify-content-between h-100">
+                    <div>
 
+                    </div>
+                    <div id="hpSettings">
+
+                    </div>
                 </div>
             </section>
         `;
