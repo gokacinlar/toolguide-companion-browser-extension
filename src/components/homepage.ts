@@ -296,13 +296,20 @@ class HomePageBody {
             </button>
         `;
     }
+
     private restoreSavedLinks(): void {
         const savedLinkData = localStorage.getItem("savedLinks");
-        if (!savedLinkData) return;
+        if (!savedLinkData) {
+            return;
+        }
+
+        // Prevent duplication of appending the pins while switching tabs
+        const alreadyRestored = document.querySelectorAll(".pinned-link").length;
+        if (alreadyRestored > 0) {
+            return;
+        }
 
         const savedLinks: { href: string; faviconUrl: string }[] = JSON.parse(savedLinkData);
-
-        // Limit the pins to maximum of 9 items
         const pinButtons = document.querySelectorAll("#pinBtn");
         const maxPins = Math.min(savedLinks.length, 9, pinButtons.length);
 
@@ -320,9 +327,9 @@ class HomePageBody {
             link.target = "_blank";
             link.rel = "noopener noreferrer";
             link.title = new URL(href).hostname;
+            link.classList.add("pinned-link"); // restored pin
             link.appendChild(img);
 
-            // Replace the i-th pin button
             const pinBtn = pinButtons[i];
             pinBtn.replaceWith(link);
         }
