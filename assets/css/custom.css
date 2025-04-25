@@ -19,6 +19,10 @@
     --alt-big-icon-size: 42px;
     --semi-big-icon-size: 48px;
     --big-icon-size: 64px;
+    --filter-invert: 1;
+    --filter-sepia: 1;
+    --filter-saturate: 5;
+    --filter-hue-rotate: 90deg;
 }
 
 @property --bg-color {
@@ -346,6 +350,53 @@
         &::-webkit-scrollbar {
             display: none;
         }
+    }
+
+    #pinMenu {
+        min-width: 340px !important;
+        -webkit-animation: scale-in-top .25s cubic-bezier(0.785, 0.135, 0.150, 0.860) both;
+        animation: scale-in-top .25s cubic-bezier(0.785, 0.135, 0.150, 0.860) both;
+        transition: all .25s ease-in-out;
+    }
+
+    @-webkit-keyframes scale-in-top {
+        0% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+            -webkit-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+            opacity: 0;
+        }
+
+        100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+            opacity: 1;
+        }
+    }
+
+    @keyframes scale-in-top {
+        0% {
+            -webkit-transform: scale(0);
+            transform: scale(0);
+            -webkit-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+            opacity: 0;
+        }
+
+        100% {
+            -webkit-transform: scale(1);
+            transform: scale(1);
+            -webkit-transform-origin: 50% 0%;
+            transform-origin: 50% 0%;
+            opacity: 1;
+        }
+    }
+
+    .pw-icon {
+        filter: invert(var(--filter-invert)) sepia(var(--filter-sepia)) saturate(var(--filter-saturate)) hue-rotate(var(--filter-hue-rotate));
     }
 
     .grid-container {
